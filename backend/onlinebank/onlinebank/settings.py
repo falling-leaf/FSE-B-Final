@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'counteropt',
-    'corsheaders',
+    'common',
+    'login',
+    'creditcard',
     'foreign_exchange',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [

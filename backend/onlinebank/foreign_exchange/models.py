@@ -15,7 +15,7 @@ class Currency(models.Model):
 class CurrencyHolding(models.Model):
     currency_holding_id = models.AutoField(primary_key=True)
     currency = models.ForeignKey('foreign_exchange.Currency', on_delete=models.CASCADE)
-    online_user = models.ForeignKey('counteropt.online_user', on_delete=models.CASCADE)
+    online_user = models.ForeignKey('common.online_user', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=5)
         
     class Meta:
@@ -29,7 +29,7 @@ class CurrencyHolding(models.Model):
 
 class ForeignExchangeOperator(models.Model):
     foreign_exchange_operator_id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey('counteropt.employee',on_delete=models.CASCADE)
+    employee = models.ForeignKey('common.employee',on_delete=models.CASCADE)
     account = models.CharField(max_length=100, null = False, unique= True)
     password = models.CharField(max_length=80, null=False)
     alter_name_authority = models.BooleanField(default=False)
@@ -46,8 +46,8 @@ class ForeignExchangeOperator(models.Model):
     
 class ForeignExchangeTrading(models.Model):
     foreign_exchange_trading_id = models.AutoField(primary_key=True)
-    account = models.ForeignKey('counteropt.account', on_delete=models.CASCADE)
-    online_user = models.ForeignKey('counteropt.online_user', on_delete=models.CASCADE)
+    account = models.ForeignKey('common.account', on_delete=models.CASCADE)
+    online_user = models.ForeignKey('common.online_user', on_delete=models.CASCADE)
     currency = models.ForeignKey('foreign_exchange.Currency', on_delete=models.CASCADE)
     buy_or_sell = models.BooleanField(default=False)
     rmb_amount = models.DecimalField(max_digits=10, decimal_places=5)

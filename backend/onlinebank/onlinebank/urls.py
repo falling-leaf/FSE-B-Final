@@ -27,4 +27,5 @@ urlpatterns = [
     path('FExchange/', include('foreign_exchange.rate_update_record_urls')),
     path('FExchange/', include('foreign_exchange.currency_holding_urls')),
     path('creditcard/', include('creditcard.urls')),
+    path('login/', include('login.login_urls')),
 ]
