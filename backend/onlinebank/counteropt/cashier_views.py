@@ -40,10 +40,7 @@ def cashier_add(request):
 
 def cashier_query_account(request):
     if request.method == 'GET':
-        filter_accountss = account.objects.filter(account_id=request.GET.get('accountID'))
-        if not filter_accountss.exists():
-            return JsonResponse({"error": "不存在该账户"}, status=405)
-        filter_accounts = filter_accountss[0]
+        filter_accounts = account.objects.filter(account_id=request.GET.get('accountID'))[0]
         account_data = {}
         account_data['id'] = filter_accounts.account_id
         account_data['password'] = filter_accounts.password

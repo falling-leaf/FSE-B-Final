@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'counteropt',
     'corsheaders',
+    'foreign_exchange',
 ]
 
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'banking',
         'USER': 'root',
-        'PASSWORD': 'why1445675246',
+        'PASSWORD': '030927',
         'HOST': 'localhost',
         'PORT': '3306',
     }

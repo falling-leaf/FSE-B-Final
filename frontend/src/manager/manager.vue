@@ -14,6 +14,12 @@
             </el-icon>
             <span>出纳员管理</span>
           </el-menu-item>
+          <el-menu-item :index="'/admin/foreign?managerID='+this.managerID">
+            <el-icon>
+              <Avatar />
+            </el-icon>
+            <span>外汇操作员管理</span>
+          </el-menu-item>
           <div style="height: 30px"></div>
           <a href="/" style="margin-left: 40px;">
             <el-button type="danger">

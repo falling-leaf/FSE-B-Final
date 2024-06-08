@@ -31,6 +31,8 @@ class cashier(models.Model):
 
 
 class online_user(models.Model):
+    person_id = models.IntegerField(null=False, default=0)
+    name = models.CharField(max_length=80, default='user001')
     identity_card = models.CharField(max_length = 18, null = False)
 
 
