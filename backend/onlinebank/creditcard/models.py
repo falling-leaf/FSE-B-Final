@@ -8,8 +8,13 @@ from django.core.exceptions import ObjectDoesNotExist
 # 所有职员（应该在其他模块中定义，这里先定义一下方便测试使用）
 class Employee(models.Model):
     employee_id = models.AutoField(primary_key=True)
-    employee_name = models.CharField(max_length=20, default='name')
-    identity_card = models.CharField(max_length=18, default='000000000000000000')
+    employee_name = models.CharField(max_length=20, null=False, default="Unknown")
+    identity_card = models.CharField(max_length=18, null=False, default="Unknown")
+    employee_sex = models.IntegerField(null=False, default=0)
+    phone_number = models.CharField(max_length=20, null=False, default="Unknown")
+    occupation_name = models.CharField(max_length=50, null=False, default="Unknown")
+    is_employeed = models.BooleanField(null=False, default="False")
+    other_information = models.CharField(max_length=1021, default="Unknown")
 
 
 # 信用卡审查员
@@ -19,25 +24,6 @@ class CreditCardExaminer(models.Model):
     check_authority = models.BooleanField(default=False)
     account = models.CharField(max_length=30, default='000000')
     password = models.CharField(max_length=20, default='password')
-
-    def add_credit_examiner(employee_id):
-        try:
-            employee = Employee.objects.get(employee_id=employee_id)
-            if CreditCardExaminer.objects.filter(employee=employee).exists():
-                raise ValueError("该员工已经是信用卡审查员")
-
-            # create a new CreditCardExaminer
-            new_examiner = CreditCardExaminer(
-                employee=employee,
-                account=employee.identity_card,  # Example account name generation
-                password='password',
-                check_authority=1  # default grant the authority
-            )
-            new_examiner.save()
-            return new_examiner
-
-        except ObjectDoesNotExist:
-            raise ValueError("该员工不存在")
 
     def modify_examiner_info(self, new_account, new_password):
         """更改审核员账号信息"""
@@ -51,7 +37,8 @@ class CreditCardExaminer(models.Model):
             raise ValueError("新密码不能和旧密码相同")
         else:
             self.password = new_password
-            self.save()
+
+        self.save()
 
     def grant(self):
         if self.check_authority:
@@ -163,7 +150,7 @@ class CreditCard(models.Model):
             raise ValueError("还款账户已被被冻结或挂失，不能还款")
         elif pay_account.balance < amount:
             raise ValueError("还款账户余额不足（还款不能透支信用）")
-        elif self.balance >= 0:
+        elif self.balance >= 0.0:
             raise Warning("账户无需还款，余额≥0")
         else:
             pay_account.balance -= amount
