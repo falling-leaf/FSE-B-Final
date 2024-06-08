@@ -14,7 +14,7 @@ class employee(models.Model):
     other_information = models.CharField(max_length = 1021, default = "Unknown")
 
 
-class sys_manage(models.Model):
+class sys_manager(models.Model):
     sys_manager_id = models.AutoField(primary_key = True)
     employee = models.ForeignKey(employee, on_delete = models.CASCADE)
     account = models.CharField(max_length = 100, null = False)
