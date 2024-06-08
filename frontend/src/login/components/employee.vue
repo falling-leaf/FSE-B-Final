@@ -111,9 +111,9 @@ export default{
         password: this.password
       }).then(response => {
         this.employee.id = response.data.id;
-        // window.location.href = "/manager?managerID=" + this.employee.id ;  // 函数内部进行超链接跳转
-      }).catch(response => {
-        ElMessage.error(response.data.error);
+        window.location.href = "/manager?managerID=" + this.employee.id ;  // 函数内部进行超链接跳转
+      }).catch(error => {
+        ElMessage.error(error.response.data.error);
         this.password = "";
       })
     },
@@ -123,9 +123,9 @@ export default{
         password: this.password
       }).then(response => {
         this.employee.id = response.data.id;
-        // window.location.href = "/cashier?cashierID=" + this.employee.id ;  // 函数内部进行超链接跳转
-      }).catch(response => {
-        ElMessage.error(response.data.error);
+        window.location.href = "/cashier?cashierID=" + this.employee.id ;  // 函数内部进行超链接跳转
+      }).catch(error => {
+        ElMessage.error(error.response.data.error);
         this.password = "";
       })
     },
