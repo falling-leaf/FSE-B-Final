@@ -15,6 +15,7 @@
   <script >
   import {ref} from "vue"
   import {Delete, Edit, Plus, Search} from "@element-plus/icons-vue";
+  import { ElMessage, datePickerProps, ElButton } from 'element-plus'
   import axios from "axios";
   
   export default {

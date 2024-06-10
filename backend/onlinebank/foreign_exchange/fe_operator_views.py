@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import json
 from django.views.decorators.http import require_http_methods
-from counteropt.models import employee
+from common.models import employee
 from foreign_exchange.models import ForeignExchangeOperator
 from django.http import JsonResponse
 from django.core import serializers
@@ -84,10 +84,10 @@ def handleDeleteOperator(request):
     operator_id = data.get('foreign_exchange_operator_id')
     try:
         operator = ForeignExchangeOperator.objects.get(foreign_exchange_operator_id = operator_id)
-        employee = employee.objects.get(employee_id = employee_id_to_delete)
-        employee.is_employeed = False
+        employees = employee.objects.get(employee_id = employee_id_to_delete)
+        employees.is_employeed = False
         operator.delete()
-        employee.save()
+        employees.save()
         return JsonResponse({'status': 'success', 'message': 'Operator deleted successfully'})
     except ForeignExchangeOperator.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Operator not found' })

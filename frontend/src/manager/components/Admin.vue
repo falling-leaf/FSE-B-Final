@@ -182,7 +182,7 @@ export default {
         }
     },
     mounted() {
-            this.searchRecords(1)
+        this.searchRecords(1)
     },
     methods: {
         handleStartDateChange(date, dateString) {
@@ -246,12 +246,12 @@ export default {
                 .catch(error => {
                     ElMessage.warning('添加请求发送失败', error);
                 });
-                location.reload()
             }
             else{
                 alert('两次密码不一致！')
             }
-
+            this.isAddOperator = false
+            this.searchRecords(1)
         },
         async handlesearch(page){
             if(this.searchOperator != '') {
@@ -287,6 +287,7 @@ export default {
             {
                 this.searchRecords(page)
             }
+            this.issearch = false
         },
         async handleModifyOperator(){
             let modifyParams = {}
@@ -297,14 +298,14 @@ export default {
                 if (response.data.status === 'success') {
                     ElMessage.warning('Operator modify successfully');
                 } else {
-                alert('Error: ' + response.data.message);
+                    alert('Error: ' + response.data.message);
                 }
-                location.reload();
             })
             .catch(error => {
                 ElMessage.warning('权限更新请求发送失败', error);
             });
-            location.reload();
+            this.isModifyOperator = false
+            this.searchRecords(1)
         },
         async handleDeleteOperator(){
             let deleteParams = {}
@@ -321,7 +322,8 @@ export default {
             .catch(error => {
                 ElMessage.warning('删除请求发送失败', error);
             });
-            location.reload();
+            this.isConfirmDeleteOperator = false
+            this.searchRecords(1)
         },
         async deletes(row) {
             this.selectedRowData = row
