@@ -28,4 +28,6 @@ urlpatterns = [
     path('FExchange/', include('foreign_exchange.currency_holding_urls')),
     path('creditcard/', include('creditcard.urls')),
     path('login/', include('login.login_urls')),
+    path('manager/', include('loan.manager_urls')),
+    path('loan/', include('loan.user_urls')),
 ]
