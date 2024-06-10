@@ -122,12 +122,23 @@ export default {
             }],
         }
     },
+    created() {
+        this.fetchDataFromUrl();
+    },
     computed: {
         fitlerTableData() {
             return this.tableData;
         }
     },
     methods: {
+        fetchDataFromUrl() {
+            // 获取当前URL
+            const url = new URL(window.location);
+            // 创建URLSearchParams对象
+            const params = new URLSearchParams(url.search);
+            // 从查询字符串中获取参数
+            this.foreign_exchange_operator_id = params.get('foreign_exchange_operator_id');
+        },
         handlePrevPage() {
             if(this.curPage > 1) {
                 this.curPage--

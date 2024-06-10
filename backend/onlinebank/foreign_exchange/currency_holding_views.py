@@ -18,7 +18,7 @@ def get_currency_holding(request):
     try:
         datas = []
 
-        holdings = CurrencyHolding.objects.filter(online_user__person_id=personId)
+        holdings = CurrencyHolding.objects.filter(online_user__user_id=personId)
 
         for h in holdings:
             datas.append({

@@ -73,10 +73,6 @@ export default{
           label: '外汇操作员',
         },
         {
-          value: '外汇管理员',
-          label: '外汇管理员',
-        },
-        {
           value: '信用卡审查员',
           label: '信用卡审查员',
         }
@@ -96,6 +92,9 @@ export default{
         case "出纳员":
           this.getCashierID();
           break;
+        case "外汇操作员":
+          this.getFEOperatorID();
+          break;
           /*
           case "...":
             ...
@@ -104,6 +103,18 @@ export default{
           */
         default: break;
       }
+    },
+    getFEOperatorID() {
+      axios.post('/login/FEOperator/',{
+        account: this.account,
+        password: this.password
+      }).then(response => {
+        this.employee.id = response.data.id;
+        window.location.href = "/FExchange/operator?foreign_exchange_operator_id=" + this.employee.id ;  // 函数内部进行超链接跳转
+      }).catch(error => {
+        ElMessage.error(error.response.data.error);
+        this.password = "";
+      })
     },
     getSysManagerID(){
       axios.post('/login/sysManager/',{

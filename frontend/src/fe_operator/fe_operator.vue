@@ -48,7 +48,18 @@ export default {
       foreign_exchange_operator_id: 1
     }
   },
+  created() {
+    this.fetchDataFromUrl();
+  },
   methods: {
+    fetchDataFromUrl() {
+      // 获取当前URL
+      const url = new URL(window.location);
+      // 创建URLSearchParams对象
+      const params = new URLSearchParams(url.search);
+      // 从查询字符串中获取参数
+      this.foreign_exchange_operator_id = params.get('foreign_exchange_operator_id');
+    },
     LogOut() {
       this.$router.push('/another-page');
     }
