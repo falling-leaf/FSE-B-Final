@@ -12,7 +12,7 @@ from django.utils import timezone
 from django_apscheduler.jobstores import DjangoJobStore, register_job
 from apscheduler.schedulers.background import BackgroundScheduler
 
-scheduler = BackgroundScheduler()
+''' scheduler = BackgroundScheduler()
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
 @register_job(
@@ -31,4 +31,4 @@ def update_loan_record_isoverdue():
         except Exception as e:
             print(str(e))
 
-scheduler.start()
+scheduler.start() '''

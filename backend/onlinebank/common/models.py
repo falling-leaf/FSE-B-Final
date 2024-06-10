@@ -29,6 +29,7 @@ class cashier(models.Model):
 
 
 class online_user(models.Model):
+    user_id = models.AutoField(primary_key = True)
     identity_card = models.CharField(max_length = 18, null = False)
     annual_income = models.FloatField(null=True)
     property_valuation = models.FloatField(null=True)
@@ -81,3 +82,64 @@ class transfer_record(models.Model):
     transfer_date = models.DateField(null = False)
     transfer_amount = models.FloatField(null = False)
     cashier_id = models.IntegerField(null = False)
+
+# 外汇
+class Currency(models.Model):
+    currency_id = models.AutoField(primary_key=True)
+    currency_name = models.CharField(max_length=80, unique=True)
+    latest_exchange_buying_rate = models.DecimalField(max_digits=10, decimal_places=5)
+    latest_exchange_selling_rate = models.DecimalField(max_digits=10, decimal_places=5)
+
+    @staticmethod
+    def GetCurrencyName(currencyId: int):
+        currency = Currency.objects.get(currency_id=currencyId)
+        return currency
+
+class CurrencyHolding(models.Model):
+    currency_holding_id = models.AutoField(primary_key=True)
+    currency = models.ForeignKey('common.Currency', on_delete=models.CASCADE)
+    online_user = models.ForeignKey('common.online_user', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=5)
+        
+    class Meta:
+        unique_together = ('currency', 'online_user')
+
+    def save(self, *args, **kwargs):
+        if self.amount <= 0:
+            self.delete()
+        else:
+            super(CurrencyHolding, self).save(*args, **kwargs)
+
+class ForeignExchangeOperator(models.Model):
+    foreign_exchange_operator_id = models.AutoField(primary_key=True)
+    employee = models.ForeignKey('common.employee',on_delete=models.CASCADE)
+    account = models.CharField(max_length=100, null = False, unique= True)
+    password = models.CharField(max_length=80, null=False)
+    alter_name_authority = models.BooleanField(default=False)
+    alter_rate_authority = models.BooleanField(default=False)
+    add_authority = models.BooleanField(default=False)
+    delete_authority = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'foreign_exchange_operator'
+        ordering = ['foreign_exchange_operator_id'] 
+
+    def __str__(self):
+        return f"{self.foreign_exchange_operator_id}: {self.account}"
+    
+class ForeignExchangeTrading(models.Model):
+    foreign_exchange_trading_id = models.AutoField(primary_key=True)
+    account = models.ForeignKey('common.account', on_delete=models.CASCADE)
+    online_user = models.ForeignKey('common.online_user', on_delete=models.CASCADE)
+    currency = models.ForeignKey('common.Currency', on_delete=models.CASCADE)
+    buy_or_sell = models.BooleanField(default=False)
+    rmb_amount = models.DecimalField(max_digits=10, decimal_places=5)
+    currency_amount = models.DecimalField(max_digits=10, decimal_places=5)
+    trading_datetime = models.DateTimeField()
+
+class RateUpdateRecord(models.Model):
+    rate_update_record_id = models.AutoField(primary_key=True)
+    currency = models.ForeignKey('common.Currency', on_delete=models.CASCADE)
+    buying_rate = models.DecimalField(max_digits=10, decimal_places=5)
+    selling_rate = models.DecimalField(max_digits=10, decimal_places=5)
+    update_datetime = models.DateTimeField()

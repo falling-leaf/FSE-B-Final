@@ -25,7 +25,7 @@ def createTradeData(request):
         # 提取日期和时间部分
         date_part = local_time.date()
         time_part = local_time.time()
-        sell_history = ForeignExchangeTrading(account__account_id=account_id, online_user__online_user_id = person_id, buy_or_sell = buy_or_sell, rmb_amount=rmb_amount, currency_amount=currency_amount, trading_datetime= date_part, trading_time = time_part,currency__currency_id = currency_id)
+        sell_history = ForeignExchangeTrading(account__account_id=account_id, online_user__user_id = person_id, buy_or_sell = buy_or_sell, rmb_amount=rmb_amount, currency_amount=currency_amount, trading_datetime= date_part, trading_time = time_part,currency__currency_id = currency_id)
         sell_history.save()
         # 在这里进行进一步的处理和逻辑操作
 
