@@ -110,7 +110,7 @@ export default{
         password: this.password
       }).then(response => {
         this.employee.id = response.data.id;
-        window.location.href = "/FExchange/operator?foreign_exchange_operator_id=" + this.employee.id ;  // 函数内部进行超链接跳转
+        window.location.href = "/fe_operator?foreign_exchange_operator_id=" + this.employee.id ;  // 函数内部进行超链接跳转
       }).catch(error => {
         ElMessage.error(error.response.data.error);
         this.password = "";
