@@ -6,7 +6,7 @@ urlpatterns = [
     path('lenderLoanApplication', manager_views.lenderLoanApplication, name='lender_loan_application'),
 ]
 
-from .models import LoanRecord
+from . import models
 from django.db import transaction
 from django.utils import timezone
 from django_apscheduler.jobstores import DjangoJobStore, register_job
@@ -23,7 +23,7 @@ scheduler.add_jobstore(DjangoJobStore(), "default")
 def update_loan_record_isoverdue():
     with transaction.atomic():
         try:
-            loan_records = LoanRecord.objects.filter(is_repay=False)
+            loan_records = models.LoanRecord.objects.filter(is_repay=False)
             current_time = timezone.now()
             for loan_record in loan_records:
                 if loan_record.end_time < current_time:
