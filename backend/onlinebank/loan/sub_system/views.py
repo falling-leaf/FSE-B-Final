@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from django.http import JsonResponse
 from django.core import serializers
-from bankLoanDepartment import models
+from . import models
 import datetime
 import json
 
@@ -50,7 +50,7 @@ def manageLoanExaminer(request):
             elif operation == "delete":
                 loan_examiner_id = body.get("loan_examiner_id")
                 loan_examiner = models.LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
-                employee = models.AuthorityEmployee.objects.get(employee_id=loan_examiner.employee_id)
+                employee = models.employee.objects.get(employee_id=loan_examiner.employee_id)
 
                 employee.is_employeed = False
                 employee.save()
@@ -119,7 +119,7 @@ def manageLoanDepartmentManager(request):
             elif operation == "delete":
                 loan_manager_id = body.get("loan_manager_id")
                 loan_manager = models.LoanDepartmentManager.objects.get(loan_manager_id=loan_manager_id)
-                employee = models.AuthorityEmployee.objects.get(employee_id=loan_manager.employee_id)
+                employee = models.employee.objects.get(employee_id=loan_manager.employee_id)
 
                 employee.is_employeed = False
                 employee.save()
