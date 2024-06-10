@@ -1,13 +1,13 @@
 import json
+from datetime import datetime
 import pytz
-from django.db.models import Sum
-from django.core import serializers
 from django.core.serializers import serialize
-from django.http import HttpResponse, JsonResponse
+from django.db.models import Sum
+from django.http import JsonResponse
 from django.utils.timezone import make_aware
-from django.views.decorators.http import require_http_methods
-from .models import *
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from .models import account, online_user, CreditCardApplication, transfer_record, employee, CreditCardExaminer
 
 
 # 信用卡操作部分---------------------------------------------------------------------------
@@ -22,7 +22,7 @@ def get_cards(request):
         if not online_user_id:
             raise ValueError("online_user_id is required")
         tz = pytz.timezone('Asia/Shanghai')
-        cards = CreditCard.objects.filter(online_user=Online_user.objects.get(person_id=online_user_id))
+        cards = account.objects.filter(online_user=online_user.objects.get(person_id=online_user_id))
         formatted_cards = []
         for card in cards:
             formatted_cards.append({
@@ -63,7 +63,7 @@ def add_new_card(request):
         apply_id = body.get('apply_id')
         print(apply_id)
 
-        CreditCard().new_card(online_user_id)
+        account().new_card(online_user_id)
 
         # Change the application state of 'have_open'
         application = CreditCardApplication.objects.get(apply_id=apply_id)
@@ -99,7 +99,7 @@ def change_password(request):
         old_password = body.get('old_password')
 
         # Fetch the credit card using the account_id from URL parameters
-        card = CreditCard.objects.get(account_id=account_id)
+        card = account.objects.get(account_id=account_id)
 
         # Update the password
         card.modify_password(new_password, old_password)
@@ -134,7 +134,7 @@ def frozen_card(request):
         password = body.get('password')
         if not password:
             raise ValueError("password is required")
-        card = CreditCard.objects.get(account_id=account_id)
+        card = account.objects.get(account_id=account_id)
         card.frozen_card(password)
 
         response['status'] = 'success'
@@ -166,7 +166,7 @@ def update_limit(request):
         password = body.get('password')
         if not password:
             raise ValueError("password is required")
-        card = CreditCard.objects.get(account_id=account_id)
+        card = account.objects.get(account_id=account_id)
         card.update_credit_limit(password, amount)
 
         response['status'] = 'success'
@@ -190,7 +190,7 @@ def cancel_card(request):
         body = json.loads(body_unicode)
         account_id = body.get('account_id')
         password = body.get('password')
-        card = CreditCard.objects.get(account_id=account_id)
+        card = account.objects.get(account_id=account_id)
         card.cancel_card(password)
         response['status'] = 'success'
         response['message'] = 'Card has been cancelled.'
@@ -215,8 +215,8 @@ def repay(request):
         amount = float(body.get('amount'))
         print(account_id, pay_account, pay_password, amount)
 
-        card = CreditCard.objects.get(account_id=account_id)
-        pay_card = CreditCard.objects.get(account_id=pay_account)
+        card = account.objects.get(account_id=account_id)
+        pay_card = account.objects.get(account_id=pay_account)
 
         card.repay(pay_card, pay_password, amount)
 
@@ -246,7 +246,7 @@ def lost_card(request):
         password = body.get('password')
         if not password:
             raise ValueError("password is required")
-        card = CreditCard.objects.get(account_id=account_id)
+        card = account.objects.get(account_id=account_id)
         card.report_lost(password)
         response['status'] = 'success'
         response['message'] = 'Card has been reported lost successfully.'
@@ -276,15 +276,15 @@ def pay_to(request):
         password = body.get('password')
 
         # update the balance of payer and receiver
-        in_card = CreditCard.objects.get(account_id=account_in_id)
-        out_card = CreditCard.objects.get(account_id=account_out_id)
+        in_card = account.objects.get(account_id=account_in_id)
+        out_card = account.objects.get(account_id=account_out_id)
         if in_card == out_card:
             raise ValueError("收款方和付款方不能相同")
         in_card.transfer_in(amount)
         out_card.transfer_out(amount, password)
 
         # update the information in transaction
-        new_transaction = Transaction(
+        new_transaction = transfer_record(
             account_in_id=body.get('account_in_id'),
             account_out_id=body.get('account_out_id'),
             transfer_amount=body.get('amount'),
@@ -328,12 +328,12 @@ def show_month_bill(request):
         start_date = make_aware(start_date, timezone=tz)
         end_date = make_aware(end_date, timezone=tz)
 
-        in_bill = Transaction.objects.filter(
+        in_bill = transfer_record.objects.filter(
             account_in_id=account_id,
             transfer_date__gte=start_date,
             transfer_date__lt=end_date
         )
-        out_bill = Transaction.objects.filter(
+        out_bill = transfer_record.objects.filter(
             account_out_id=account_id,
             transfer_date__gte=start_date,
             transfer_date__lt=end_date
@@ -389,7 +389,7 @@ def add_examiner(request):
         phone_number = body.get('phone_number')
         password = body.get('password')
         other_information = body.get('other_information')
-        account = body.get('account')
+        account_card = body.get('account')
         sex = body.get('sex')
 
         if sex == 'female':
@@ -397,7 +397,7 @@ def add_examiner(request):
         if sex == 'male':
             employee_sex = 0
 
-        new_employee = Employee(
+        new_employee = employee(
             employee_name=employee_name,
             identity_card=identity_card,
             employee_sex=employee_sex,
@@ -410,7 +410,7 @@ def add_examiner(request):
 
         new_examiner = CreditCardExaminer(
             employee=new_employee,
-            account=account,  # Example account name generation
+            account=account_card,  # Example account name generation
             password=password,
             check_authority=1  # default grant the authority
         )
@@ -440,7 +440,7 @@ def get_examiners(request):
 
         examiner_info = []
         for examiner in examiners:
-            employee = Employee.objects.get(employee_id=examiner.employee_id)
+            employee = employee.objects.get(employee_id=examiner.employee_id)
             if employee.employee_sex == 0:
                 sex = '男'
             else:
@@ -498,13 +498,13 @@ def modify_examiner(request):
         examiner.modify_examiner_info(new_account, new_password)
         examiner.save()
 
-        employee = Employee.objects.get(employee_id=examiner.employee_id)
-        employee.other_information = new_other_information
-        employee.phone_number = new_phone_number
-        employee.sex = new_sex
-        employee.identity_card = new_identity_card
-        employee.name = new_employee_name
-        employee.save()
+        employee_ = employee.objects.get(employee_id=examiner.employee_id)
+        employee_.other_information = new_other_information
+        employee_.phone_number = new_phone_number
+        employee_.sex = new_sex
+        employee_.identity_card = new_identity_card
+        employee_.name = new_employee_name
+        employee_.save()
 
         response['status'] = 'success'
         response['message'] = 'Examiner info has been modified successfully.'
