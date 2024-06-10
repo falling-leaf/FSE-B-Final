@@ -22,7 +22,9 @@
           <div style="margin-left: 10px; text-align: start; font-size: 16px;">
             <p style="padding: 2px;"><span style="font-weight: bold">账户名：</span>{{examiner.account}}</p>
             <p style="padding: 2px;"><span style="font-weight: bold">员工ID：</span>{{examiner.employee_id}}</p>
-            <p style="padding: 2px;"><span style="font-weight: bold">员工名：</span>{{ examiner.employee_name }}</p>
+            <p style="padding: 2px;"><span style="font-weight: bold">姓名：</span>{{ examiner.employee_name }}</p>
+            <p style="padding: 2px;"><span style="font-weight: bold">性别：</span>{{ examiner.sex }}</p>
+            <p style="padding: 2px;"><span style="font-weight: bold">电话：</span>{{ examiner.phone_number }}</p>
             <p style="padding: 2px;">
               <el-tag v-if="examiner.check_authority">审查权限</el-tag>
             </p>
@@ -31,6 +33,7 @@
           <!-- 卡片操作 -->
           <div style="margin-top: 10px; display:flex; margin-left: 50px; margin-right: 50px;">
             <el-button type="primary" :icon="Edit" @click="this.modifyInfo.examiner_id=examiner.examiner_id,
+            this.modifyInfo.new_employee_name=examiner.employee_name, this.modifyInfo.new_account=examiner.account,
               this.modifyExaminerVisible = true"  />
             <el-button type="primary" :icon="Switch" @click="this.toChangeAuthority=examiner.examiner_id,
               this.changeAuthorityVisible = true"  />
@@ -45,15 +48,42 @@
     <!-- 添加审查员对话框 -->
     <el-dialog v-model="newExaminerVisible" title="添加信用卡审查员" width="30%" align-center>
       <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          员工编号：
-          <el-input v-model="newExaminerEmployeeId" style="width: 12.5vw;" clearable />
+          姓名：
+          <el-input v-model="newExaminer.employee_name" style="width: 12.5vw;" clearable />
       </div>
-
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          账号：
+          <el-input v-model="newExaminer.account" style="width: 12.5vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          身份证：
+          <el-input v-model="newExaminer.identity_card" style="width: 15vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          密码：
+          <el-input v-model="newExaminer.password" style="width: 12.5vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          电话：
+          <el-input v-model="newExaminer.phone_number" style="width: 12.5vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          性别：
+          <el-select v-model="this.newExaminer.sex" style="width: 12.5vw;">
+          <el-option v-for="type in sex_types" :key="type.value" :label="type.label" :value="type.value"/>
+        </el-select>
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          其他信息：
+          <el-input v-model="newExaminer.other_information" style="width: 15vw;" clearable />
+      </div>
       <template #footer>
         <span>
           <el-button @click="newExaminerVisible=false">取消</el-button>
           <el-button type="primary" @click="ConfirmNewExaminer"
-                     :disabled="newExaminerEmployeeId===0 ">确定</el-button>
+                     :disabled="newExaminer.employee_name.length===0||newExaminer.sex ===null||
+                     newExaminer.account.length===0 || newExaminer.password.length===0||
+                     newExaminer.identity_card.length!==18">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -75,12 +105,30 @@
     <!-- 修改审查员对话框 -->
     <el-dialog v-model="modifyExaminerVisible" title="修改信用卡审查员信息" width="30%" align-center>
       <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          新账号：
+          账号：
           <el-input v-model="modifyInfo.new_account" style="width: 12.5vw;" clearable />
       </div>
       <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          新密码：
+          密码：
           <el-input v-model="modifyInfo.new_password" style="width: 12.5vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          身份证：
+          <el-input v-model="modifyInfo.new_identity_card" style="width: 15vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          手机号码：
+          <el-input v-model="modifyInfo.new_phone_number" style="width: 12.5vw;" clearable />
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          性别：
+          <el-select v-model="this.newExaminer.sex" style="width: 12.5vw;">
+          <el-option v-for="type in sex_types" :key="type.value" :label="type.label" :value="type.value"/>
+        </el-select>
+      </div>
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          其他信息：
+          <el-input v-model="modifyInfo.new_other_information" style="width: 15vw;" clearable />
       </div>
 
       <template #footer>
@@ -128,6 +176,8 @@ export default{
           check_authority: true,
           employee_id: 1,
           employee_name: '',
+          sex:'',
+          phone_number:''
         },
       ],
       Delete,
@@ -136,13 +186,26 @@ export default{
       Switch,
       // add examiner(should by employee_id first)
       newExaminerVisible: false,
-      newExaminerEmployeeId: 1,
+      newExaminer:{
+        employee_name: '',
+        account:'',
+        phone_number:'',
+        identity_card:'',
+        password:'',
+        other_information:'',
+        sex:'',
+      },
       // modify examiner
       modifyExaminerVisible: false,
       modifyInfo: {
         examiner_id: 1,
+        new_employee_name:'',
         new_account: '',
         new_password: '',
+        new_phone_number:'',
+        new_identity_card:'',
+        new_other_information:'',
+        new_sex:'',
       },
       // delete examiner
       deleteExaminerVisible: false,
@@ -161,6 +224,7 @@ export default{
       ],
       authority_type: '',
       toChangeAuthority: 0,
+      sex_types:[{value:'male',label:'男'},{value:'female',label:'女'}],
     }
   },
   methods: {
@@ -168,8 +232,13 @@ export default{
       //发出POST请求
       axios.post( "/creditcard/add_examiner",
       {
-        employee_id: this.newExaminerEmployeeId,
-        // 需要登陆时职员的ID
+        employee_name: this.newExaminer.employee_name,
+        account: this.newExaminer.account,
+        phone_number: this.newExaminer.phone_number,
+        identity_card: this.newExaminer.identity_card,
+        password: this.newExaminer.password,
+        other_information: this.newExaminer.other_information,
+        sex:this.newExaminer.sex,
       }).then(response => {
             if(response.data.status === 'success') {
               ElMessage.success("添加成功");
@@ -190,6 +259,11 @@ export default{
         examiner_id: this.modifyInfo.examiner_id,
         new_account: this.modifyInfo.new_account,
         new_password: this.modifyInfo.new_password,
+        new_employee_name: this.modifyInfo.new_employee_name,
+        new_phone_number: this.modifyInfo.new_phone_number,
+        new_identity_card: this.modifyInfo.new_identity_card,
+        new_other_information: this.modifyInfo.new_other_information,
+        new_sex:this.modifyInfo.new_sex,
       }).then(response => {
             if(response.data.status === 'success'){
               ElMessage.success("修改成功");
@@ -269,11 +343,13 @@ export default{
             let examiners = response.data.list;
             examiners.forEach(item => {
               let examiner = {
-                examiner_id: item.pk,
-                account: item.fields.account,
-                check_authority: item.fields.check_authority,
-                employee_id: item.fields.employee,
-                employee_name: '', // 这里假设没有从后端获取 employee_name
+                examiner_id: item.examiner_id,
+                account: item.account,
+                check_authority: item.check_authority,
+                employee_name: item.employee_name, // 这里假设没有从后端获取 employee_name
+                sex: item.sex,
+                phone_number: item.phone_number,
+                employee_id:item.employee_id,
               };
               this.examiners.push(examiner);
             });

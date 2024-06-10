@@ -383,8 +383,38 @@ def add_examiner(request):
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-        employee_id = body.get('employee_id')
-        new_examiner = CreditCardExaminer.add_credit_examiner(employee_id)
+
+        employee_name = body.get('employee_name')
+        identity_card = body.get('identity_card')
+        phone_number = body.get('phone_number')
+        password = body.get('password')
+        other_information = body.get('other_information')
+        account = body.get('account')
+        sex = body.get('sex')
+
+        if sex == 'female':
+            employee_sex = 1
+        if sex == 'male':
+            employee_sex = 0
+
+        new_employee = Employee(
+            employee_name=employee_name,
+            identity_card=identity_card,
+            employee_sex=employee_sex,
+            phone_number=phone_number,
+            occupation_name='信用卡审查员',
+            is_employeed=True,
+            other_information=other_information
+        )
+        new_employee.save()
+
+        new_examiner = CreditCardExaminer(
+            employee=new_employee,
+            account=account,  # Example account name generation
+            password=password,
+            check_authority=1  # default grant the authority
+        )
+        new_examiner.save()
 
         # Prepare the response dictionary
         response['status'] = 'success'
@@ -407,10 +437,27 @@ def get_examiners(request):
     response = {}
     try:
         examiners = CreditCardExaminer.objects.filter()
+
+        examiner_info = []
+        for examiner in examiners:
+            employee = Employee.objects.get(employee_id=examiner.employee_id)
+            if employee.employee_sex == 0:
+                sex = '男'
+            else:
+                sex = '女'
+            examiner_info.append({
+                'examiner_id': examiner.credit_examiner_id,
+                'employee_name': employee.employee_name,
+                'account': examiner.account,
+                'phone_number': employee.phone_number,
+                'check_authority': examiner.check_authority,
+                'sex': sex,
+                'employee_id': employee.employee_id,
+            })
         response['status'] = 'success'
         response['message'] = 'Examiners show successfully.'
         response['error_num'] = 0
-        response['list'] = json.loads(serializers.serialize('json', examiners))
+        response['list'] = examiner_info
     except Exception as e:
         response['status'] = 'error'
         response['message'] = str(e)
@@ -436,10 +483,28 @@ def modify_examiner(request):
         # Get the new information
         new_account = body.get('new_account')
         new_password = body.get('new_password')
+        new_employee_name = body.get('new_employee_name')
+        new_identity_card = body.get('new_identity_card')
+        new_phone_number = body.get('new_phone_number')
+        new_other_information = body.get('new_other_information')
+        new_sex = body.get('new_sex')
+
+        if new_sex == 'female':
+            new_sex = 0
+        if new_sex == 'male':
+            new_sex = 1
 
         # Update the password
         examiner.modify_examiner_info(new_account, new_password)
         examiner.save()
+
+        employee = Employee.objects.get(employee_id=examiner.employee_id)
+        employee.other_information = new_other_information
+        employee.phone_number = new_phone_number
+        employee.sex = new_sex
+        employee.identity_card = new_identity_card
+        employee.name = new_employee_name
+        employee.save()
 
         response['status'] = 'success'
         response['message'] = 'Examiner info has been modified successfully.'
@@ -553,7 +618,7 @@ def get_check_applications(request):
                 'apply_date': application.apply_date.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S'),
                 'examiner_id': application.creditCardExaminer_id,
                 'online_user_id': application.online_user_id,
-                'have_open':application.have_open,
+                'have_open': application.have_open,
             })
         response['status'] = 'success'
         response['message'] = 'Applications show successfully.'

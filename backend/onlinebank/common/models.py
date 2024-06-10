@@ -52,6 +52,8 @@ class deposit_record(models.Model):
     deposit_type = models.CharField(max_length = 10, null = False)
     auto_renew_status = models.BooleanField(null = True)
     deposit_start_date = models.DateField(null = False)
+    # 新增更新时间
+    deposit_update_date = models.DateField(null=False)
     deposit_end_date = models.DateField(null = True)
     deposit_amount = models.FloatField(null = False)
     cashier_id = models.IntegerField(null = False)
