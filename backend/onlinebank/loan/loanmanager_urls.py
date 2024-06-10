@@ -2,10 +2,8 @@ from . import manager_views
 from django.urls import path
 
 urlpatterns = [
-    path('showAllLoanApplicationUnapproved/', manager_views.showAllLoanApplicationUnapproved, name='show_all_loan_application_unapproved'),
-    path('showAllLoanApplicationUnlent/', manager_views.showAllLoanApplicationUnlent, name='show_all_loan_application_unlent'),
-    path('approvalLoanApplication/', manager_views.approvalLoanApplication, name='approval_loan_application'),
-    path('lenderLoanApplication/', manager_views.lenderLoanApplication, name='lender_loan_application'),
+    path('showAllLoanApplicationUnlent', manager_views.showAllLoanApplicationUnlent, name='show_all_loan_application_unlent'),
+    path('lenderLoanApplication', manager_views.lenderLoanApplication, name='lender_loan_application'),
 ]
 
 from .models import LoanRecord
@@ -30,8 +28,6 @@ def update_loan_record_isoverdue():
             for loan_record in loan_records:
                 if loan_record.end_time < current_time:
                     loan_record.is_overdue = True
-
-            print(str(datetime.datetime.now()) + "是否逾期信息更新成功")
         except Exception as e:
             print(str(e))
 

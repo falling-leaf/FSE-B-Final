@@ -30,6 +30,9 @@ class cashier(models.Model):
 
 class online_user(models.Model):
     identity_card = models.CharField(max_length = 18, null = False)
+    annual_income = models.FloatField(null=True)
+    property_valuation = models.FloatField(null=True)
+    service_year = models.IntegerField(null=True)
 
 
 # 账户表
@@ -41,6 +44,8 @@ class account(models.Model):
     balance = models.FloatField(null=False, default=0.0)
     current_deposit = models.FloatField(null=False, default=0.0)
     uncredited_deposit = models.FloatField(null=False, default=0.0)
+    credit_limit = models.FloatField(default=10000)
+    lent_money = models.FloatField(null=True)
     is_frozen = models.BooleanField(null=False, default=False)
     is_lost = models.BooleanField(null=False, default=True)
 
