@@ -95,6 +95,9 @@ export default{
         case "外汇操作员":
           this.getFEOperatorID();
           break;
+        case"信用卡审查员":
+          this.getCreditExaminerID();
+          break;
           /*
           case "...":
             ...
@@ -137,6 +140,18 @@ export default{
         window.location.href = "/cashier?cashierID=" + this.employee.id ;  // 函数内部进行超链接跳转
       }).catch(error => {
         ElMessage.error(error.response.data.error);
+        this.password = "";
+      })
+    },
+    getCreditExaminerID(){
+      axios.post('/login/creditcardExmainer/',{
+        account: this.account,
+        password: this.password
+      }).then(response => {
+        this.employee.id = response.data.id;
+        window.location.href = "/credit_examiner?CreditExaminerID=" + this.employee.id ;  // 函数内部进行超链接跳转
+      }).catch(error => {
+        ElMessage.error(error.response.data.error+error);
         this.password = "";
       })
     },
