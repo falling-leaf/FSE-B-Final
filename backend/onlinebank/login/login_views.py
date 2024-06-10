@@ -1,8 +1,9 @@
-import json
-from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse, HttpResponse
 from common.models import cashier, sys_manager, ForeignExchangeOperator, CreditCardExaminer
+from common.models import LoanExaminer, LoanDepartmentManager
 from django.views.decorators.csrf import csrf_exempt
+import json
 # Create your views here.
 
 @csrf_exempt
@@ -115,3 +116,50 @@ def login_creditexmainer(request):
     elif request.method == 'OPTIONS':
         return JsonResponse({"success": "OPTION operation"}, status = 200)
     else: return JsonResponse({"error": "Method not allowed"}, status = 405)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def loanExaminerLogin(request):
+    ''' 贷款部门审查员登录 '''
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        print(body_unicode)
+        check_account = body.get('account')
+        password = body.get('password')
+        loan_examiner_account = LoanExaminer.objects.get(account=check_account)
+        if loan_examiner_account.checkPassword(password):
+            print(1)
+            return JsonResponse({"loan_examiner_id": loan_examiner_account.loan_examiner_id})
+        else:
+            return JsonResponse({"error": "密码错误"}, status=403)
+    except LoanExaminer.DoesNotExist:
+        return JsonResponse({"error": "该用户不存在"}, status=403)
+    except LoanExaminer.MultipleObjectsReturned:
+        return JsonResponse({"error": "用户名重叠"}, status=403)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=403)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def loanDepartmentManagerLogin(request):
+    ''' 贷款部门经理登录 '''
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        check_account = body.get('account')
+        password = body.get('password')
+        loan_manager_account = LoanDepartmentManager.objects.get(account=check_account)
+        if loan_manager_account.checkPassword(password):
+            return JsonResponse({"loan_manager_id": loan_manager_account.loan_manager_id})
+        else:
+            return JsonResponse({"error": "密码错误"}, status=403)
+    except LoanExaminer.DoesNotExist:
+        return JsonResponse({"error": "该用户不存在"}, status=403)
+    except LoanExaminer.MultipleObjectsReturned:
+        return JsonResponse({"error": "用户名重叠"}, status=403)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=403)

@@ -2,6 +2,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
 from django.http import JsonResponse
+from django.utils import timezone
 from . import models
 import datetime
 import json
@@ -187,3 +188,16 @@ def lenderLoanApplication(request):
             response['response_message'] = str(e)
 
     return JsonResponse(response)
+
+def update_loan_record_isoverdue():
+    with transaction.atomic():
+        try:
+            print("开始更新")
+            loan_records = models.LoanRecord.objects.filter(is_repay=False)
+            current_time = timezone.now()
+            for loan_record in loan_records:
+                if loan_record.end_time < current_time:
+                    loan_record.is_overdue = True
+            print("更新结束")
+        except Exception as e:
+            print(str(e))
