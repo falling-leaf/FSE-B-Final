@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from common.models import cashier, sys_manager, ForeignExchangeOperator
+from common.models import cashier, sys_manager, ForeignExchangeOperator, CreditCardExaminer
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
@@ -77,6 +77,33 @@ def login_feOperator(request):
                 Has_account = True
                 if o["password"] == check_psw:
                     check_id = o["foreign_exchange_operator_id"]
+                    break
+        if not Has_account:
+            return JsonResponse({"error":"账户不存在"}, status=403)
+        if check_id == -1:
+            return JsonResponse({"error": "密码错误"}, status=403)
+        rs_dict = {}
+        rs_dict["id"] = check_id
+        return JsonResponse(rs_dict, safe = False)
+    elif request.method == 'OPTIONS':
+        return JsonResponse({"success": "OPTION operation"}, status = 200)
+    else: return JsonResponse({"error": "Method not allowed"}, status = 405)
+    
+@csrf_exempt
+def login_creditexmainer(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        check_account = data.get("account")
+        check_psw = data.get("password")
+        creditcardExaminer = CreditCardExaminer.objects.all()
+        operators_list = list(creditcardExaminer.values())
+        Has_account = False
+        check_id = -1
+        for o in operators_list:
+            if o["account"] == check_account:
+                Has_account = True
+                if o["password"] == check_psw:
+                    check_id = o["credit_examiner_id"]
                     break
         if not Has_account:
             return JsonResponse({"error":"账户不存在"}, status=403)
