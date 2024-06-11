@@ -343,7 +343,7 @@ export default{
             let examiners = response.data.list;
             examiners.forEach(item => {
               let examiner = {
-                examiner_id: item.examiner_id,
+                credit_examiner_id: item.credit_examiner_id,
                 account: item.account,
                 check_authority: item.check_authority,
                 employee_name: item.employee_name, // 这里假设没有从后端获取 employee_name

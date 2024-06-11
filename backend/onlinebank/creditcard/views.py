@@ -22,7 +22,7 @@ def get_cards(request):
         if not online_user_id:
             raise ValueError("online_user_id is required")
         tz = pytz.timezone('Asia/Shanghai')
-        cards = account.objects.filter(online_user=online_user.objects.get(person_id=online_user_id))
+        cards = account.objects.filter(online_user=online_user.objects.get(user_id=online_user_id))
         formatted_cards = []
         for card in cards:
             formatted_cards.append({
@@ -436,23 +436,22 @@ def get_examiners(request):
     """
     response = {}
     try:
-        examiners = CreditCardExaminer.objects.filter()
-
+        examiners = CreditCardExaminer.objects.all()
         examiner_info = []
         for examiner in examiners:
-            employee = employee.objects.get(employee_id=examiner.employee_id)
-            if employee.employee_sex == 0:
+            employee_ = employee.objects.get(employee_id=examiner.employee_id)
+            if employee_.employee_sex == 0:
                 sex = '男'
             else:
                 sex = '女'
             examiner_info.append({
                 'examiner_id': examiner.credit_examiner_id,
-                'employee_name': employee.employee_name,
+                'employee_name': employee_.employee_name,
                 'account': examiner.account,
-                'phone_number': employee.phone_number,
+                'phone_number': employee_.phone_number,
                 'check_authority': examiner.check_authority,
                 'sex': sex,
-                'employee_id': employee.employee_id,
+                'employee_id': employee_.employee_id,
             })
         response['status'] = 'success'
         response['message'] = 'Examiners show successfully.'
