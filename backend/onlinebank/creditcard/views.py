@@ -389,8 +389,10 @@ def add_examiner(request):
         phone_number = body.get('phone_number')
         password = body.get('password')
         other_information = body.get('other_information')
-        account_card = body.get('account')
+        account_ = body.get('account')
         sex = body.get('sex')
+        if CreditCardExaminer.objects.filter(account=account_).exists():
+            return JsonResponse({"error": "该信用卡审查员账户已存在"}, status=403)
 
         if sex == 'female':
             employee_sex = 1
@@ -410,7 +412,7 @@ def add_examiner(request):
 
         new_examiner = CreditCardExaminer(
             employee=new_employee,
-            account=account_card,  # Example account name generation
+            account=account_,  # Example account name generation
             password=password,
             check_authority=1  # default grant the authority
         )
@@ -673,8 +675,18 @@ def new_application(request):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         online_user_id = body.get('online_user_id')
+        annual_income = float(body.get('annual_income'))
+        property_valuation = float(body.get('property_valuation'))
+        service_year = int(body.get('service_year'))
+
         if not online_user_id:
             raise ValueError("online_user_id is required")
+
+        online_user_ = online_user.objects.get(online_user_id=online_user_id)
+        online_user_.annual_income = annual_income
+        online_user_.property_valuation = property_valuation
+        online_user_.service_year = service_year
+        online_user_.save()
 
         # Create a new application using the obtained online_user
         CreditCardApplication().new_apply(online_user_id)

@@ -98,13 +98,31 @@
 
       <!-- 申请信用卡对话框 -->
       <el-dialog v-model="newApplicationVisible" title="申请信用卡" width="30%" align-center>
-      您确定使用当前用户信息申请新的信用卡吗？
+      <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          年收入：
+          <el-input v-model="newApplicationInfo.annual_income" style="width: 12.5vw;" clearable />
+         元
+       </div>
+        <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          总资产：
+          <el-input v-model="newApplicationInfo.property_valuation" style="width: 12.5vw;" clearable />
+          元
+        </div>
+        <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
+          总工龄：
+          <el-input v-model="newApplicationInfo.service_year" style="width: 12.5vw;" clearable />
+          年
+        </div>
+
       <template #footer>
-          <span>
-              <el-button @click="this.newApplicationVisible = false">取消</el-button>
-              <el-button type="primary" @click="ConfirmApply">确定</el-button>
-          </span>
-      </template>
+            <span>
+                <el-button @click="this.newApplicationVisible = false">取消</el-button>
+                <el-button type="primary" @click="ConfirmApply"
+                  :disabled="newApplicationInfo.annual_income <= 0 ||
+                  newApplicationInfo.property_valuation <= 0 ||
+                  newApplicationInfo.service_year < 0  ">确定</el-button>
+            </span>
+        </template>
       </el-dialog>
 
       <!-- 查看申请 -->
@@ -338,12 +356,12 @@ export default{
       online_user_id: 1,
       creditcards: [
         {
-          account_id: 1,
+          account_id: '',
           open_date: '',
-          limit: 1000,
-          balance: 106.3,
-          is_frozen: false,
-          is_lost: false,
+          limit: 0.0,
+          balance: 0.0,
+          is_frozen: '',
+          is_lost: '',
           card_type: '信用卡', // credit card
         },
       ],
@@ -354,12 +372,12 @@ export default{
       showList: false,
       applyList: [
         {
-          apply_id: 1,
-          apply_status: false,
-          apply_result: false,
-          apply_date: '2025-10-1',
-          examiner_id: 1,
-          have_open: false,
+          apply_id: '',
+          apply_status: '',
+          apply_result: '',
+          apply_date: '',
+          examiner_id: '',
+          have_open: '',
         },
       ],
       // frozen
@@ -377,7 +395,7 @@ export default{
       // cancel card
       CancelCard: false,
       cancelCardInfo: {
-        account_id: 1,
+        account_id: '',
         password: ''
       },
       // update limits
@@ -397,18 +415,18 @@ export default{
       // pay bill
       PayBill: false,
       newPayBill: {
-        PayTo_id: 1,
-        account_id: 2,
-        amount: 1,
+        PayTo_id: '',
+        account_id: '',
+        amount: '',
         password: '',
       },
       // repay from other card
       RepayCredit: false,
       newRepayCredit: {
-        account_id: 1,
-        pay_account: 1,
+        account_id: '',
+        pay_account:'' ,
         pay_password: '',
-        amount: 1,
+        amount: '',
       },
       // show month bill
       ViewBill: false,
@@ -417,20 +435,24 @@ export default{
       in_amount: 0,
       out_amount: 0,
       billInfo: {
-        account_id: 1,
+        account_id: '',
         year: '',
         month: '',
       },
       bills: [
         {
-          bill_record_id: 1,
-          account_in_id: 1,
-          account_out_id: 2,
-          amount: 123,
-          date: '2024-5-8 12:00',
+          bill_record_id: '',
+          account_in_id: '',
+          account_out_id: '',
+          amount: '',
+          date: '',
         },
       ],
-
+     newApplicationInfo:{
+        annual_income:0.0,
+        property_valuation:0.0,
+        service_year:0,
+      },
     }
   },
   methods: {
@@ -607,7 +629,10 @@ export default{
     },
     ConfirmApply() {
       axios.post("/creditcard/new_application", {
-        online_user_id: this.online_user_id
+        online_user_id: this.online_user_id,
+        annual_income: this.newApplicationInfo.annual_income,
+        property_valuation: this.newApplicationInfo.property_valuation,
+        service_year: this.newApplicationInfo.service_year,
       })
           .then(response => {
             if (response.data.status === 'success') {

@@ -171,10 +171,10 @@ export default{
     return{
       examiners: [
         {
-          examiner_id: 1,
-          account: '000000', // default: employee_identity_card
-          check_authority: true,
-          employee_id: 1,
+          examiner_id: '',
+          account: '', // default: employee_identity_card
+          check_authority: '',
+          employee_id: '',
           employee_name: '',
           sex:'',
           phone_number:''

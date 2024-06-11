@@ -35,17 +35,18 @@ class cashier(models.Model):
 
 
 class online_bank_manager(models.Model):
-    online_bank_manager_id = models.AutoField(primary_key = True)
-    employee = models.ForeignKey(employee, on_delete = models.CASCADE)
-    account = models.CharField(max_length = 100, null = False)
-    password = models.CharField(max_length = 20, null = False)
+    online_bank_manager_id = models.AutoField(primary_key=True)
+    employee = models.ForeignKey(employee, on_delete=models.CASCADE)
+    account = models.CharField(max_length=100, null=False)
+    password = models.CharField(max_length=20, null=False)
+
 
 class online_user(models.Model):
-    user_id = models.AutoField(primary_key = True)
-    user_name = models.CharField(max_length = 20, null = False, default = "Unknown")
-    password = models.CharField(max_length=20, null=False,default = "666666")
-    identity_card = models.CharField(max_length = 18, null = False,unique=True)
-    phone_num = models.CharField(max_length=20, null=False,default = "10086")
+    user_id = models.AutoField(primary_key=True)
+    user_name = models.CharField(max_length=20, null=False, default="Unknown")
+    password = models.CharField(max_length=20, null=False, default="666666")
+    identity_card = models.CharField(max_length=18, null=False, unique=True)
+    phone_num = models.CharField(max_length=20, null=False, default="10086")
     annual_income = models.FloatField(null=True)
     property_valuation = models.FloatField(null=True)
     service_year = models.IntegerField(null=True)
@@ -60,7 +61,7 @@ class account(models.Model):
     password = models.CharField(max_length=20, null=False)
     user_id = models.ForeignKey(online_user, on_delete=models.SET_NULL, related_name="accounts", null=True)
     identity_card = models.CharField(max_length=18, null=False)
-    phone_num = models.CharField(max_length=20, null=False,default = "10086")
+    phone_num = models.CharField(max_length=20, null=False, default="10086")
     card_type = models.IntegerField(null=False)
     balance = models.FloatField(null=False, default=0.0)
     current_deposit = models.FloatField(null=False, default=0.0)
@@ -70,12 +71,13 @@ class account(models.Model):
     is_frozen = models.BooleanField(null=False, default=False)
     is_lost = models.BooleanField(null=False, default=True)
     open_date = models.DateTimeField(default=timezone.now)  # Automatically set to today's date as default
-    
-    
+
+
 class BlackList(models.Model):
-    list_id = models.AutoField(primary_key = True)
-    online_bank_manager_id = models.ForeignKey(online_bank_manager, on_delete=models.CASCADE,default=1,db_column='online_bank_manager_id')
-    user_id = models.ForeignKey(online_user, on_delete=models.CASCADE,db_column='user_id')
+    list_id = models.AutoField(primary_key=True)
+    online_bank_manager_id = models.ForeignKey(online_bank_manager, on_delete=models.CASCADE, default=1,
+                                               db_column='online_bank_manager_id')
+    user_id = models.ForeignKey(online_user, on_delete=models.CASCADE, db_column='user_id')
     timestamp = models.DateTimeField(auto_now_add=True)
 
     @staticmethod
