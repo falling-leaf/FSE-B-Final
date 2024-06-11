@@ -6,9 +6,9 @@
                  style="height:100%; width: 100%; overflow: hidden" :router="true">
           <div style="color: white; background-color: #181818;
           width: 100%; height: 10vh; display: flex; align-items: center; justify-content: center;">
-            贷款审核员
+            贷款审核员#{{auditor_id}}
           </div>
-          <el-menu-item index="/auditors/check">
+          <el-menu-item :index="'/auditors/check?auditor_id='+this.auditor_id">
             <el-icon>
               <Avatar />
             </el-icon>
@@ -38,6 +38,9 @@
 <script>
 export default {
   data() {
+    return{
+      auditor_id: 0
+    }
   },
   created() {
     this.fetchDataFromUrl();

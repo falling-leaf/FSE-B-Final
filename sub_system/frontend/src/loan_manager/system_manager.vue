@@ -8,13 +8,13 @@
           width: 100%; height: 10vh; display: flex; align-items: center; justify-content: center;">
             管理员
           </div>
-          <el-menu-item :index="'/manager/loanManager?managerID='+this.managerID">
+          <el-menu-item :index="'/system_manager/loanManager?managerID='+this.managerID">
             <el-icon>
               <Avatar />
             </el-icon>
             <span>贷款部门经理管理</span>
           </el-menu-item>
-          <el-menu-item :index="'/manager/auditors?managerID='+this.managerID">
+          <el-menu-item :index="'/system_manager/auditors?managerID='+this.managerID">
             <el-icon>
               <Avatar />
             </el-icon>

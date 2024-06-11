@@ -15,7 +15,7 @@
         <div style="margin-left: 10px; text-align: start; font-size: 16px;">
           <div style = "margin-left: 3vw; font-weight: bold; font-size: 1rem; margin-top: 5px;">
             职员类型：
-            <el-select v-model="employee.type" size="default" style="width: 11vw; margin-left: 0rem">
+            <el-select v-model="employee.type" size="default" style="width: 11vw; margin-left: 0">
               <el-option v-for="type in Types" :key="type.value" :label="type.label" :value="type.value" />
             </el-select>
           </div>
@@ -112,6 +112,9 @@ export default{
       }
     },
     getSysManagerID(){
+      //TODO 如果需要跳过登录测试，
+      //TODO 系统管理员登陆还未实现
+      //window.location.href = "/system_manager?managerID=" + this.employee.id ;  // 函数内部进行超链接跳转
       axios.post('/login/sysManager/',{
         account: this.account,
         password: this.password
@@ -153,7 +156,7 @@ export default{
         password: this.password
       }).then(response => {
         this.employee.id = response.data.loan_manager_id;
-        window.location.href = "/manager?managerID=" + this.employee.id;  // 函数内部进行超链接跳转
+        window.location.href = "/loan_manager?loan_manager_id=" + this.employee.id;  // 函数内部进行超链接跳转
       }).catch(error => {
         ElMessage.error(error.response.data.error);
         this.password = "";

@@ -60,13 +60,27 @@ import { ElMessage } from 'element-plus'
 export default {
   data() {
     return {
+      auditor_id:0,
       records: [],
       loanApprovalVisible: false,
       loanRejectionVisible: false,
       currentLoan: {},
     }
   },
+  created() {
+    this.fetchDataFromUrl();
+  },
   methods: {
+    fetchDataFromUrl() {
+      // 获取当前URL
+      const url = new URL(window.location);
+
+      // 创建URLSearchParams对象
+      const params = new URLSearchParams(url.search);
+
+      // 从查询字符串中获取参数
+      this.auditor_id = params.get('auditor_id');
+    },
     approveLoan(application_id) {
       this.currentLoan = this.records.find(record => record.application_id === application_id);
       this.loanApprovalVisible = true;
