@@ -35,8 +35,8 @@ class cashier(models.Model):
 
 
 class online_user(models.Model):
-    user_id = models.AutoField(primary_key = True)
-    identity_card = models.CharField(max_length = 18, null = False)
+    user_id = models.AutoField(primary_key=True)
+    identity_card = models.CharField(max_length=18, null=False)
     annual_income = models.FloatField(null=True)
     property_valuation = models.FloatField(null=True)
     service_year = models.IntegerField(null=True)
@@ -291,12 +291,13 @@ class Currency(models.Model):
         currency = Currency.objects.get(currency_id=currencyId)
         return currency
 
+
 class CurrencyHolding(models.Model):
     currency_holding_id = models.AutoField(primary_key=True)
     currency = models.ForeignKey('common.Currency', on_delete=models.CASCADE)
     online_user = models.ForeignKey('common.online_user', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=5)
-        
+
     class Meta:
         unique_together = ('currency', 'online_user')
 
@@ -306,10 +307,11 @@ class CurrencyHolding(models.Model):
         else:
             super(CurrencyHolding, self).save(*args, **kwargs)
 
+
 class ForeignExchangeOperator(models.Model):
     foreign_exchange_operator_id = models.AutoField(primary_key=True)
-    employee = models.ForeignKey('common.employee',on_delete=models.CASCADE)
-    account = models.CharField(max_length=100, null = False, unique= True)
+    employee = models.ForeignKey('common.employee', on_delete=models.CASCADE)
+    account = models.CharField(max_length=100, null=False, unique=True)
     password = models.CharField(max_length=80, null=False)
     alter_name_authority = models.BooleanField(default=False)
     alter_rate_authority = models.BooleanField(default=False)
@@ -318,11 +320,12 @@ class ForeignExchangeOperator(models.Model):
 
     class Meta:
         db_table = 'foreign_exchange_operator'
-        ordering = ['foreign_exchange_operator_id'] 
+        ordering = ['foreign_exchange_operator_id']
 
     def __str__(self):
         return f"{self.foreign_exchange_operator_id}: {self.account}"
-    
+
+
 class ForeignExchangeTrading(models.Model):
     foreign_exchange_trading_id = models.AutoField(primary_key=True)
     account = models.ForeignKey('common.account', on_delete=models.CASCADE)
@@ -333,12 +336,14 @@ class ForeignExchangeTrading(models.Model):
     currency_amount = models.DecimalField(max_digits=10, decimal_places=5)
     trading_datetime = models.DateTimeField()
 
+
 class RateUpdateRecord(models.Model):
     rate_update_record_id = models.AutoField(primary_key=True)
     currency = models.ForeignKey('common.Currency', on_delete=models.CASCADE)
     buying_rate = models.DecimalField(max_digits=10, decimal_places=5)
     selling_rate = models.DecimalField(max_digits=10, decimal_places=5)
     update_datetime = models.DateTimeField()
+
 
 class LoanDepartmentManager(models.Model):
     loan_manager_id = models.AutoField(primary_key=True)
@@ -357,6 +362,7 @@ class LoanDepartmentManager(models.Model):
     def checkPassword(self, row_password):
         return check_password(row_password, self.password)
 
+
 class LoanExaminer(models.Model):
     loan_examiner_id = models.AutoField(primary_key=True)
     employee_id = models.ForeignKey(employee, on_delete=models.CASCADE, db_column="employee_id")
@@ -374,6 +380,7 @@ class LoanExaminer(models.Model):
     def checkPassword(self, row_password):
         return check_password(row_password, self.password)
 
+
 # The following is the data structure of the service
 
 class LoanApplication(models.Model):
@@ -390,6 +397,7 @@ class LoanApplication(models.Model):
         db_table = "loan_application"
         verbose_name = "loan application"
 
+
 class LoanApproval(models.Model):
     approval_id = models.AutoField(primary_key=True)
     loan_examiner_id = models.ForeignKey(LoanExaminer, on_delete=models.CASCADE, db_column="loan_examiner_id")
@@ -403,6 +411,7 @@ class LoanApproval(models.Model):
         db_table = "loan_approval"
         verbose_name = "loan approval"
 
+
 class Lender(models.Model):
     lender_id = models.AutoField(primary_key=True)
     loan_manager_id = models.ForeignKey(LoanDepartmentManager, on_delete=models.CASCADE, db_column="loan_manager_id")
@@ -415,10 +424,13 @@ class Lender(models.Model):
     class Meta:
         db_table = "lender"
 
+
 ''' 
 在放款之后产生一个贷款记录用来监控后期还款以及实现还款提醒
 因此需要通过lender记录计算其end_time
 '''
+
+
 class LoanRecord(models.Model):
     loan_id = models.AutoField(primary_key=True)
     loan_examiner_id = models.ForeignKey(LoanExaminer, on_delete=models.CASCADE, db_column="loan_examiner_id")
@@ -437,6 +449,7 @@ class LoanRecord(models.Model):
     def setEndTime(self, loan_duration):
         self.end_time = self.effective_date + relativedelta(months=loan_duration)
 
+
 class LoanRepayment(models.Model):
     repayment_id = models.AutoField(primary_key=True)
     loan_id = models.ForeignKey(LoanRecord, on_delete=models.CASCADE, db_column="loan_id")
@@ -448,4 +461,3 @@ class LoanRepayment(models.Model):
     class Meta:
         db_table = "loan_repayment"
         verbose_name = "loan repayment"
-
