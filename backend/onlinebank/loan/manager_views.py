@@ -175,9 +175,7 @@ def lenderLoanApplication(request):
 
             account = models.account.objects.get(account_id=loan_application.account_id_id)
             # 等待函数change_balance
-            account.balance += loan_application.amount
-            account.uncredited_deposit += loan_application.amount
-            account.save()
+            account.transfer_in(loan_application.amount)
             print(5)
 
             response['response_code'] = 1

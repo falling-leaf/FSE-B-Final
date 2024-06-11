@@ -217,7 +217,7 @@ def userRepayLoanByAccount(request):
                 raise Exception("Error! The owner of the card number is not you!")
             amount = loan_record.application_id.amount
             # 待定修改
-            if check_account.uncredited_deposit < amount:
+            if check_account.balance < amount:
                 raise Exception("Error! The balance of this card is not enough to repay the loan!")
 
             # determine wheather is overdue, > means later
@@ -235,10 +235,8 @@ def userRepayLoanByAccount(request):
                 remark="This is remark about the loan repayment"
             )
             # 调用函数change_balance
-            check_account.balance -= amount
-            check_account.current_deposit -= amount
+            check_account.transfer_out(amount)
             loan_record.is_repay = True
-            check_account.save()
             loan_record.save()
 
             response['response_code'] = 1
