@@ -10,11 +10,12 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
-from counteropt.cashier_views import deposit_record_update
 from loan.manager_views import update_loan_record_isoverdue
+from counteropt.cashier_views import time_deposit_record_update, demand_deposit_record_update
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'onlinebank.settings')
 
 application = get_wsgi_application()
-deposit_record_update()
 update_loan_record_isoverdue()
+time_deposit_record_update()
+demand_deposit_record_update()
