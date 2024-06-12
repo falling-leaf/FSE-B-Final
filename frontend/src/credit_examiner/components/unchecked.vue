@@ -84,7 +84,7 @@ export default {
                 apply_id: item.apply_id,
                 apply_date: item.apply_date,
                 account_id: item.online_user_id,
-                credit: item.credit, // 这里假设没有从后端获取 assert
+                credit: item.credit,
               };
               this.tableData.push(application);
             });

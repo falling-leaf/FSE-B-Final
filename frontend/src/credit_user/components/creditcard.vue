@@ -28,7 +28,7 @@
             <!-- 卡片内容 -->
             <div style="margin-left: 10px; text-align: start; font-size: 16px;">
               <p style="padding: 2.5px;"><span style="font-weight: bold">余额：</span>{{creditcard.balance}}</p>
-              <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{creditcard.limit}}</p>
+              <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{creditcard.credit_limit}}</p>
               <p style="padding: 2.5px;"><span style="font-weight: bold">开户日期：</span>{{creditcard.open_date}}</p>
               <p style="padding: 2.5px;">
                 <el-tag v-if="creditcard.is_frozen">已冻结</el-tag>
@@ -216,7 +216,7 @@
                 <span>
                     <el-button @click="this.UpdateLimit = false">取消</el-button>
                     <el-button type="primary" @click="ConfirmUpdateLimit"
-                        :disabled="newUpdateLimit.account_id.length === 0 || newUpdateLimit.limit.length === 0">确定</el-button>
+                        :disabled="newUpdateLimit.account_id.length === 0">确定</el-button>
                 </span>
             </template>
       </el-dialog>

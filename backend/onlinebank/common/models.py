@@ -142,7 +142,6 @@ class account(models.Model):
                 record.transfer_amount for record in transfer_out_records)
             outcome_frequency = withdrawal_records.count() + transfer_out_records.count()
 
-            annual_income_parameter = 0
             if user.service_year is None or user.service_year == 0:
                 annual_income_parameter = 0
             elif user.service_year <= 20:
@@ -151,8 +150,14 @@ class account(models.Model):
                 annual_income_parameter = 1
 
             # 一般转入频率低而转出频率高，需要对转出的数据进行补偿
-            credit_limit = user.property_valuation + user.annual_income * annual_income_parameter * 0.5 + (
-                        total_income * 0.1 / income_frequency - total_outcome * 0.8 / outcome_frequency) * 450
+            per_income = 0
+            per_outcome = 0
+            if income_frequency != 0:
+                per_income = total_income / income_frequency
+            if outcome_frequency != 0:
+                per_outcome = total_outcome / outcome_frequency
+            credit_limit = user.property_valuation *0.3 + user.annual_income * annual_income_parameter * 0.5 + (
+                        per_income * 0.1 - per_outcome * 0.8) * 450
 
             self.credit_limit = credit_limit
             self.save()
