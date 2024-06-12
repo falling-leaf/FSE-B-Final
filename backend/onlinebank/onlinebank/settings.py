@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'foreign_exchange',
     'corsheaders',
     'loan',
+    'bank_app'
 ]
 
 MIDDLEWARE = [
@@ -89,9 +90,9 @@ WSGI_APPLICATION = 'onlinebank.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'banking',
+        'NAME': 'fse_final',
         'USER': 'root',
-        'PASSWORD': 'why1445675246',
+        'PASSWORD': 'ww71304002ww',
         'HOST': 'localhost',
         'PORT': '3306',
     }
