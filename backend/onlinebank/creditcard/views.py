@@ -23,16 +23,14 @@ def get_cards(request):
             raise ValueError("online_user_id is required")
         tz = pytz.timezone('Asia/Shanghai')
         cards = account.objects.filter(
-            online_user=online_user.objects.get(user_id=online_user_id),
+            user_id=online_user_id,
             card_type=0,
         )
         formatted_cards = []
         for card in cards:
             formatted_cards.append({
                 'account_id': card.account_id,
-                'online_user_id': card.online_user_id,
                 'balance': card.balance,
-                'card_type': '信用卡',
                 'credit_limit': card.credit_limit,
                 'open_date': card.open_date.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S'),
                 'is_lost': card.is_lost,
@@ -64,6 +62,7 @@ def add_new_card(request):
 
         online_user_id = body.get('online_user_id')
         apply_id = body.get('apply_id')
+        # print("in add_new_card")
         # print(apply_id)
 
         account().new_card(online_user_id, 0)
@@ -289,7 +288,7 @@ def pay_to(request):
             account_in_id=body.get('account_in_id'),
             account_out_id=body.get('account_out_id'),
             transfer_amount=body.get('amount'),
-            transfer_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 使用当前时间作为交易日期
+            transfer_date=datetime.now().strftime('%Y-%m-%d')  # 使用当前时间作为交易日期
         )
         new_transaction.save()
 
@@ -395,15 +394,14 @@ def add_examiner(request):
         if CreditCardExaminer.objects.filter(account=account_).exists():
             return JsonResponse({"error": "该信用卡审查员账户已存在"}, status=403)
 
+        employee_sex_ = 0
         if sex == 'female':
-            employee_sex = 1
-        if sex == 'male':
-            employee_sex = 0
+            employee_sex_ = 1
 
         new_employee = employee(
             employee_name=employee_name,
             identity_card=identity_card,
-            employee_sex=employee_sex,
+            employee_sex=employee_sex_,
             phone_number=phone_number,
             occupation_name='信用卡审查员',
             is_employeed=True,
@@ -444,9 +442,9 @@ def get_examiners(request):
         for examiner in examiners:
             employee_ = employee.objects.get(employee_id=examiner.employee_id)
             if employee_.employee_sex == 0:
-                sex = '男'
+                sex = 'male'
             else:
-                sex = '女'
+                sex = 'female'
             examiner_info.append({
                 'examiner_id': examiner.credit_examiner_id,
                 'employee_name': employee_.employee_name,
@@ -613,13 +611,14 @@ def get_check_applications(request):
         applications = CreditCardApplication.objects.filter(apply_status=1)
         formatted_applications = []
         for application in applications:
-            online_user = online_user.objects.get(online_user_id=application.online_user_id)
-            if online_user.service_year >= 20:
-                s = (online_user.service_year * 20 + 0.0001 * online_user.annual_income / 20 +
-                     0.0002 * online_user.property_valuation / 20)
+            online_user_ = online_user.objects.get(user_id=application.online_user_id)
+            if online_user_.service_year >= 20:
+                s = (online_user_.service_year * 20 + 0.0001 * online_user_.annual_income / 20 +
+                     0.0002 * online_user_.property_valuation / 20)
             else:
-                s = (online_user.service_year * online_user.service_year + 0.0001 * online_user.annual_income / online_user.service_year +
-                     0.0002 * online_user.property_valuation / online_user.service_year)
+                s = (online_user_.service_year * online_user_.service_year +
+                     0.0001 * online_user_.annual_income / online_user_.service_year +
+                     0.0002 * online_user_.property_valuation / online_user_.service_year)
             if s >= 320:
                 credit = '优秀'
             elif s >= 250:
@@ -664,14 +663,14 @@ def get_uncheck_applications(request):
 
         for application in applications:
 
-            online_user = online_user.objects.get(online_user_id=application.online_user_id)
-            if online_user.service_year >= 20:
-                s = (online_user.service_year * 20 + 0.0001 * online_user.annual_income / 20 +
-                     0.0002 * online_user.property_valuation / 20)
+            online_user_ = online_user.objects.get(user_id=application.online_user_id)
+            if online_user_.service_year >= 20:
+                s = (online_user_.service_year * 20 + 0.0001 * online_user_.annual_income / 20 +
+                     0.0002 * online_user_.property_valuation / 20)
             else:
-                s = (online_user.service_year * online_user.service_year +
-                     0.0001 * online_user.annual_income / online_user.service_year +
-                            0.0002 * online_user.property_valuation / online_user.service_year)
+                s = (online_user_.service_year * online_user_.service_year +
+                     0.0001 * online_user_.annual_income / online_user_.service_year +
+                     0.0002 * online_user_.property_valuation / online_user_.service_year)
             if s >= 350:
                 credit = '优秀'
             elif s >= 250:
@@ -720,7 +719,7 @@ def new_application(request):
         if not online_user_id:
             raise ValueError("online_user_id is required")
 
-        online_user_ = online_user.objects.get(online_user_id=online_user_id)
+        online_user_ = online_user.objects.get(user_id=online_user_id)
         online_user_.annual_income = annual_income
         online_user_.property_valuation = property_valuation
         online_user_.service_year = service_year
@@ -749,7 +748,7 @@ def get_application_at(request):
     response = {}
     try:
         online_user_id = request.GET['online_user_id']
-        applications = CreditCardApplication.objects.filter(online_user_id=online_user_id)
+        applications = CreditCardApplication.objects.filter(online_user=online_user_id)
         tz = pytz.timezone('Asia/Shanghai')
         format_applications = []
         for application in applications:
@@ -759,7 +758,6 @@ def get_application_at(request):
                 'apply_result': application.apply_result,
                 'apply_date': application.apply_date.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S'),
                 'examiner_id': application.creditCardExaminer_id,
-                'online_user_id': application.online_user_id,
                 'have_open': application.have_open,
             })
         response['status'] = 'success'
@@ -799,6 +797,10 @@ def change_application_state(request):
         # Get the result and examiner_id
         apply_result = body.get('apply_result')
         examiner_id = int(body.get('examiner_id'))
+        if not examiner_id:
+            raise ValueError("examiner_id is required")
+        print("in view = ")
+        print(examiner_id)
 
         # Update the apply_status and apply_result
         apply.change_state(apply_result, examiner_id)

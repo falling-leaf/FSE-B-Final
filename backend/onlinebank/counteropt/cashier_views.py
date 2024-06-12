@@ -1,5 +1,7 @@
 import json
 import datetime
+
+import pytz
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from .models import *
@@ -417,7 +419,7 @@ def time_deposit_record_update():
 def demand_deposit_record_update():
     print("开始更新活期存款金额")
     demand_deposit_rate = 0.0003
-    today = datetime.date.today()
+    today = datetime.datetime.now(tz=pytz.UTC)
     accounts = account.objects.all()
     for filter_account in accounts:
         delta_time = today - filter_account.uncredited_deposit_update_date

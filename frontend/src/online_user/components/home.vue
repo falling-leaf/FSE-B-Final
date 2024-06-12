@@ -46,6 +46,11 @@
             <div style="">
                   <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmLoan">[ 贷款 ] 贷款申请  </el-button>
             </div>
+            <a href="/credit_user">
+              <el-button type="primary" style="font-size: 20px;margin: 10px;padding: 5px">
+                [ 信用卡 ] 信用卡
+              </el-button>
+            </a>
           </div>
         </el-card>
       </div>

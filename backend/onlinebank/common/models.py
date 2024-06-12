@@ -76,10 +76,18 @@ class account(models.Model):
     @staticmethod
     def new_card(online_user_id, card_type):
         new_card = account()
-        new_card.online_user = online_user.objects.get(person_id=online_user_id)
-        new_card.account_type = card_type
+        new_card.password = "creditcard"  # default pw
+        print("in new_card")
+        user_ = online_user.objects.get(pk=online_user_id)
+        print("in new_card")
+        new_card.user_id = user_
+        print("in new_card")
+        new_card.identity_card = user_.identity_card
+        new_card.phone_num = user_.phone_num
+        new_card.card_type = card_type
+        print("in new_card")
+        print(new_card.identity_card)
         new_card.save()
-        return new_card
 
     def modify_password(self, new_password, old_password):
         """更改信用卡密码，输入新密码"""
@@ -258,7 +266,7 @@ class transfer_record(models.Model):
     account_out_id = models.IntegerField(null=False)
     transfer_date = models.DateField(null=False)
     transfer_amount = models.FloatField(null=False)
-    cashier_id = models.IntegerField(null=False)
+    cashier_id = models.IntegerField(null=True)
 
 
 # 信用卡审查员
@@ -321,9 +329,10 @@ class CreditCardApplication(models.Model):
         return new_application
 
     def change_state(self, apply_result, credit_examiner_id):
+        credit_examiner = CreditCardExaminer.objects.get(pk=credit_examiner_id)
         self.apply_status = True
         self.apply_result = apply_result
-        self.credit_examiner_id = credit_examiner_id
+        self.creditCardExaminer = credit_examiner
         self.save()
 
     def get_state(self):

@@ -28,7 +28,7 @@
             <!-- 卡片内容 -->
             <div style="margin-left: 10px; text-align: start; font-size: 16px;">
               <p style="padding: 2.5px;"><span style="font-weight: bold">余额：</span>{{creditcard.balance}}</p>
-              <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{creditcard.credit_limit}}</p>
+              <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{creditcard.credit_limit.toFixed(3)}}</p>
               <p style="padding: 2.5px;"><span style="font-weight: bold">开户日期：</span>{{creditcard.open_date}}</p>
               <p style="padding: 2.5px;">
                 <el-tag v-if="creditcard.is_frozen">已冻结</el-tag>
@@ -352,13 +352,12 @@ export default{
       online_user_id: 1,
       creditcards: [
         {
-          account_id: '',
+          account_id: 1,
           open_date: '',
-          limit: 0.0,
+          credit_limit: 0.0,
           balance: 0.0,
-          is_frozen: '',
-          is_lost: '',
-          card_type: '信用卡', // credit card
+          is_lost: false,
+          is_frozen: false,
         },
       ],
       // apply new card
@@ -368,12 +367,12 @@ export default{
       showList: false,
       applyList: [
         {
-          apply_id: '',
-          apply_status: '',
-          apply_result: '',
+          apply_id: 1,
+          apply_status: false,
+          apply_result: false,
           apply_date: '',
-          examiner_id: '',
-          have_open: '',
+          examiner_id: 1,
+          have_open: false,
         },
       ],
       // frozen
@@ -463,19 +462,17 @@ export default{
             tableData.forEach(item => {
               let card = {
                 account_id: item.account_id,
-                online_user_id: item.online_user_id,
                 balance: item.balance,
-                card_type: item.card_type,
                 open_date: item.open_date,
                 credit_limit: item.credit_limit,
                 is_frozen: item.is_frozen,
                 is_lost: item.is_lost,
               };
+              console.log(card)
               this.creditcards.push(card);
             });
           })
           .catch(error => {
-                console.error('Error fetching examiners:', error);
                 ElMessage.error("数据获取失败，请稍后重试！" + error);
           });
     },

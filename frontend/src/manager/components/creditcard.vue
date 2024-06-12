@@ -135,8 +135,10 @@
         <span>
           <el-button @click="modifyExaminerVisible=false">取消</el-button>
           <el-button type="primary" @click="ConfirmModifyExaminer"
-                     :disabled="modifyInfo.examiner_id===0 || modifyInfo.new_account==='' ||
-                     modifyInfo.new_password===''">确定</el-button>
+                     :disabled=" modifyInfo.new_account==='' ||
+                     modifyInfo.new_password==='' || modifyInfo.new_employee_name.length===0 ||
+                     modifyInfo.new_identity_card.length===0 && modifyInfo.new_phone_number.length===0 ||
+                     modifyInfo.new_other_information.length===0">确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -171,7 +173,7 @@ export default{
     return{
       examiners: [
         {
-          examiner_id: '',
+          examiner_id: 1,
           account: '', // default: employee_identity_card
           check_authority: '',
           employee_id: '',
@@ -343,7 +345,7 @@ export default{
             let examiners = response.data.list;
             examiners.forEach(item => {
               let examiner = {
-                credit_examiner_id: item.credit_examiner_id,
+                examiner_id: item.examiner_id,
                 account: item.account,
                 check_authority: item.check_authority,
                 employee_name: item.employee_name, // 这里假设没有从后端获取 employee_name

@@ -51,11 +51,11 @@ import {ElMessage} from "element-plus";
 export default {
   data() {
     return {
-      examiner_id: 2,
+      examiner_id: 1,
       tableData: [
         {
-          apply_id:'',
-          account_id: '', // online_user
+          apply_id: 1,
+          account_id: 1, // online_user
           apply_date: "",
           credit: "",
         },
@@ -63,7 +63,6 @@ export default {
       // 审核
       checkAssetVisible : false,
       checkInfo: {
-        examiner_id: '',
         apply_id: '',
         apply_result: '',
       },
