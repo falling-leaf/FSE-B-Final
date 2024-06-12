@@ -211,10 +211,6 @@
           输入密码：
           <el-input v-model="newUpdateLimit.password" style="width: 12.5vw;" clearable />
         </div>
-        <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          更新额度：
-          <el-input v-model="newUpdateLimit.limit" style="width: 12.5vw;" clearable />
-        </div>
 
         <template #footer>
                 <span>
@@ -403,7 +399,6 @@ export default{
       newUpdateLimit: {
         account_id: '',
         password: '',
-        limit: 15000,
       },
       // update password
       UpdatePassword: false,
@@ -531,7 +526,6 @@ export default{
       {
         account_id: this.newUpdateLimit.account_id,
         password: this.newUpdateLimit.password,
-        amount: this.newUpdateLimit.limit,
       })
           .then(response => {
             if (response.data.status === 'success') {
