@@ -290,13 +290,9 @@ def updateCreditLimit(request):
         # 一般转入频率低而转出频率高，需要对转出的数据进行补偿
         per_income = 0
         per_outcome = 0
-        if income_frequency == 0:
-            per_income = 0
-        else:
+        if income_frequency != 0:
             per_income = total_income / income_frequency
-        if outcome_frequency == 0:
-            per_outcome = 0
-        else:
+        if outcome_frequency != 0:
             per_outcome = total_outcome / outcome_frequency
         credit_limit = user.property_valuation + user.annual_income * annual_income_parameter * 0.5 + (per_income * 0.1 - per_outcome * 0.8) * 450
 
