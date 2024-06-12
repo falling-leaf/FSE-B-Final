@@ -108,7 +108,7 @@ export default{
   },
   methods: {
     ConfirmNewExaminer() {
-      axios.post('/manage_loan_examiner', {
+      axios.post('/manager/manage_loan_examiner', {
         operation: "add",
         employee_id: this.newExaminerInfo.employee_id,
         account: this.newExaminerInfo.account,
@@ -124,7 +124,7 @@ export default{
           })
     },
     ConfirmModPasswordExaminer() {
-      axios.post('/manage_loan_examiner', {
+      axios.post('/manager/manage_loan_examiner', {
         operation: "update",
         loan_examiner_id: this.modPasswordExaminerInfo.loan_examiner_id,
         new_password: this.modPasswordExaminerInfo.new_password
@@ -138,7 +138,7 @@ export default{
           })
     },
     ConfirmDeleteExaminer() {
-      axios.post('/manage_loan_examiner', {
+      axios.post('/manager/manage_loan_examiner', {
         operation: "delete",
         loan_examiner_id: this.deleteExaminerID
       }).then(response => {
@@ -168,7 +168,7 @@ export default{
           account: 'examiner3'
         }
       ]
-      axios.post('/getAllLoanExaminer', {
+      axios.post('/manager/getAllLoanExaminer', {
         operation: "get"
       })
           .then(response => {

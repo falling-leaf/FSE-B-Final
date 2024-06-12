@@ -108,7 +108,7 @@ export default{
   },
   methods: {
     ConfirmNewManager() {
-      axios.post('/manage_loan_department_manager', {
+      axios.post('/manager/manage_loan_department_manager', {
         operation: "add",
         employee_id: this.newManagerInfo.employee_id,
         account: this.newManagerInfo.account,
@@ -124,7 +124,7 @@ export default{
           })
     },
     ConfirmModPasswordManager() {
-      axios.post('/manage_loan_department_manager', {
+      axios.post('/manager/manage_loan_department_manager', {
         operation: "update",
         loan_manager_id: this.modPasswordManagerInfo.loan_manager_id,
         new_password: this.modPasswordManagerInfo.new_password
@@ -138,7 +138,7 @@ export default{
           })
     },
     ConfirmDeleteManager() {
-      axios.post('/manage_loan_department_manager', {
+      axios.post('/manager/manage_loan_department_manager', {
         operation: "delete",
         loan_manager_id: this.deleteManagerID
       }).then(response => {
@@ -168,7 +168,7 @@ export default{
           account: 'manager3'
         }
       ]
-      axios.post('/getAllLoanManager', {
+      axios.post('/manager/getAllLoanManager', {
         operation: "get"
       })
           .then(response => {

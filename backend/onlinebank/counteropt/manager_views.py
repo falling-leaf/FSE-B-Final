@@ -1,8 +1,13 @@
-import json
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from .models import cashier, employee
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.db import transaction
+import datetime
+import json
+
+
+from .models import cashier, employee
+from .models import LoanDepartmentManager, LoanExaminer
 
 # Create your views here.
 
@@ -117,3 +122,157 @@ def modify_authority(request):
     elif request.method == 'OPTIONS':
         return JsonResponse({"success": "OPTION operation"}, status = 200)
     else: return JsonResponse({"error": "Method not allowed"}, status = 405)
+
+@csrf_exempt
+def getAllLoanExaminer(request):
+    ''' 显示所有贷款审查员信息 '''
+    if request.method == 'GET':
+        try:
+            loan_examiners = LoanExaminer.objects.all()
+
+            loan_examiner_list = []
+            for loan_examiner in loan_examiners:
+                loan_examiner_map = {}
+                loan_examiner_map['employee_id'] = loan_examiner.employee_id_id
+                loan_examiner_map['loan_examiner_id'] = loan_examiner.loan_examiner_id
+                loan_examiner_map['account'] = loan_examiner.account
+                loan_examiner_list.append(loan_examiner_map)
+
+            return JsonResponse({'loan_examiner_list': loan_examiner_list})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=405)
+    else:
+        return JsonResponse({'error': "the method is not GET"}, status=403)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def manageLoanExaminer(request):
+    ''' 管理贷款审核员信息 '''
+
+    response = {}
+    with transaction.atomic():
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            operation = body.get("operation")
+
+            if operation == "add":
+                employee_id = body.get('employee_id')
+                account = body.get("account")
+                password = body.get("password")
+                employee1 = employee.objects.get(employee_id=employee_id)
+
+
+                loan_examiner = LoanExaminer(
+                    employee_id=employee1,
+                    account=account,
+                    other_information="add a new loan examiner at " + str(datetime.datetime.now())
+                )
+                loan_examiner.setPassword(password)
+                loan_examiner.save()
+
+                response['response_message'] = f"Successfully added information for loan examiner."
+                print(type(response))
+            elif operation == "update":
+                loan_examiner_id = body.get("loan_examiner_id")
+                new_password = body.get("new_password")
+
+                loan_examiner = LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
+                loan_examiner.setPassword(new_password)
+                loan_examiner.save()
+
+                response['response_message'] = f"Successfully update loan examiner{loan_examiner_id} password."
+            elif operation == "delete":
+                loan_examiner_id = body.get("loan_examiner_id")
+                loan_examiner = LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
+                employee1 = employee.objects.get(employee_id=loan_examiner.employee_id)
+
+                employee1.is_employeed = False
+                employee1.save()
+                response['response_message'] = f"Successfully dismissal of a loan examiner{loan_examiner_id}."
+            else:
+                return JsonResponse({'error': "Unrecognized operation type"}, status=403)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': "无效的JSON 负载"}, status=403)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=405)
+
+    return JsonResponse(response)
+
+@csrf_exempt
+def getAllLoanManager(request):
+    ''' 显示所有贷款部门经理的信息 '''
+    if request.method == 'GET':
+        try:
+            loan_managers = LoanDepartmentManager.objects.all()
+
+            loan_manager_list = []
+            for loan_manager in loan_managers:
+                loan_manager_map = {}
+                loan_manager_map['employee_id'] = loan_manager.employee_id_id
+                loan_manager_map['loan_manager_id'] = loan_manager.loan_manager_id
+                loan_manager_map['account'] = loan_manager.account
+                loan_manager_list.append(loan_manager_map)
+
+            return JsonResponse({'loan_manager_list': loan_manager_list})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=405)
+    else:
+        return JsonResponse({'error': "the method is not GET"}, status=403)
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def manageLoanDepartmentManager(request):
+    ''' 管理贷款部门经理信息 '''
+
+    response = {}
+    with transaction.atomic():
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            operation = body.get("operation")
+
+            if operation == "add":
+                employee_id = body.get('employee_id')
+                account = body.get("account")
+                password = body.get("password")
+                employee1 = employee.objects.get(employee_id=employee_id)
+
+                loan_manager = LoanDepartmentManager(
+                    employee_id=employee1,
+                    account=account,
+                    other_information="add a new loan examiner at " + str(datetime.datetime.now())
+                )
+                loan_manager.setPassword(password)
+                loan_manager.save()
+
+                response['response_message'] = f"Successfully added information for loan department manager."
+            elif operation == "update":
+                loan_manager_id = body.get("loan_manager_id")
+                new_password = body.get("new_password")
+
+                loan_manager = LoanDepartmentManager.objects.get(loan_manager_id=loan_manager_id)
+                loan_manager.setPassword(new_password)
+                loan_manager.save()
+
+                response['response_message'] = f"Successfully update loan manager{loan_manager_id} password."
+            elif operation == "delete":
+                loan_manager_id = body.get("loan_manager_id")
+                loan_manager = LoanDepartmentManager.objects.get(loan_manager_id=loan_manager_id)
+                employee1 = employee.objects.get(employee_id=loan_manager.employee_id)
+
+                employee1.is_employeed = False
+                employee1.save()
+
+                response['response_message'] = f"Successfully dismissal of a loan manager{loan_manager_id}."
+            else:
+                return JsonResponse({'error': "Unrecognized operation type"}, status=403)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': "无效的JSON 负载"}, status=403)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=405)
+
+    return JsonResponse(response)
