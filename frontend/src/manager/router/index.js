@@ -2,6 +2,8 @@ import { createRouter, createWebHistory} from 'vue-router'
 import creditcard from '../components/creditcard.vue'
 import Admin from '../components/Admin.vue'
 import home from "../components/home.vue"
+import LoanManager from "../components/LoanManager.vue"
+import Auditors from "../components/Auditors.vue"
 
 //import 自定义组件名 from 路径
 const router = createRouter({
@@ -19,6 +21,14 @@ const router = createRouter({
         {
             path: '/admin/foreign',
             component: Admin
+        },
+        {
+            path: '/manager/loanManager',
+            component: LoanManager
+        },
+        {
+            path: '/manager/auditors',
+            component: Auditors
         },
         {
             path:'/manager/credit',

@@ -6,40 +6,16 @@
                  style="height:100%; width: 100%; overflow: hidden" :router="true">
           <div style="color: white; background-color: #181818;
           width: 100%; height: 10vh; display: flex; align-items: center; justify-content: center;">
-            管理员
+            贷款审核员#{{auditor_id}}
           </div>
-          <el-menu-item :index="'/manager/cashier?managerID='+this.managerID">
+          <el-menu-item :index="'/auditors/check?auditor_id='+this.auditor_id">
             <el-icon>
               <Avatar />
             </el-icon>
-            <span>出纳员管理</span>
-          </el-menu-item>
-          <el-menu-item :index="'/admin/foreign?managerID='+this.managerID">
-            <el-icon>
-              <Avatar />
-            </el-icon>
-            <span>外汇操作员管理</span>
-          </el-menu-item>
-          <el-menu-item :index="'/manager/credit?managerID='+this.managerID">
-            <el-icon>
-              <Avatar />
-            </el-icon>
-            <span>信用卡管理员管理</span>
-          </el-menu-item>
-          <el-menu-item :index="'/manager/loanManager?managerID='+this.managerID">
-            <el-icon>
-              <Avatar />
-            </el-icon>
-            <span>贷款部门经理管理</span>
-          </el-menu-item>
-          <el-menu-item :index="'/manager/auditors?managerID='+this.managerID">
-            <el-icon>
-              <Avatar />
-            </el-icon>
-            <span>贷款审查员管理</span>
+            <span>贷款审批</span>
           </el-menu-item>
           <div style="height: 30px"></div>
-          <a href="/" style="margin-left: 40px;">
+          <a href="/login" style="margin-left: 40px;">
             <el-button type="danger">
               退出
             </el-button>
@@ -61,15 +37,18 @@
 
 <script>
 export default {
+  data() {
+    return{
+      auditor_id: 0
+    }
+  },
   created() {
     this.fetchDataFromUrl();
   },
-  data(){
-    return{
-      managerID: 0
-    }
-  },
   methods: {
+    LogOut() {
+      this.$router.push('/another-page');
+    },
     fetchDataFromUrl() {
       // 获取当前URL
       const url = new URL(window.location);
@@ -78,7 +57,7 @@ export default {
       const params = new URLSearchParams(url.search);
 
       // 从查询字符串中获取参数
-      this.cashierID = params.get('managerID');
+      this.auditor_id = params.get('auditorID');
     }
   }
 }

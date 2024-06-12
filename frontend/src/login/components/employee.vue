@@ -98,6 +98,12 @@ export default{
         case"信用卡审查员":
           this.getCreditExaminerID();
           break;
+        case "贷款审核员":
+          this.getLoanAuditorID();
+          break;
+        case "贷款部门经理":
+          this.getLoanManagerID();
+          break;
           /*
           case "...":
             ...
@@ -126,6 +132,32 @@ export default{
       }).then(response => {
         this.employee.id = response.data.id;
         window.location.href = "/manager?managerID=" + this.employee.id ;  // 函数内部进行超链接跳转
+      }).catch(error => {
+        ElMessage.error(error.response.data.error);
+        this.password = "";
+      })
+    },
+    //贷款审核员
+    getLoanAuditorID() {
+      axios.post('/login/loanExaminer/',{
+        account: this.account,
+        password: this.password
+      }).then(response => {
+        this.employee.id = response.data.loan_examiner_id;
+        window.location.href = "/auditors?auditorID=" + this.employee.id + "/check";  // 函数内部进行超链接跳转
+      }).catch(error => {
+        ElMessage.error(error.response.data.error);
+        this.password = "";
+      })
+    },
+    //贷款部门经理
+    getLoanManagerID() {
+      axios.post('/login/loanManager/',{
+        account: this.account,
+        password: this.password
+      }).then(response => {
+        this.employee.id = response.data.loan_manager_id;
+        window.location.href = "/loan_manager?loan_manager_id=" + this.employee.id;  // 函数内部进行超链接跳转
       }).catch(error => {
         ElMessage.error(error.response.data.error);
         this.password = "";
