@@ -94,7 +94,7 @@ export default {
       this.loanRejectionVisible = true;
     },
     confirmLoanApproval() {
-      axios.post('/user/loanDepart/lenderLoanApplication/', {
+      axios.post('/loanManager/lenderLoanApplication/', {
         "loan_manager_id": this.currentLoan.loan_manager_id,
         "result": this.currentLoan.result,
         "approval_id": this.currentLoan.approval_id,
