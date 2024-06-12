@@ -22,14 +22,17 @@ def get_cards(request):
         if not online_user_id:
             raise ValueError("online_user_id is required")
         tz = pytz.timezone('Asia/Shanghai')
-        cards = account.objects.filter(online_user=online_user.objects.get(user_id=online_user_id))
+        cards = account.objects.filter(
+            online_user=online_user.objects.get(user_id=online_user_id),
+            card_type=0,
+        )
         formatted_cards = []
         for card in cards:
             formatted_cards.append({
                 'account_id': card.account_id,
                 'online_user_id': card.online_user_id,
                 'balance': card.balance,
-                'card_type': card.card_type,
+                'card_type': '信用卡',
                 'credit_limit': card.credit_limit,
                 'open_date': card.open_date.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S'),
                 'is_lost': card.is_lost,
@@ -61,9 +64,9 @@ def add_new_card(request):
 
         online_user_id = body.get('online_user_id')
         apply_id = body.get('apply_id')
-        print(apply_id)
+        # print(apply_id)
 
-        account().new_card(online_user_id)
+        account().new_card(online_user_id, 0)
 
         # Change the application state of 'have_open'
         application = CreditCardApplication.objects.get(apply_id=apply_id)

@@ -403,7 +403,7 @@ export default{
       newUpdateLimit: {
         account_id: '',
         password: '',
-        limit: 1500,
+        limit: 15000,
       },
       // update password
       UpdatePassword: false,
@@ -472,7 +472,7 @@ export default{
                 balance: item.balance,
                 card_type: item.card_type,
                 open_date: item.open_date,
-                limit: item.credit_limit,
+                credit_limit: item.credit_limit,
                 is_frozen: item.is_frozen,
                 is_lost: item.is_lost,
               };
