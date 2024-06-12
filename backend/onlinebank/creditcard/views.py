@@ -613,6 +613,22 @@ def get_check_applications(request):
         applications = CreditCardApplication.objects.filter(apply_status=1)
         formatted_applications = []
         for application in applications:
+            online_user = online_user.objects.get(online_user_id=application.online_user_id)
+            if online_user.service_year >= 20:
+                s = (online_user.service_year * 20 + 0.0001 * online_user.annual_income / 20 +
+                     0.0002 * online_user.property_valuation / 20)
+            else:
+                s = (online_user.service_year * online_user.service_year + 0.0001 * online_user.annual_income / online_user.service_year +
+                     0.0002 * online_user.property_valuation / online_user.service_year)
+            if s >= 320:
+                credit = '优秀'
+            elif s >= 250:
+                credit = '良好'
+            elif s >= 150:
+                credit = '一般'
+            else:
+                credit = '较差'
+
             formatted_applications.append({
                 'apply_id': application.apply_id,
                 'apply_status': application.apply_status,
@@ -621,6 +637,7 @@ def get_check_applications(request):
                 'examiner_id': application.creditCardExaminer_id,
                 'online_user_id': application.online_user_id,
                 'have_open': application.have_open,
+                'credit': credit,
             })
         response['status'] = 'success'
         response['message'] = 'Applications show successfully.'
@@ -652,13 +669,14 @@ def get_uncheck_applications(request):
                 s = (online_user.service_year * 20 + 0.0001 * online_user.annual_income / 20 +
                      0.0002 * online_user.property_valuation / 20)
             else:
-                s = (online_user.service_year * online_user.service_year + 0.0001 * online_user.annual_income / online_user.service_year +
-                     0.0002 * online_user.property_valuation / online_user.service_year)
-            if s >= 450:
+                s = (online_user.service_year * online_user.service_year +
+                     0.0001 * online_user.annual_income / online_user.service_year +
+                            0.0002 * online_user.property_valuation / online_user.service_year)
+            if s >= 350:
                 credit = '优秀'
-            elif s >= 320:
+            elif s >= 250:
                 credit = '良好'
-            elif s >= 200:
+            elif s >= 150:
                 credit = '一般'
             else:
                 credit = '较差'

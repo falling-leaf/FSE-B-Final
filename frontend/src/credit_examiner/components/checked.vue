@@ -13,7 +13,7 @@
         <el-table-column prop="apply_id" label="序号" sortable width="100"/>
         <el-table-column prop="apply_date" label="申请时间" sortable width="200"/>
         <el-table-column prop="account_id" label="申请人ID" width="140"/>
-        <el-table-column prop="asset" label="信誉" width="140"/>
+        <el-table-column prop="credit" label="信誉" width="140"/>
         <el-table-column prop="examiner_id" label="审核员ID" width="140" />
         <el-table-column prop="apply_result" label="申请结果" width="140" >
           <template v-slot ="scope">{{ scope.row.apply_result ? '通过' : '不通过' }}</template>
@@ -59,7 +59,7 @@ export default {
           apply_date: "",
           apply_result: '',
           account_id: 1, // online_user_id
-          asset: '',
+          credit: '',
           examiner_id: 1,
           have_open: false
         },
@@ -82,7 +82,7 @@ export default {
                 apply_date: item.apply_date,
                 apply_result: item.apply_result,
                 account_id: item.online_user_id,
-                assert: "unset",
+                credit: item.credit,
                 // 还没有从后端获取 assert：申请人的信誉情况，需要贷款模块提供
                 examiner_id: item.examiner_id,
                 have_open: item.have_open,
