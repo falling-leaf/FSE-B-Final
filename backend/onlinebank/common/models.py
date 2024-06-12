@@ -69,15 +69,15 @@ class account(models.Model):
     credit_limit = models.FloatField(default=10000)
     lent_money = models.FloatField(null=True)
     is_frozen = models.BooleanField(null=False, default=False)
-    is_lost = models.BooleanField(null=False, default=True)
+    is_lost = models.BooleanField(null=False, default=False)
     open_date = models.DateTimeField(default=timezone.now)  # Automatically set to today's date as default
     uncredited_deposit_update_date = models.DateTimeField(null=False, default=timezone.now)
 
     @staticmethod
-    def new_card(online_user_id):
-        ## 需要加上更具不同的信用额度来判断
+    def new_card(online_user_id, card_type):
         new_card = account()
         new_card.online_user = online_user.objects.get(person_id=online_user_id)
+        new_card.account_type = card_type
         new_card.save()
         return new_card
 
@@ -232,8 +232,8 @@ class CreditCardExaminer(models.Model):
     employee = models.ForeignKey(employee, on_delete=models.CASCADE)
     credit_examiner_id = models.AutoField(primary_key=True)
     check_authority = models.BooleanField(default=False)
-    account = models.CharField(max_length=30, default='000000')
-    password = models.CharField(max_length=20, default='password')
+    account = models.CharField(max_length=30, null=False)
+    password = models.CharField(max_length=20, null=False)
 
     def modify_examiner_info(self, new_account, new_password):
         """更改审核员账号信息"""
@@ -282,7 +282,7 @@ class CreditCardApplication(models.Model):
         if exist:
             raise ValueError("您有未审核的申请，请不要重复提交")
         new_application = CreditCardApplication()
-        new_application.online_user = online_user.objects.get(person_id=online_user_id)
+        new_application.online_user = online_user.objects.get(user_id=online_user_id)
         new_application.save()
         return new_application
 
