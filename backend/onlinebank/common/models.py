@@ -71,6 +71,7 @@ class account(models.Model):
     is_frozen = models.BooleanField(null=False, default=False)
     is_lost = models.BooleanField(null=False, default=True)
     open_date = models.DateTimeField(default=timezone.now)  # Automatically set to today's date as default
+    uncredited_deposit_update_date = models.DateTimeField(null=False, default=timezone.now)
 
 
 class BlackList(models.Model):
