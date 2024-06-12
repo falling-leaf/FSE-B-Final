@@ -463,6 +463,7 @@ class LoanRecord(models.Model):
     effective_date = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True)
     is_repay = models.BooleanField(default=False)
+    is_overdue = models.BooleanField(default=False)
     remark = models.TextField(null=True)
     objects = models.Manager()
 
@@ -478,7 +479,6 @@ class LoanRepayment(models.Model):
     repayment_id = models.AutoField(primary_key=True)
     loan_id = models.ForeignKey(LoanRecord, on_delete=models.CASCADE, db_column="loan_id")
     repayment_date = models.DateTimeField(auto_now_add=True)
-    is_overdue = models.BooleanField(default=False)
     remark = models.TextField(null=True)
     objects = models.Manager()
 
