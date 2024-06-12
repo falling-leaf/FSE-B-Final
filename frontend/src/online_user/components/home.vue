@@ -44,7 +44,7 @@
                   <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px">[ 外汇 ] 国际转账</el-button>
             </div>
             <div style="">
-                  <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px">[ 贷款 ] 贷款申请</el-button>
+                  <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmLoan">[ 贷款 ] 贷款申请  </el-button>
             </div>
           </div>
         </el-card>
@@ -60,6 +60,7 @@
   export default {
     data() {
       return {
+        user_id:0,
         toTransferInfo:{
           account_out_id:"",
           password:"",
@@ -69,6 +70,16 @@
       }
     },
     methods:{
+      fetchDataFromUrl() {
+        // 获取当前URL
+        const url = new URL(window.location);
+
+        // 创建URLSearchParams对象
+        const params = new URLSearchParams(url.search);
+
+        // 从查询字符串中获取参数
+        this.user_id = params.get('user_id');
+      },
       ConfirmTransfer(){
         axios.post("http://127.0.0.1:8000/user/money_transfer/",{
           account_out_id :this.toTransferInfo.account_out_id,
@@ -80,6 +91,10 @@
         }).catch(error=>{
           ElMessage.error(error.response.data.error)
         })
+      },
+      ConfirmLoan(){
+        window.location.href =
+            "/loan_user?user_id=" + this.user_id ; // 函数内部进行超链接跳转
       }
     },
     mounted() {

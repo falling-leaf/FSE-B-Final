@@ -85,6 +85,7 @@ export default {
     return {
       account: "", // 用户登录，还不知道用什么
       password: "",
+      user_id:0,
       user: {
         id: "",
       },
@@ -92,6 +93,7 @@ export default {
   },
   methods: {
     handle() {
+      //window.location.href = "/online_user?user_id=";
       // console.log( "文豪说看看这个6666")
       axios
         .post("http://127.0.0.1:8000/user/sign_in/", {
