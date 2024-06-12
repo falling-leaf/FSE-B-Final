@@ -73,14 +73,6 @@ class account(models.Model):
     open_date = models.DateTimeField(default=timezone.now)  # Automatically set to today's date as default
     uncredited_deposit_update_date = models.DateTimeField(null=False, default=timezone.now)
 
-
-class BlackList(models.Model):
-    list_id = models.AutoField(primary_key=True)
-    online_bank_manager_id = models.ForeignKey(online_bank_manager, on_delete=models.CASCADE, default=1,
-                                               db_column='online_bank_manager_id')
-    user_id = models.ForeignKey(online_user, on_delete=models.CASCADE, db_column='user_id')
-    timestamp = models.DateTimeField(auto_now_add=True)
-
     @staticmethod
     def new_card(online_user_id):
         ## 需要加上更具不同的信用额度来判断
@@ -192,6 +184,14 @@ class BlackList(models.Model):
             self.save()
             return False
         return True
+
+
+class BlackList(models.Model):
+    list_id = models.AutoField(primary_key=True)
+    online_bank_manager_id = models.ForeignKey(online_bank_manager, on_delete=models.CASCADE, default=1,
+                                               db_column='online_bank_manager_id')
+    user_id = models.ForeignKey(online_user, on_delete=models.CASCADE, db_column='user_id')
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
 # 存款记录
