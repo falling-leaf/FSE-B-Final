@@ -247,3 +247,57 @@ def userRepayLoanByAccount(request):
             print(str(e))
 
     return JsonResponse(response)
+
+
+@csrf_exempt
+@require_http_methods(['POST'])
+def updateCreditLimit(request):
+    ''' 更新用户的信用额度 '''
+
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        account_id = body.get('account_id')
+        check_account = models.account.objects.get(account_id=account_id)
+        loan_records = models.LoanRecord.objects.all()
+        for loan_record in loan_records:
+            if loan_record.is_overdue:
+                check_account.credit_limit = 0
+                check_account.save()
+                return JsonResponse({'message': "update successfully"}, status=200)
+
+        # 获取卡对应user的财产信息以及该卡的存取转账信息
+        user = models.online_user.objects.get(identity_card=check_account.identity_card)
+        deposit_records = models.deposit_record.objects.filter(account_id=account_id)
+        withdrawal_records = models.withdrawal_record.objects.filter(account_id=account_id)
+        transfer_in_records = models.transfer_record.objects.filter(account_in_id=account_id)
+        transfer_out_records = models.transfer_record.objects.filter(account_out_id=account_id)
+
+        total_income = sum(record.deposit_amount for record in deposit_records) + sum(record.transfer_amount for record in transfer_in_records)
+        income_frequency = deposit_records.count() + transfer_in_records.count()
+        total_outcome = sum(record.withdrawal_amount for record in withdrawal_records) + sum(record.transfer_amount for record in transfer_out_records)
+        outcome_frequency = withdrawal_records.count() + transfer_out_records.count()
+
+        annual_income_parameter = 0
+        if user.service_year is None or user.service_year == 0:
+            annual_income_parameter = 0
+        elif user.service_year <= 20:
+            annual_income_parameter = user.service_year / 20.0
+        else:
+            annual_income_parameter = 1
+
+        # 一般转入频率低而转出频率高，需要对转出的数据进行补偿
+        per_income = 0
+        per_outcome = 0
+        if income_frequency != 0:
+            per_income = total_income / income_frequency
+        if outcome_frequency != 0:
+            per_outcome = total_outcome / outcome_frequency
+        credit_limit = user.property_valuation + user.annual_income * annual_income_parameter * 0.5 + (per_income * 0.1 - per_outcome * 0.8) * 450
+
+        check_account.credit_limit = credit_limit
+        check_account.save()
+        return JsonResponse({'message': "update successfully"}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=403)

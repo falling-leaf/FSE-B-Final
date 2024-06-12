@@ -13,7 +13,7 @@
         <el-table-column prop="apply_id" label="申请序号" sortable width="150"/>
         <el-table-column prop="apply_date" label="申请时间" width="220"/>
         <el-table-column prop="account_id" label="申请人ID" />
-        <el-table-column prop="asset" label="申请人信誉" />
+        <el-table-column prop="credit" label="申请人信誉" />
 
         <el-table-column fixed="right" label="具体操作">
           <template v-slot="scope">
@@ -57,7 +57,7 @@ export default {
           apply_id:'',
           account_id: '', // online_user
           apply_date: "",
-          asset: "",
+          credit: "",
         },
       ],
       // 审核
@@ -84,7 +84,7 @@ export default {
                 apply_id: item.apply_id,
                 apply_date: item.apply_date,
                 account_id: item.online_user_id,
-                assert: "unset", // 这里假设没有从后端获取 assert
+                credit: item.credit,
               };
               this.tableData.push(application);
             });

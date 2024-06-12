@@ -69,15 +69,15 @@ class account(models.Model):
     credit_limit = models.FloatField(default=10000)
     lent_money = models.FloatField(null=True)
     is_frozen = models.BooleanField(null=False, default=False)
-    is_lost = models.BooleanField(null=False, default=True)
+    is_lost = models.BooleanField(null=False, default=False)
     open_date = models.DateTimeField(default=timezone.now)  # Automatically set to today's date as default
     uncredited_deposit_update_date = models.DateTimeField(null=False, default=timezone.now)
 
     @staticmethod
-    def new_card(online_user_id):
-        ## 需要加上更具不同的信用额度来判断
+    def new_card(online_user_id, card_type):
         new_card = account()
         new_card.online_user = online_user.objects.get(person_id=online_user_id)
+        new_card.account_type = card_type
         new_card.save()
         return new_card
 
@@ -115,7 +115,7 @@ class account(models.Model):
         self.delete()
         return True
 
-    def update_credit_limit(self, password, amount):
+    def update_credit_limit(self, password):
         """更新信用额度"""
         if password != self.password:
             raise ValueError("密码不匹配")
@@ -124,9 +124,43 @@ class account(models.Model):
         elif not self.check_card():
             raise ValueError("信用卡已透支，请还款后再申请更新额度")
         else:
-            self.credit_limit = amount
+            loan_records = LoanRecord.objects.all()
+            for loan_record in loan_records:
+                if loan_record.is_overdue:
+                    self.credit_limit = 0
+                    self.save()
+            # 获取卡对应user的财产信息以及该卡的存取转账信息
+            user = online_user.objects.get(identity_card=self.identity_card)
+            deposit_records = deposit_record.objects.filter(account_id=self.account_id)
+            withdrawal_records = withdrawal_record.objects.filter(account_id=self.account_id)
+            transfer_in_records = transfer_record.objects.filter(account_in_id=self.account_id)
+            transfer_out_records = transfer_record.objects.filter(account_out_id=self.account_id)
+            total_income = sum(record.deposit_amount for record in deposit_records) + sum(
+                record.transfer_amount for record in transfer_in_records)
+            income_frequency = deposit_records.count() + transfer_in_records.count()
+            total_outcome = sum(record.withdrawal_amount for record in withdrawal_records) + sum(
+                record.transfer_amount for record in transfer_out_records)
+            outcome_frequency = withdrawal_records.count() + transfer_out_records.count()
+
+            if user.service_year is None or user.service_year == 0:
+                annual_income_parameter = 0
+            elif user.service_year <= 20:
+                annual_income_parameter = user.service_year / 20.0
+            else:
+                annual_income_parameter = 1
+
+            # 一般转入频率低而转出频率高，需要对转出的数据进行补偿
+            per_income = 0
+            per_outcome = 0
+            if income_frequency != 0:
+                per_income = total_income / income_frequency
+            if outcome_frequency != 0:
+                per_outcome = total_outcome / outcome_frequency
+            credit_limit = user.property_valuation *0.3 + user.annual_income * annual_income_parameter * 0.5 + (
+                        per_income * 0.1 - per_outcome * 0.8) * 450
+
+            self.credit_limit = credit_limit
             self.save()
-            return True
 
     def frozen_card(self, password):
         """冻结信用卡"""
@@ -232,8 +266,8 @@ class CreditCardExaminer(models.Model):
     employee = models.ForeignKey(employee, on_delete=models.CASCADE)
     credit_examiner_id = models.AutoField(primary_key=True)
     check_authority = models.BooleanField(default=False)
-    account = models.CharField(max_length=30, default='000000')
-    password = models.CharField(max_length=20, default='password')
+    account = models.CharField(max_length=30, null=False)
+    password = models.CharField(max_length=20, null=False)
 
     def modify_examiner_info(self, new_account, new_password):
         """更改审核员账号信息"""
@@ -282,7 +316,7 @@ class CreditCardApplication(models.Model):
         if exist:
             raise ValueError("您有未审核的申请，请不要重复提交")
         new_application = CreditCardApplication()
-        new_application.online_user = online_user.objects.get(person_id=online_user_id)
+        new_application.online_user = online_user.objects.get(user_id=online_user_id)
         new_application.save()
         return new_application
 
@@ -463,6 +497,7 @@ class LoanRecord(models.Model):
     effective_date = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True)
     is_repay = models.BooleanField(default=False)
+    is_overdue = models.BooleanField(default=False)
     remark = models.TextField(null=True)
     objects = models.Manager()
 
@@ -478,7 +513,6 @@ class LoanRepayment(models.Model):
     repayment_id = models.AutoField(primary_key=True)
     loan_id = models.ForeignKey(LoanRecord, on_delete=models.CASCADE, db_column="loan_id")
     repayment_date = models.DateTimeField(auto_now_add=True)
-    is_overdue = models.BooleanField(default=False)
     remark = models.TextField(null=True)
     objects = models.Manager()
 

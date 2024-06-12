@@ -1,7 +1,7 @@
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse, HttpResponse
 from common.models import cashier, sys_manager, ForeignExchangeOperator, CreditCardExaminer
-from common.models import LoanExaminer, LoanDepartmentManager
+from common.models import LoanExaminer, LoanDepartmentManager, online_user
 from django.views.decorators.csrf import csrf_exempt
 import json
 # Create your views here.
@@ -163,3 +163,18 @@ def loanDepartmentManagerLogin(request):
         return JsonResponse({"error": "用户名重叠"}, status=403)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=403)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def getUserIdentityCard(request):
+    ''' 跳转到贷款模块获取用户身份码 '''
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        user_id = body.get('user_id')
+        user = online_user.objects.get(user_id=user_id)
+        return JsonResponse({'identity_card': user.identity_card}, status=200)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=403)

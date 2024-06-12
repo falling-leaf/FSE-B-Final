@@ -22,14 +22,17 @@ def get_cards(request):
         if not online_user_id:
             raise ValueError("online_user_id is required")
         tz = pytz.timezone('Asia/Shanghai')
-        cards = account.objects.filter(online_user=online_user.objects.get(user_id=online_user_id))
+        cards = account.objects.filter(
+            online_user=online_user.objects.get(user_id=online_user_id),
+            card_type=0,
+        )
         formatted_cards = []
         for card in cards:
             formatted_cards.append({
                 'account_id': card.account_id,
                 'online_user_id': card.online_user_id,
                 'balance': card.balance,
-                'card_type': card.card_type,
+                'card_type': '信用卡',
                 'credit_limit': card.credit_limit,
                 'open_date': card.open_date.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S'),
                 'is_lost': card.is_lost,
@@ -61,9 +64,9 @@ def add_new_card(request):
 
         online_user_id = body.get('online_user_id')
         apply_id = body.get('apply_id')
-        print(apply_id)
+        # print(apply_id)
 
-        account().new_card(online_user_id)
+        account().new_card(online_user_id, 0)
 
         # Change the application state of 'have_open'
         application = CreditCardApplication.objects.get(apply_id=apply_id)
@@ -160,14 +163,12 @@ def update_limit(request):
         account_id = body.get('account_id')
         if not account_id:
             raise ValueError("account_id is required")
-        amount = body.get('amount')
-        if not amount:
-            raise ValueError("amount is required")
         password = body.get('password')
         if not password:
             raise ValueError("password is required")
         card = account.objects.get(account_id=account_id)
-        card.update_credit_limit(password, amount)
+
+        card.update_credit_limit(password)
 
         response['status'] = 'success'
         response['message'] = 'Limit has been updated.'
@@ -612,6 +613,22 @@ def get_check_applications(request):
         applications = CreditCardApplication.objects.filter(apply_status=1)
         formatted_applications = []
         for application in applications:
+            online_user = online_user.objects.get(online_user_id=application.online_user_id)
+            if online_user.service_year >= 20:
+                s = (online_user.service_year * 20 + 0.0001 * online_user.annual_income / 20 +
+                     0.0002 * online_user.property_valuation / 20)
+            else:
+                s = (online_user.service_year * online_user.service_year + 0.0001 * online_user.annual_income / online_user.service_year +
+                     0.0002 * online_user.property_valuation / online_user.service_year)
+            if s >= 320:
+                credit = '优秀'
+            elif s >= 250:
+                credit = '良好'
+            elif s >= 150:
+                credit = '一般'
+            else:
+                credit = '较差'
+
             formatted_applications.append({
                 'apply_id': application.apply_id,
                 'apply_status': application.apply_status,
@@ -620,6 +637,7 @@ def get_check_applications(request):
                 'examiner_id': application.creditCardExaminer_id,
                 'online_user_id': application.online_user_id,
                 'have_open': application.have_open,
+                'credit': credit,
             })
         response['status'] = 'success'
         response['message'] = 'Applications show successfully.'
@@ -643,7 +661,26 @@ def get_uncheck_applications(request):
         tz = pytz.timezone('Asia/Shanghai')
         applications = CreditCardApplication.objects.filter(apply_status=0)
         formatted_applications = []
+
         for application in applications:
+
+            online_user = online_user.objects.get(online_user_id=application.online_user_id)
+            if online_user.service_year >= 20:
+                s = (online_user.service_year * 20 + 0.0001 * online_user.annual_income / 20 +
+                     0.0002 * online_user.property_valuation / 20)
+            else:
+                s = (online_user.service_year * online_user.service_year +
+                     0.0001 * online_user.annual_income / online_user.service_year +
+                            0.0002 * online_user.property_valuation / online_user.service_year)
+            if s >= 350:
+                credit = '优秀'
+            elif s >= 250:
+                credit = '良好'
+            elif s >= 150:
+                credit = '一般'
+            else:
+                credit = '较差'
+
             formatted_applications.append({
                 'apply_id': application.apply_id,
                 'apply_status': application.apply_status,
@@ -651,6 +688,7 @@ def get_uncheck_applications(request):
                 'apply_date': application.apply_date.astimezone(tz).strftime('%Y-%m-%d %H:%M:%S'),
                 'examiner_id': application.creditCardExaminer_id,
                 'online_user_id': application.online_user_id,
+                'credit': credit,
             })
         response['status'] = 'success'
         response['message'] = 'Applications show successfully.'

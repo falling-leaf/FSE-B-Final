@@ -31,4 +31,7 @@ urlpatterns = [
     path('loan/', include('loan.user_urls')),
     path('loanExaminer/', include('loan.loanexaminer_urls')),
     path('loanManager/', include('loan.loanmanager_urls')),
+    
+    path('OBmanager/', include('bank_app.manager_urls')),
+    path('user/', include('bank_app.user_urls')),
 ]

@@ -7,4 +7,5 @@ urlpatterns = [
     path('unrepayLoanRecordReminder/', user_views.unrepayLoanRecordReminder, name="unrepay_loan_record_reminder"),
     path('searchAllLoanApplicationByUser/', user_views.searchAllLoanApplicationByUser, name="search_all_loan_application_by_user"),
     path('userRepayLoanByAccount/', user_views.userRepayLoanByAccount, name="user_repay_loan_by_account"),
+    path('updateCreditLimit', user_views.updateCreditLimit, name="update_credit_limit"),
 ]
