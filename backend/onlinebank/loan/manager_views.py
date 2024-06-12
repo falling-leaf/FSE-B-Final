@@ -199,3 +199,21 @@ def update_loan_record_isoverdue():
             print("更新结束")
         except Exception as e:
             print(str(e))
+
+@csrf_exempt
+def unrepayReminderManager(request):
+    ''' 银行机构还款提醒 '''
+    if request == "GET":
+        loan_records = models.LoanRecord.objects.filter(is_repay=False, is_overdue=False)
+
+        count = 0
+        current_time = timezone.now()
+        for record in loan_records:
+            if current_time < record.end_time < current_time + datetime.timedelta(days=7):
+                count += 1
+        if count == 0:
+            return JsonResponse({'message': "没有七天内需要还款的用户"}, status=200)
+        else:
+            return JsonResponse({'message': f"七天内需要还款的用户有{count}个"}, status=200)
+    else:
+        return JsonResponse({'error': 'The method is not GET'}, status=403)
