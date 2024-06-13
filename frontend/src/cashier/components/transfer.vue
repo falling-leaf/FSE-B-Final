@@ -4,9 +4,6 @@
     <!-- 标题和搜索框 -->
     <div style="margin-top: 20px; margin-left: 40px; font-size: 2em; font-weight: bold;">
         账户转账
-        <el-input v-model="toSearch" :prefix-icon="Search"
-            style=" width: 15vw;min-width: 150px; margin-left: 30px; margin-right: 30px; float: right; ;"
-            clearable />
     </div>
 
     <!-- 转账操作 -->
