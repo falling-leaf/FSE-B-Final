@@ -16,7 +16,7 @@
             <p style="padding: 2.5px;"><span style="font-weight: bold">贷款金额：</span>{{ record.amount }}</p>
             <p style="padding: 2.5px;"><span style="font-weight: bold">贷款期限：</span>{{ record.loan_duration }}</p>
             <p style="padding: 2.5px;"><span style="font-weight: bold">贷款日期：</span>{{ record.application_data }}</p>
-            <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{ record.credit_limit }}（{{ getCreditLevel(record.credit_limit) }}）</p>
+            <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{ record.credit_limit }}</p>
             <p style="padding: 2.5px;"><span style="font-weight: bold">当前已贷款未还数量：</span>{{ record.lent_money }}</p>
           </div>
           <el-divider />
@@ -96,9 +96,13 @@ export default {
             "application_id": this.currentLoan.application_id,
       })
           .then(response => {
+            if(response.data.response_code === 1){
             ElMessage.success("贷款已拒绝");
             this.loanRejectionVisible = false;
             this.queryLoans();
+          }else{
+            ElMessage.error("贷款拒绝失败");
+          }
           })
           .catch(error => {
             ElMessage.error("贷款拒绝失败");
@@ -111,38 +115,33 @@ export default {
             "application_id": this.currentLoan.application_id,
       })
           .then(response => {
+            if(response.data.response_code === 1){
             ElMessage.success("贷款已批准");
             this.loanApprovalVisible = false;
             this.queryLoans();
+          }else{
+            ElMessage.error("贷款批准失败");
+          }
           })
           .catch(error => {
             ElMessage.error("贷款批准失败");
           });
     },
-    getCreditLevel(creditLimit) {
-      if (creditLimit >= 80000) {
-        return '优秀';
-      } else if (creditLimit >= 50000) {
-        return '良好';
-      } else if (creditLimit >= 20000) {
-        return '一般';
-      } else if (creditLimit == 0) {
-        return '无法贷款';
-      } else {
-        return '较差';
-      }
-    },
     queryLoans() {
+    this.records = [];
       axios.get('/loanExaminer/showAllLoanApplicationUnapproved/')
           .then(response => {
+            if(response.data.response_code === 1){
             let records = response.data.unapproved_application_list
-            console.log(response.data)
+            ElMessage.error("查询贷款记录成功");
             records.forEach(record => {
               this.records.push(record)
             })
+          }else{
+            ElMessage.error("查询贷款记录失败");
+          }
           })
           .catch(error => {
-            console.error('There was an error!', error);
             ElMessage.error("查询贷款记录失败");
           });
     }

@@ -41,10 +41,11 @@ export default {
   data() {
     return {
       isShow: true,
+      identity_card: '',
       records: [],
       status: '',
       toQuery: '',
-      userID: '12345' // 示例 person_id
+      userID: 0 // 示例 person_id
     };
   },
   computed: {
@@ -62,27 +63,58 @@ export default {
       // 创建URLSearchParams对象
       const params = new URLSearchParams(url.search);
       // 从查询字符串中获取参数
-      this.userID = params.get('userID');
+      this.user_id = params.get('user_id');
     },
-    queryLoans() {
-      axios.post('/loan/searchAllLoanApplicationByUser/', {
-        identity_card: "330204197508260578",
+    getIdentity_card(){
+      axios.post('/login/getUserIdentityCard/', {
+        user_id: this.user_id,
       })
           .then(response => {
-            let records = response.data.loan_application_list;
-            console.log(response.data);
-            records.forEach(record => {
-              this.records.push(record);
-            });
+            this.identity_card = response.data.identity_card
+            console.log(response.data.identity_card)
           })
           .catch(error => {
             console.error('There was an error!', error);
+          });
+    },
+    queryLoans() {
+    axios.post('/login/getUserIdentityCard/', {
+        user_id: this.user_id,
+      })
+          .then(response => {
+            this.identity_card = response.data.identity_card
+            console.log(response.data.identity_card)
+            axios.post('/loan/searchAllLoanApplicationByUser/', {
+            identity_card: this.identity_card,
+      })
+          .then(response => {
+            if(response.data.response_code === 1){
+                ElMessage.success(""查询贷款记录成功")
+                let records = response.data.loan_application_list;
+                records.forEach(record => {
+                this.records.push(record);
+            });
+            }else{
+                ElMessage.error(""查询贷款记录失败")
+            }
+          })
+          .catch(error => {
             ElMessage.error("查询贷款记录失败");
+          })
+          })
+          .catch(error => {
+            ElMessage.error("用户身份证获取失败");
           });
     },
     remindUnrepayLoan() {
-      axios.post('/loan/unrepayLoanRecordReminder/', {
-        identity_card: "330204197508260578",
+    axios.post('/login/getUserIdentityCard/', {
+        user_id: this.user_id,
+      })
+          .then(response => {
+            this.identity_card = response.data.identity_card
+            console.log(response.data.identity_card)
+            axios.post('/loan/unrepayLoanRecordReminder/', {
+        identity_card: this.identity_card,
       })
           .then(response => {
             if (response.data.response_code === 1) {
@@ -94,10 +126,15 @@ export default {
           .catch(error => {
             console.error('There was an error!', error);
             ElMessage.error("还款提醒失败");
+          })
+          })
+          .catch(error => {
+            ElMessage.error("用户身份证获取失败");
           });
     }
   },
   mounted() {
+    this.getIdentity_card();
     this.queryLoans();
     this.remindUnrepayLoan(); // 页面加载时自动提醒还款
   },

@@ -35,12 +35,11 @@ def commitLoanApplication(request):
             if identity_card != check_account.identity_card:
                 raise Exception("Error! The owner of the card number is not you!")
 
-            models.LoanApplication.objects.create(identity_card=identity_card, account_id=check_account,
+            loan_application = models.LoanApplication.objects.create(identity_card=identity_card, account_id=check_account,
                                                   amount=amount, loan_duration=loan_duration, remark=remark)
 
             response['response_code'] = 1
-            response['response_message'] = "Loan application commit successfully, the apllication date is " + str(
-                datetime.datetime.now())
+            response['response_message'] = f"贷款申请成功，贷款申请id为{loan_application.application_id}"
         except Exception as e:
             response['response_code'] = 0
             response['response_message'] = str(e)
@@ -77,12 +76,12 @@ def searchAllNeedRepayLoanRecord(request):
             loan_application = models.LoanApplication.objects.get(application_id=loan_record.application_id_id)
             loan_record_map['account_id'] = loan_application.account_id_id
             loan_record_map['amount'] = loan_application.amount
-            loan_record_map['end_time'] = str(loan_record.end_time)
+            loan_record_map['end_time'] = str(loan_record.end_time)[0:19]
             loan_record_list.append(loan_record_map)
         print(loan_record_list)
 
         response['response_code'] = 1
-        response['response_message'] = "Check the records of all loans that need to be repaid successfully"
+        response['response_message'] = "成功查询所有需要还款的贷款记录"
         response['loan_application_list'] = loan_record_list
     except Exception as e:
         response['response_code'] = 0
@@ -116,7 +115,7 @@ def unrepayLoanRecordReminder(request):
                 count += 1
 
         response['response_code'] = 1
-        response['response_message'] = f"You have a record of {count} loans that need to be repaid within 7 days"
+        response['response_message'] = f"你在七天内需要还款的贷款记录有{count}条"
     except Exception as e:
         response['response_code'] = 0
         response['response_message'] = str(e)
@@ -148,7 +147,7 @@ def searchAllLoanApplicationByUser(request):
             loan_application_map = {}
             loan_application_map['application_id'] = loan_application.application_id
             loan_application_map['account_id'] = loan_application.account_id_id
-            loan_application_map['application_data'] = str(loan_application.application_data)
+            loan_application_map['application_data'] = str(loan_application.application_data)[0:19]
             loan_application_map['amount'] = loan_application.amount
             if models.LoanApproval.objects.filter(application_id=loan_application).exists():
                 loan_approval = models.LoanApproval.objects.get(application_id=loan_application)
@@ -179,7 +178,7 @@ def searchAllLoanApplicationByUser(request):
         print(loan_application_list)
 
         response['response_code'] = 1
-        response['response_message'] = "Query all loan applications with status feature of users"
+        response['response_message'] = "成功查询所有贷款记录"
         response['loan_application_list'] = loan_application_list
     except Exception as e:
         response['response_code'] = 0
@@ -233,13 +232,14 @@ def userRepayLoanByAccount(request):
                 loan_id=loan_record,
                 remark="This is remark about the loan repayment"
             )
+            print(1)
             # 调用函数change_balance
-            check_account.transfer_out(amount)
+            check_account.transfer_out(amount, check_account.password)
             loan_record.is_repay = True
             loan_record.save()
 
             response['response_code'] = 1
-            response['response_message'] = "The repayment is successful, and the credit card balance is deducted"
+            response['response_message'] = "贷款还款成功，信用卡已成功扣款"
         except Exception as e:
             response['response_code'] = 0
             response['response_message'] = str(e)
@@ -295,7 +295,8 @@ def updateCreditLimit(request):
             per_outcome = total_outcome / outcome_frequency
         credit_limit = user.property_valuation + user.annual_income * annual_income_parameter * 0.5 + (per_income * 0.1 - per_outcome * 0.8) * 450
 
-        check_account.credit_limit = credit_limit
+        if credit_limit > 5000:
+            check_account.credit_limit = credit_limit
         check_account.save()
         return JsonResponse({'message': "update successfully"}, status=200)
     except Exception as e:

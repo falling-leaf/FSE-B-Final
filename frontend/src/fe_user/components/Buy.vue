@@ -114,9 +114,9 @@ export default {
             this.UpdateHoldings()
             this.GoBack()
             this.isInputPassword = false
-            //ElMessage.success(response.data.message)
+            ElMessage.success(response.data.message)
           } else {
-            //ElMessage.warning(response.data.message)
+            ElMessage.warning(response.data.message)
           }
         })
         .catch((error) => {
