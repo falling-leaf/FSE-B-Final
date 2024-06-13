@@ -75,7 +75,7 @@ def blacklist_account_add(request):
                     # print(new_user)
                     return JsonResponse({"error": "already in black",'state': False}, status=400)
             else:
-                return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+                return JsonResponse({"error": "账户不存在",'state': False}, status=403)
         else:
             return JsonResponse({"error": "Manager don't exist",'state': False}, status=403)
     elif request.method == 'OPTION':
@@ -103,7 +103,7 @@ def user_frozen(request):
             else:
                 return JsonResponse({"error": "已经冻结了，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -129,7 +129,7 @@ def user_unfrozen(request):
             else:
                 return JsonResponse({"error": "你逗我呢，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -155,7 +155,7 @@ def user_lost(request):
             else:
                 return JsonResponse({"error": "已经挂失了，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -181,7 +181,7 @@ def user_unlost(request):
             else:
                 return JsonResponse({"error": "别闹，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -207,7 +207,7 @@ def user_lost(request):
             else:
                 return JsonResponse({"error": "已经挂失了，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -233,7 +233,7 @@ def user_unlost(request):
             else:
                 return JsonResponse({"error": "别闹，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -261,9 +261,9 @@ def blacklist_account_delet(request):
                 return_data = {'state': True}
                 return JsonResponse(return_data, status=200)
             else:
-                return JsonResponse({"error": "Blacklist don't exist",'state': False}, status=403)
+                return JsonResponse({"error": "没在黑名单中",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "账户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:

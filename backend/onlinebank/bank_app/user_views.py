@@ -110,7 +110,7 @@ def user_add(request):
     if request.method == 'POST':
         # 将请求体中的数据转化为json格式
         data = json.loads(request.body.decode('utf-8'))
-        print('看看data:{}'.format(data))
+        # print('看看data:{}'.format(data))
         filter_online_user = online_user.objects.filter(identity_card=data.get('identity_card'))
         # print('看看filter_online_user:{}'.format(filter_online_user))
         if not filter_online_user.exists():
@@ -141,15 +141,15 @@ def user_add(request):
             print(f"看看这个{filter_accounts}")
             if filter_accounts.exists():
                 filter_accounts.update(user_id=new_user.user_id)
-                return_data = {"success": "The auto-binding is successful", 'state': True}
+                return_data = {"success": "卡片自动绑定成功", 'state': True}
                 return JsonResponse(return_data, status=200)
             else:
-                return JsonResponse({"success": "No accounts now for this user", 'state': True}, status=200)
+                return JsonResponse({"success": "该用户没卡", 'state': True}, status=200)
         # # print(new_user)
             # return_data = {'state': True}
             # return JsonResponse(return_data, status=200)
         else:
-            return JsonResponse({"error": "User with this identity_card has been exist",'state': False}, status=403)
+            return JsonResponse({"error": "此身份证的用户已经存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -166,9 +166,9 @@ def user_log_in(request):
         # print('看看filter_online_user:{}'.format(filter_online_user))
         if filter_online_user.exists():
             if filter_online_user[0].is_blacklisted:
-                return JsonResponse({"error": "this user is blacklisted", 'state': False}, status=400)
+                return JsonResponse({"error": "该用户已被列入黑名单", 'state': False}, status=400)
             if filter_online_user[0].is_frozen:
-                return JsonResponse({"error": "this user is frozen", 'state': False}, status=400)
+                return JsonResponse({"error": "该用户已冻结", 'state': False}, status=400)
             # 用户存在开始对照密码
             cur_user = online_user.objects.get(user_name = data.get('user_name'))
             print(f"文豪说看看这个密码: {cur_user.password}")
@@ -178,9 +178,9 @@ def user_log_in(request):
             else:
                 print("看看这里")
                 # print(new_user)
-                return JsonResponse({"error": "password is wrong",'state': False}, status=400)
+                return JsonResponse({"error": "密码错误",'state': False}, status=400)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -202,9 +202,9 @@ def user_change_password(request):
                 return_data = {'state': True}
                 return JsonResponse(return_data, status=200)
             else:
-                return JsonResponse({"error": "information is wrong",'state': False}, status=400)
+                return JsonResponse({"error": "信息错误",'state': False}, status=400)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -256,7 +256,7 @@ def user_account_all_records(request):
                         "cashier_id": record.cashier_id,
                     } for record in filter_transfer_records]
             else:
-                return JsonResponse({"error":"Wrong record type"},status=400)
+                return JsonResponse({"error":"卡类型错误"},status=400)
             print(f"look records: {records}")
             return JsonResponse(records, safe=False, status=200)
     else:
