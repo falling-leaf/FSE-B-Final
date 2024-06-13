@@ -231,7 +231,6 @@ def userRepayLoanByAccount(request):
 
             models.LoanRepayment.objects.create(
                 loan_id=loan_record,
-                is_overdue=is_overdue,
                 remark="This is remark about the loan repayment"
             )
             # 调用函数change_balance
