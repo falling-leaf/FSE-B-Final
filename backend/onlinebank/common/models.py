@@ -162,8 +162,8 @@ class account(models.Model):
                 per_outcome = total_outcome / outcome_frequency
             credit_limit = user.property_valuation *0.3 + user.annual_income * annual_income_parameter * 0.5 + (
                         per_income * 0.1 - per_outcome * 0.8) * 450
-
-            self.credit_limit = credit_limit
+            if credit_limit>5000:
+                self.credit_limit = credit_limit
             self.save()
 
     def frozen_card(self, password):

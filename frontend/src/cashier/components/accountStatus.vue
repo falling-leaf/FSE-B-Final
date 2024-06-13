@@ -220,7 +220,11 @@
             }).then(response => {
               this.account = response.data
               this.isShow = true;
-            })
+            }).catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.isShow = false;
+            this.password = "";
+          });
         // this.isShow = true
       }
     }

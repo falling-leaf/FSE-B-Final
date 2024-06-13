@@ -206,7 +206,7 @@ export default {
                     ElMessage.success('外币重命名成功')
                     this.searchRecords(1)
                 } else {
-                    //ElMessage.error(response.data.message)
+                    ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
@@ -225,7 +225,7 @@ export default {
                     ElMessage.success('外币删除成功');
                     this.searchRecords(1)
                 } else {
-                    //ElMessage.error(response.data.message)
+                    ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
@@ -250,7 +250,7 @@ export default {
                     ElMessage.warning('外币更新成功')
                     this.searchRecords(1)
                 } else {
-                    //ElMessage.error(response.data.message)
+                    ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {

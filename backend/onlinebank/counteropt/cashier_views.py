@@ -40,7 +40,7 @@ def cashier_query_account(request):
     if request.method == 'GET':
         filter_accountss = account.objects.filter(account_id=request.GET.get('accountID'))
         if not filter_accountss.exists():
-            return JsonResponse({"error": "不存在该账户"}, status=405)
+            return JsonResponse({"error": "不存在该账户"}, status=403)
         filter_accounts = filter_accountss[0]
         account_data = {}
         account_data['id'] = filter_accounts.account_id
@@ -114,9 +114,12 @@ def cashier_demand_deposit(request):
                 cashier_id=data.get('cashier_id'),
             )
             new_deposit_record.save()
-            return JsonResponse({"success": "successful operation"}, status=200)
+            return JsonResponse({"success": "存款成功"}, status=200)
         else:
-            return JsonResponse({"error": "User not exists"}, status=403)
+            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            if not check_account.exists():
+                return JsonResponse({"error": "账户不存在"}, status=403)
+            else: return JsonResponse({"error": "密码错误"}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -156,9 +159,12 @@ def cashier_time_deposit(request):
                 cashier_id=data.get('cashier_id'),
             )
             new_deposit_record.save()
-            return JsonResponse({"success": "successful operation"}, status=200)
+            return JsonResponse({"success": "存款成功"}, status=200)
         else:
-            return JsonResponse({"error": "User not exists"}, status=403)
+            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            if not check_account.exists():
+                return JsonResponse({"error": "账户不存在"}, status=403)
+            else: return JsonResponse({"error": "密码错误"}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -237,11 +243,14 @@ def cashier_withdrawl(request):
                     cashier_id=data.get('cashier_id'),
                 )
                 new_withdrawal_record.save()
-                return JsonResponse({"success": "successful operation"}, status=200)
+                return JsonResponse({"success": "取款成功"}, status=200)
             else:
                 return JsonResponse({"error": "存款不足"}, status=403)
         else:
-            return JsonResponse({"error": "User not exists"}, status=403)
+            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            if not check_account.exists():
+                return JsonResponse({"error": "账户不存在"}, status=403)
+            else: return JsonResponse({"error": "密码错误"}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -290,7 +299,10 @@ def cashier_transfer(request):
         if not filter_in_account.exists():
             return JsonResponse({"error": "接收转账用户不存在"}, status=403)
         if not filter_out_account.exists():
-            return JsonResponse({"error": "存款不足"}, status=403)
+            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            if not check_account.exists():
+                return JsonResponse({"error": "账户不存在"}, status=403)
+            else: return JsonResponse({"error": "密码错误"}, status=403)
         filter_in_account = filter_in_account.first()
         filter_out_account = filter_out_account.first()
         if filter_out_account.is_frozen or filter_out_account.is_lost:
@@ -319,7 +331,7 @@ def cashier_transfer(request):
             new_transfer_record.save()
             return JsonResponse({"success": "successful operation"}, status=200)
         else:
-            return JsonResponse({"error": "转账用户不存在"}, status=403)
+            return JsonResponse({"error": "存款不足"}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:

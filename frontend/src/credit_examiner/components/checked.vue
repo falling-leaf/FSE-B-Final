@@ -104,12 +104,13 @@ export default {
               this.newCardVisible = false
               this.QueryApplications()
             } else {
-              ElMessage.error("开户失败")
+              console.log(response)
+              ElMessage.error("开户失败:"+ response.data.message)
             }
           })
           .catch(error => {
             console.error('Error fetching examiners:', error);
-            ElMessage.error("开户失败" + error);
+            ElMessage.error("开户失败:" + error);
           });
     },
   },
