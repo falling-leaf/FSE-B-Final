@@ -7,6 +7,12 @@
 
 在集成时，请在git commit中标注具体信息，其中包括集成模块及操作者，并在本README中进行日志的更新。
 
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py runserver
+
+
 ## 更新日志
 
 2024/6/7：创建仓库，并上传B1组前后端初步代码及前端登录界面 from B1

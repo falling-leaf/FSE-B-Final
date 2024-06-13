@@ -46,6 +46,12 @@
             <div style="">
                   <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmLoan">[ 贷款 ] 贷款申请  </el-button>
             </div>
+<!--            <a href="/credit_user?online_user_id=this.user_id">-->
+            <a>
+              <el-button type="primary" style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmCreditcard">
+                [ 信用卡 ] 信用卡
+              </el-button>
+            </a>
           </div>
         </el-card>
       </div>
@@ -60,7 +66,7 @@
   export default {
     data() {
       return {
-        user_id:0,
+        user_id:'',
         toTransferInfo:{
           account_out_id:"",
           password:"",
@@ -73,13 +79,16 @@
       fetchDataFromUrl() {
         // 获取当前URL
         const url = new URL(window.location);
-
+        console.log(url);  // Use console.log instead of print
         // 创建URLSearchParams对象
         const params = new URLSearchParams(url.search);
+        console.log(Array.from(params.entries()));  // Log all parameters to see what is available
 
         // 从查询字符串中获取参数
         this.user_id = params.get('user_id');
-      },
+        console.log('User ID:', this.user_id);  // Check if user_id is retrieved correctly
+    },
+
       ConfirmTransfer(){
         axios.post("http://127.0.0.1:8000/user/money_transfer/",{
           account_out_id :this.toTransferInfo.account_out_id,
@@ -93,9 +102,15 @@
         })
       },
       ConfirmLoan(){
+        this.fetchDataFromUrl();
         window.location.href =
             "/loan_user?user_id=" + this.user_id ; // 函数内部进行超链接跳转
-      }
+      },
+      ConfirmCreditcard(){
+        this.fetchDataFromUrl();
+        window.location.href =
+            "/credit_user?user_id=" + this.user_id ; // 函数内部进行超链接跳转
+      },
     },
     mounted() {
     }

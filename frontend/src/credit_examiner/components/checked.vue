@@ -57,7 +57,7 @@ export default {
         {
           apply_id:1,
           apply_date: "",
-          apply_result: '',
+          apply_result: false,
           account_id: 1, // online_user_id
           credit: '',
           examiner_id: 1,
@@ -99,9 +99,13 @@ export default {
         apply_id: this.newCardApplyId,
       })
           .then(response => {
+            if(response.data.status === "success") {
               ElMessage.success("开户成功")
               this.newCardVisible = false
               this.QueryApplications()
+            } else {
+              ElMessage.error("开户失败")
+            }
           })
           .catch(error => {
             console.error('Error fetching examiners:', error);

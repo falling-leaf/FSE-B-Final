@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_apscheduler',
+    'rest_framework',
     'counteropt',
     'common',
     'login',
@@ -94,7 +95,7 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': 'why1445675246',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '1024',
     }
 }
 

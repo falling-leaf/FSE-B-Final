@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory} from 'vue-router'
-import Creditcard from "../components/creditcard.vue";
+import Creditcard from "../components/credit_user.vue";
 //import 自定义组件名 from 路径
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,10 +7,10 @@ const router = createRouter({
 
         {
             path: '/',
-            redirect: '/user/creditcard'
+            redirect: '/credit_user'
         },
         {
-            path: '/user/creditcard',
+            path: '/credit_user',
             component: Creditcard,
         }
     ]
