@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     handleSellCurrency(row) {
-      console.log(row)
+      this.$router.push("/FExchange/user/sell?currency_name=" + row.currency_name + "&user_id=" + this.userId)
     },
     fetchDataFromUrl() {
       const url = new URL(window.location);

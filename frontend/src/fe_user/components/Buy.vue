@@ -16,7 +16,7 @@
       <el-button class="but" @click="inputPassword">确定</el-button>
       <el-button class="but" @click="GoBack">取消</el-button>
 
-      <el-dialog v-model="isInputPassword" :title="'搜索条件'" width="30%"
+      <el-dialog v-model="isInputPassword" :title="'购买外币'" width="30%"
         align-center>
 
         <div
@@ -79,7 +79,7 @@ export default {
       userId: 1,
       isInputPassword: false,
       password: "",
-      account: "",//写一个获取account
+      account: "",
     }
   },
   mounted() {
@@ -102,19 +102,24 @@ export default {
       this.isInputPassword = true
     },
     confirmTransaction() {
-      axios.post("http://127.0.0.1:8000/user/sign_in/", {
-          user_name: this.account,
+      axios.post("/FExchange/user/account/login", {
+          account_id: this.selected_account_id,
           password: this.password,
         })
         .then((response) => {
-          this.UpdateAccount()
-          this.UpdateBuyHistory()
-          this.UpdateHoldings()
-          this.GoBack()
-          this.isInputPassword = false
+          console.log(response)
+          if(response.data.status === 'success') {
+            this.UpdateAccount()
+            this.UpdateBuyHistory()
+            this.UpdateHoldings()
+            this.GoBack()
+            this.isInputPassword = false
+            //ElMessage.success(response.data.message)
+          } else {
+            //ElMessage.warning(response.data.message)
+          }
         })
         .catch((error) => {
-          ElMessage.error(error.response.data.error);
           this.password = "";
         });
     },

@@ -8,7 +8,6 @@
 
     <el-button class="but"@click="handleConfirmAdd">确定添加</el-button>
 
-    <el-button class="but" @click="Retreat">取消</el-button>
     </div>
   </template>
   
@@ -57,9 +56,6 @@
       async GetCurrency() {
         
       },
-      Retreat() {
-        this.$router.push('/FExchange/user/currency');
-      },
       async handleConfirmAdd() {
         let addParams = {}
         if(this.name != '') {
@@ -85,7 +81,7 @@
           .then(response => {
             //console.log(response.data);
             if (response.data.status === 'success') {
-              ElMessage.success('Currency add successfully');
+              ElMessage.success('外币添加成功');
               this.name = ''
               this.latest_buy = ''
               this.latest_sell = ''

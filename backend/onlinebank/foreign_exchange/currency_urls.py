@@ -8,4 +8,5 @@ urlpatterns = [
     re_path('Operator/modify',currency_views.handleModifyRateCurrency),
     re_path('Operator/rename',currency_views.handleModifyNameCurrency),
     re_path('user/currency/rate',currency_views.get_currency),
+    re_path('user/account/login',currency_views.login),
 ]

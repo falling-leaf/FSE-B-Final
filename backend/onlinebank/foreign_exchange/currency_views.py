@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from foreign_exchange.models import Currency
 from foreign_exchange.models import RateUpdateRecord
+from foreign_exchange.models import account
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from foreign_exchange.models import ForeignExchangeOperator
@@ -144,7 +145,7 @@ def handleModifyRateCurrency(request):
         current_time = datetime.datetime.now()
         try:
             new_update_record = RateUpdateRecord(
-                currency_id = currency,
+                currency = currency,
                 buying_rate = modify_buy_rate,
                 selling_rate= modify_sell_rate,
                 update_datetime = current_time
@@ -185,6 +186,31 @@ def handleModifyNameCurrency(request):
             response_data = {
                 'status': 'error',
                 'message': '重命名 Currency 失败',
+                'error': str(e)
+            }           
+    return JsonResponse(response_data)
+
+@csrf_exempt
+def login(request):
+    
+    data = json.loads(request.body)
+    account_id = data.get('account_id')
+    password = data.get('password')
+
+    account_ = account.objects.get(account_id=account_id)
+    password_ = account_.password
+    if(password != password_):
+        return JsonResponse({'status': 'error', 'message': '密码错误！' })
+    else:
+        try:
+            response_data = {
+                'status': 'success',
+                'message': '密码正确！'
+            }
+        except Exception as e:
+            response_data = {
+                'status': 'error',
+                'message': '不知道为什么错了',
                 'error': str(e)
             }           
     return JsonResponse(response_data)

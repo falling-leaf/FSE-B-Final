@@ -11,8 +11,8 @@
                         <input type="radio" v-model="selectedOption" value="female"> 女
                 </h1>
                 <h1 class="h11">电话号码：<input type="text" id="phone_number" v-model="phone_number" class="inputtext" required></h1>
-                <h1 class="h11">密码：<input type="text" id="password" v-model="password" class="inputtext" required></h1>
-                <h1 class="h11">密码：<input type="text" id="confirm_password" v-model="confirm_password" class="inputtext" required></h1>
+                <h1 class="h11">密码：<input type="password" id="password" v-model="password" class="inputtext" required></h1>
+                <h1 class="h11">确认密码：<input type="password" id="confirm_password" v-model="confirm_password" class="inputtext" required></h1>
                 <h1 class="h11">职位：外汇操作员</h1>
                 <h1 class="h11">是否在任：是</h1>
                 <h1 class="h11">其他信息：<input type="text" id="other_information" v-model="other_information" class="inputtext" required></h1>
@@ -257,7 +257,8 @@ export default {
                 });
             }
             else{
-                alert('两次密码不一致！')
+                ElMessage.warning('两次密码不一致！')
+                return;
             }
             this.isAddOperator = false
             this.searchRecords(1)
