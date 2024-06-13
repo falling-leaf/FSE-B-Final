@@ -19,22 +19,11 @@ def cashier_add(request):
             return JsonResponse({"error": "柜员编号不存在"}, status=403)
         if not filter_cashier[0].manage_authority:
             return JsonResponse({"error": "柜员无开设账户权限"}, status=403)
-        filter_online_user = online_user.objects.filter(identity_card=data.get('identity_card'))
-        if not filter_online_user.exists():
-            new_online_user = online_user(
-                password=data.get('password'),
-                identity_card=data.get('identity_card'),
-            )
-            new_online_user.save()
         filter_account = account.objects.filter(identity_card=data.get('identity_card'))
         if filter_account.count() >= 4:
             return JsonResponse({"error": "账户数量超过限制"}, status=403)
-        filter_online_user = online_user.objects.filter(identity_card=data.get('identity_card'))
-        if not filter_online_user.exists():
-            return JsonResponse({"error": "添加online_user失败"}, status=403)
         new_account = account(
             password=data.get('password'),
-            user_id=filter_online_user[0],
             identity_card=data.get('identity_card'),
             card_type=1,#1为银行卡
         )
@@ -153,7 +142,7 @@ def cashier_time_deposit(request):
                 return JsonResponse({"error": "账户挂失/冻结"}, status=403)
             # 更新用户存款情况
             filter_account.current_deposit += data.get('deposit_amount')
-            filter_account.balance += data.get('deposit_amount')
+            #filter_account.balance += data.get('deposit_amount')
             filter_account.save()
             # 更新存款记录
             new_deposit_record = deposit_record(
