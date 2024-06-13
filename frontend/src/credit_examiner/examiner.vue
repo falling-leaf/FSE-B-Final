@@ -6,15 +6,15 @@
                  style="height:100%; width: 100%; overflow: hidden" :router="true">
           <div style="color: white; background-color: #181818;
           width: 100%; height: 10vh; display: flex; align-items: center; justify-content: center;">
-            信用卡审核员
+            信用卡审核员 {{this.examiner_id}}
           </div>
-          <el-menu-item index="/credit_examiner/checked">
+          <el-menu-item :index=" '/credit_examiner/checked?examiner_id=' + this.examiner_id">
             <el-icon>
               <Avatar />
             </el-icon>
             <span>已审核</span>
           </el-menu-item>
-          <el-menu-item index="/credit_examiner/unchecked">
+          <el-menu-item :index=" '/credit_examiner/unchecked?examiner_id=' + this.examiner_id">
             <el-icon>
               <Avatar />
             </el-icon>
@@ -40,7 +40,28 @@
   </div>
 </template>
 
-<script setup>
+<script>
+export default {
+  data() {
+    return {
+      examiner_id: '',
+    }
+  },
+  methods: {
+    fetchDataFromUrl() {
+      // 获取当前URL
+      const url = new URL(window.location);
+      // 创建URLSearchParams对象
+      const params = new URLSearchParams(url.search);
+      // 从查询字符串中获取参数
+      this.examiner_id = params.get('examiner_id');
+    }
+
+  },
+  created() {
+    this.fetchDataFromUrl();
+  }
+}
 </script>
 
 <style scoped>
