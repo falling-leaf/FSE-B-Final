@@ -215,7 +215,7 @@ export default {
         .then((response) => {
           this.employee.id = response.data.loan_examiner_id;
           window.location.href =
-            "/auditors?auditorID=" + this.employee.id; // 函数内部进行超链接跳转
+            "/auditors?auditorID=" + this.employee.id + "/check"; // 函数内部进行超链接跳转
         })
         .catch((error) => {
           ElMessage.error(error.response.data.error);

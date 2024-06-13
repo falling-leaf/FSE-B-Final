@@ -69,7 +69,6 @@ export default {
       // 从查询字符串中获取参数
       this.user_id = params.get('user_id');
     }
-
   }
 };
 </script>

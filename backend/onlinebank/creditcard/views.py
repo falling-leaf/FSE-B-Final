@@ -442,9 +442,9 @@ def get_examiners(request):
         for examiner in examiners:
             employee_ = employee.objects.get(employee_id=examiner.employee_id)
             if employee_.employee_sex == 0:
-                sex = 'male'
+                sex = '男'
             else:
-                sex = 'female'
+                sex = '女'
             examiner_info.append({
                 'examiner_id': examiner.credit_examiner_id,
                 'employee_name': employee_.employee_name,

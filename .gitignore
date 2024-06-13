@@ -26,3 +26,7 @@ __pycache__/
 *.sw?
 *.pyc
 
+/frontend/node_modules
+/backend/onlinebank/bank_app/__pycache__
+/.idea
+*.ts

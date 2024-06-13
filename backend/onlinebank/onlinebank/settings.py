@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_apscheduler',
+    'rest_framework',
     'counteropt',
     'common',
     'login',
@@ -90,11 +91,11 @@ WSGI_APPLICATION = 'onlinebank.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'fse_final',
+        'NAME': 'banksystem',
         'USER': 'root',
-        'PASSWORD': 'lmy1009MySQL*',
+        'PASSWORD': 'Sql_201208',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '1024',
     }
 }
 
