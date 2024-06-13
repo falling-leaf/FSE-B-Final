@@ -90,6 +90,7 @@ export default {
           })
     },
     ConfirmChangeState() {
+      this.fetchDataFromUrl();
       axios.post("/creditcard/change_application_state",
       {
         apply_id: this.checkInfo.apply_id,
@@ -110,10 +111,23 @@ export default {
             ElMessage.error("修改失败" + error);
           });
     },
+    fetchDataFromUrl() {
+        // 获取当前URL
+        const url = new URL(window.location);
+        console.log(url);  // Use console.log instead of print
+        // 创建URLSearchParams对象
+        const params = new URLSearchParams(url.search);
+        console.log(Array.from(params.entries()));  // Log all parameters to see what is available
+
+        // 从查询字符串中获取参数
+        this.examiner_id = params.get('examiner_id');
+        console.log('User ID:', this.examiner_id);  // Check if user_id is retrieved correctly
+    },
 
   },
   mounted() {
-    this.QueryApplications()
+    this.QueryApplications();
+    this.fetchDataFromUrl();
   },
 }
 </script>
