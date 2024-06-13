@@ -39,7 +39,7 @@ export default {
         currency_name: '',
         amount: 0,
       }],
-      userId: 1,
+      userId: 0,
       Delete,
       Edit,
       Search,
@@ -48,11 +48,20 @@ export default {
       isShow: true,
     }
   },
+  created() {
+    this.fetchDataFromUrl();
+  },
   methods: {
     handleSellCurrency(row) {
-      console.log(row)
+      this.$router.push("/FExchange/user/sell?currency_name=" + row.currency_name + "&user_id=" + this.userId)
+    },
+    fetchDataFromUrl() {
+      const url = new URL(window.location);
+      const params = new URLSearchParams(url.search);
+      this.userId = params.get('user_id')
     },
     async getHolding() {
+      this.fetchDataFromUrl()
       this.tableData = []
 
       await axios.get('/FExchange/user/holding', { params: { person_id: this.userId } })

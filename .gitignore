@@ -30,3 +30,4 @@ __pycache__/
 /backend/onlinebank/bank_app/__pycache__
 /.idea
 *.ts
+/frontend/node_modules

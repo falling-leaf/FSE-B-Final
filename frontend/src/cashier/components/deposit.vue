@@ -4,9 +4,6 @@
     <!-- 标题和搜索框 -->
     <div style="margin-top: 20px; margin-left: 40px; font-size: 2em; font-weight: bold;">
         账户存款
-        <el-input v-model="toSearch" :prefix-icon="Search"
-            style=" width: 15vw;min-width: 150px; margin-left: 30px; margin-right: 30px; float: right; ;"
-            clearable />
     </div>
 
     <!-- 存款操作 -->
@@ -72,6 +69,7 @@
             <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
                 存款期限：
                 <el-input v-model="newTimeDepositInfo.deposit_term" style="width: 12.5vw;" clearable />
+                月
             </div>
             <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
                 是否自动续期：
@@ -214,6 +212,10 @@ export default {
                     this.DemandDepositVisible = false // 将对话框设置为不可见
                     this.QueryDeposits() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
             this.newDepositInfo = { // 待新建活期存款信息
                 account_id: '',
                 password: '',
@@ -236,6 +238,10 @@ export default {
                     this.TimeDepositVisible = false // 将对话框设置为不可见
                     this.QueryDeposits() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
             this.newTimeDepositInfo = {// 待新建定期存款信息
                 account_id: '',
                 password: '',

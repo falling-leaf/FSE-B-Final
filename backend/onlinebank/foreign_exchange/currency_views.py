@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from foreign_exchange.models import Currency
 from foreign_exchange.models import RateUpdateRecord
+from foreign_exchange.models import account
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from foreign_exchange.models import ForeignExchangeOperator
@@ -31,6 +32,31 @@ def get_all_currency(request):
 
     return JsonResponse(response)
 
+def get_currency(request):
+    response = {}
+
+    currencyName = request.GET.get('currency_name')
+
+    try:
+        currencies = Currency.objects.filter(currency_name=currencyName)
+        data = []
+
+        for c in currencies:
+            data.append({
+                'buying_rate': c.latest_exchange_buying_rate,
+                'selling_rate': c.latest_exchange_selling_rate,
+            })
+
+        # print(data)
+        response['rates'] = data
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
 @csrf_exempt
 def handleDeleteCurrency(request):
     data = json.loads(request.body)
@@ -43,9 +69,9 @@ def handleDeleteCurrency(request):
         try:
             currency = Currency.objects.get(currency_id = currency_id_to_delete)
             currency.delete()
-            return JsonResponse({'status': 'success', 'message': 'Currency deleted successfully'})
+            return JsonResponse({'status': 'success', 'message': '外币删除成功'})
         except Currency.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Currency not found' })
+            return JsonResponse({'status': 'error', 'message': '未找到该外币' })
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -84,7 +110,7 @@ def handleAddCurrency(request):
                 update_datetime = current_time
             )
             new_update_record.save()
-            return JsonResponse({'status': 'success', 'message': 'Currency added successfully'})
+            return JsonResponse({'status': 'success', 'message': '外币添加成功'})
         except Exception as e:
             response_data = {
                 'status': 'error',
@@ -112,14 +138,14 @@ def handleModifyRateCurrency(request):
         except Exception as e:
             response_data = {
                 'status': 'error',
-                'message': '修改 Currency 失败',
+                'message': '修改外币失败',
                 'error': str(e)
             }
         
         current_time = datetime.datetime.now()
         try:
             new_update_record = RateUpdateRecord(
-                currency_id = currency,
+                currency = currency,
                 buying_rate = modify_buy_rate,
                 selling_rate= modify_sell_rate,
                 update_datetime = current_time
@@ -127,7 +153,7 @@ def handleModifyRateCurrency(request):
             new_update_record.save()
             response_data = {
                 'status': 'success',
-                'message': '修改 Currency 成功'
+                'message': '修改外币成功'
             }
         except Exception as e:
             response_data = {
@@ -154,12 +180,37 @@ def handleModifyNameCurrency(request):
             currency.save()
             response_data = {
                 'status': 'success',
-                'message': '重命名 Currency 成功'
+                'message': '重命名外币成功'
             }
         except Exception as e:
             response_data = {
                 'status': 'error',
-                'message': '重命名 Currency 失败',
+                'message': '重命名外币失败',
+                'error': str(e)
+            }           
+    return JsonResponse(response_data)
+
+@csrf_exempt
+def login(request):
+    
+    data = json.loads(request.body)
+    account_id = data.get('account_id')
+    password = data.get('password')
+
+    account_ = account.objects.get(account_id=account_id)
+    password_ = account_.password
+    if(password != password_):
+        return JsonResponse({'status': 'error', 'message': '密码错误！' })
+    else:
+        try:
+            response_data = {
+                'status': 'success',
+                'message': '密码正确！'
+            }
+        except Exception as e:
+            response_data = {
+                'status': 'error',
+                'message': '不知道为什么错了',
                 'error': str(e)
             }           
     return JsonResponse(response_data)

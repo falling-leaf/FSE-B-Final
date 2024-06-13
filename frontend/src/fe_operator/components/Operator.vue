@@ -32,7 +32,7 @@
         <el-dialog v-model="isModifyRateCurrency" :title="'更新汇率'" width="35%"
             align-center>
             <h1 class="h11">预期买入价：<input type="text" id="modify_latest_buy" v-model="modify_latest_buy" class="input" required></h1>
-            <h1 class="h11">预期售出价：<input type="text" id="modify_latest_sell" v-model="modify_latest_sell" class="input" required></h1>
+            <h1 class="h11">预期卖出价：<input type="text" id="modify_latest_sell" v-model="modify_latest_sell" class="input" required></h1>
             
             <template #footer>
                 <span class="dialog-footer">
@@ -182,7 +182,7 @@ export default {
                         this.tableData = response.data.results;
                     })
                 .catch(error => {
-                    ElMessage.warning('Error fetching data:', error);
+                    //ElMessage.warning('Error fetching data:', error);
                 });
             }
             else
@@ -196,40 +196,41 @@ export default {
             if(this.mofidy_name != '') {
                 renameParams.currency_name = this.modify_name
             }
-            renameParams.currency_id = this.selectedRowData.currency_id
+            renameParams.currency_id = this.selectedRowData.currency
             renameParams.operator_id = this.foreign_exchange_operator_id
+            console.log(renameParams)
             await axios.post('/FExchange/Operator/rename', renameParams)
             .then(response => {
                 console.log(response.data);
                 if (response.data.status === 'success') {
-                    ElMessage.warning('Currency rename successfully')
+                    ElMessage.success('外币重命名成功')
+                    this.searchRecords(1)
                 } else {
-                    alert('Error: ' + response.data.message);
+                    //ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
                 ElMessage.warning('重命名请求发送失败', error);
             });
-            location.reload();
         },
         async handleDeleteCurrency(){
             this.isConfirmDeleteCurrency = false
             let deleteParams = {}
-            deleteParams.currency_id = this.selectedRowData.currency_id
+            deleteParams.currency_id = this.selectedRowData.currency
             deleteParams.operator_id = this.foreign_exchange_operator_id
             await axios.post('/FExchange/Operator/delete',deleteParams)
             .then(response => {
                 console.log(response.data);
                 if (response.data.status === 'success') {
-                    ElMessage.warning('Currency deleted successfully');
+                    ElMessage.success('外币删除成功');
+                    this.searchRecords(1)
                 } else {
-                alert('Error: ' + response.data.message);
+                    //ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
                 ElMessage.warning('删除请求发送失败', error);
             });
-            location.reload();
         },
         async handleModifyRateCurrency(){
             this.isModifyRateCurrency = false
@@ -240,33 +241,36 @@ export default {
             if(this.modify_latest_sell != '') {
                 modifyParams.selling_rate = this.modify_latest_sell
             }
-            modifyParams.currency_id = this.selectedRowData.currency_id
+            modifyParams.currency_id = this.selectedRowData.currency
             modifyParams.operator_id = this.foreign_exchange_operator_id
             await axios.post('/FExchange/Operator/modify', modifyParams)
             .then(response => {
                 console.log(response.data);
                 if (response.data.status === 'success') {
-                    ElMessage.warning('Currency modify successfully')
+                    ElMessage.warning('外币更新成功')
+                    this.searchRecords(1)
                 } else {
-                    alert('Error: ' + response.data.message);
+                    //ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
                 ElMessage.warning('添加请求发送失败', error);
             });
-            location.reload();
         },
         async deletes(row) {
             this.selectedRowData = row
+            console.log(row)
             this.isConfirmDeleteCurrency = true
             this.detailTitle = this.selectedRowData.currency_name
         },
         async modifys(row) {
             this.selectedRowData = row
+            console.log(row)
             this.isModifyRateCurrency = true
         },
         async rename(row) {
             this.selectedRowData = row
+            console.log(row)
             this.isModifyNameCurrency = true
         },
         myTimeToLocal(inputTime){

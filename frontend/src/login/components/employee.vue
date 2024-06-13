@@ -280,7 +280,7 @@ export default {
         .then((response) => {
           this.employee.id = response.data.id;
           window.location.href =
-            "/credit_examiner?CreditExaminerID=" + this.employee.id; // 函数内部进行超链接跳转
+            "/credit_examiner?examiner_id=" + this.employee.id; // 函数内部进行超链接跳转
         })
         .catch((error) => {
           ElMessage.error(error.response.data.error + error);

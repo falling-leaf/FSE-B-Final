@@ -28,9 +28,7 @@ def login_sysManager(request):
             return JsonResponse({"error": "密码错误"}, status = 403)
         rs_dict = {}
         rs_dict["id"] = check_id
-        rs = []
-        rs.append(rs_dict)
-        return JsonResponse(rs, safe = False)
+        return JsonResponse(rs_dict, safe = False)
     elif request.method == 'OPTIONS':
         return JsonResponse({"success": "OPTION operation"}, status = 200)
     else: return JsonResponse({"error": "Method not allowed"}, status = 405)

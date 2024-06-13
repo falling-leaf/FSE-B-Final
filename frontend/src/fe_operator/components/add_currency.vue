@@ -8,7 +8,6 @@
 
     <el-button class="but"@click="handleConfirmAdd">确定添加</el-button>
 
-    <el-button class="but" @click="Retreat">取消</el-button>
     </div>
   </template>
   
@@ -57,28 +56,37 @@
       async GetCurrency() {
         
       },
-      Retreat() {
-        this.$router.push('/FExchange/user/currency');
-      },
       async handleConfirmAdd() {
         let addParams = {}
         if(this.name != '') {
-            addParams.currency_name = this.name
+          addParams.currency_name = this.name
+        } else {
+          ElMessage.warning("外币名称不能为空")
+          return;
         }
         if(this.latest_buy != '') {
           addParams.latest_exchange_buying_rate = this.latest_buy
+        } else {
+          ElMessage.warning("买入价不能为空")
+          return;
         }
         if(this.latest_sell != '') {
           addParams.latest_exchange_selling_rate = this.latest_sell
+        } else {
+          ElMessage.warning("卖出价不能为空")
+          return;
         }
         addParams.operator_id= this.foreign_exchange_operator_id
         await axios.post('/FExchange/Operator/add', addParams)
           .then(response => {
-            console.log(response.data);
+            //console.log(response.data);
             if (response.data.status === 'success') {
-              ElMessage.warning('Currency add successfully');
+              ElMessage.success('外币添加成功');
+              this.name = ''
+              this.latest_buy = ''
+              this.latest_sell = ''
             } else {
-              alert('Error: ' + response.data.message);
+              ElMessage.error(response.data.message)
             }
           })
         .catch(error => {

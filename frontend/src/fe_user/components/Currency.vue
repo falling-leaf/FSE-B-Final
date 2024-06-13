@@ -126,6 +126,7 @@ export default {
                 value: '',
             }],
             detailTitle: '',
+            userId: 1,
         }
     },
     computed: {
@@ -133,12 +134,51 @@ export default {
             return this.tableData;
         }
     },
+    created() {
+      this.fetchDataFromUrl();
+    },
     methods: {
-        handleBuyCurrency() {
-            this.$router.push('/FExchange/user/buy')
+        fetchDataFromUrl() {
+            // 获取当前URL
+            const url = new URL(window.location);
+
+            // 创建URLSearchParams对象
+            const params = new URLSearchParams(url.search);
+
+            // 从查询字符串中获取参数
+            this.userId = params.get('user_id');
         },
-        handleSellCurrency() {
-            this.$router.push('/FExchange/user/sell')
+        async handleBuyCurrency() {
+            this.$router.push("/FExchange/user/buy?currency_name=" + this.selectedRowData.currency_name + "&user_id=" + this.userId)
+        },
+        async handleSellCurrency() {
+            this.fetchDataFromUrl()
+            let queryParams = {}
+            if(this.selectedRowData != '') {
+                queryParams.currency_name = this.selectedRowData.currency_name
+            } 
+
+            if(this.userId != 0) {
+                queryParams.person_id = this.userId
+            } 
+
+            let confirm = 0;
+            await axios.get('/FExchange/user/currency/amount', { params: queryParams })
+                .then(response => {
+                    //console.log(response.data)
+                    if(response.data.error_num === 0) {
+                        if(response.data.holdings.length !== 0) {
+                            confirm = 1
+                        }
+                    } else {
+                        ElMessage.error("搜索请求错误")
+                    }
+                })
+            if(confirm !== 0) {
+                this.$router.push("/FExchange/user/sell?currency_name=" + this.selectedRowData.currency_name + "&user_id=" + this.userId)
+            } else {
+                ElMessage.warning("未持有该外币")
+            }
         },
         handleStartDateChange(date, dateString) {
             this.startDate = date;

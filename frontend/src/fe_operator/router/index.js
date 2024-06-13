@@ -6,14 +6,14 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            redirect: '/FExchange_operator'
+            redirect: '/FExchange/operator'
         },
         {
-            path: '/FExchange_operator',
+            path: '/FExchange/operator',
             component: Operator
         },
         {
-            path: '/FExchange_operator/addcurrency',
+            path: '/FExchange/operator/addcurrency',
             component: Addcurrency
         },
 

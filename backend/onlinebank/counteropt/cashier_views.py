@@ -14,27 +14,21 @@ def cashier_add(request):
     if request.method == 'POST':
         # 将请求体中的数据转化为json格式
         data = json.loads(request.body.decode('utf-8'))
-        filter_online_user = online_user.objects.filter(identity_card=data.get('identity_card'))
-        if not filter_online_user.exists():
-            new_online_user = online_user(
-                password=data.get('password'),
-                identity_card=data.get('identity_card'),
-            )
-            new_online_user.save()
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashierID'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].manage_authority:
+            return JsonResponse({"error": "柜员无开设账户权限"}, status=403)
         filter_account = account.objects.filter(identity_card=data.get('identity_card'))
         if filter_account.count() >= 4:
             return JsonResponse({"error": "账户数量超过限制"}, status=403)
-        filter_online_user = online_user.objects.filter(identity_card=data.get('identity_card'))
-        if not filter_online_user.exists():
-            return JsonResponse({"error": "添加online_user失败"}, status=403)
         new_account = account(
             password=data.get('password'),
-            user_id=filter_online_user[0],
             identity_card=data.get('identity_card'),
-            card_type=data.get('cashierID'),
+            card_type=1,#1为银行卡
         )
         new_account.save()
-        return_data = {'id': new_account.account_id}
+        return_data = {'id': new_account.account_id, "success": "开设账户成功"}
         return JsonResponse(return_data, status=200)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
@@ -51,7 +45,7 @@ def cashier_query_account(request):
         account_data = {}
         account_data['id'] = filter_accounts.account_id
         account_data['password'] = filter_accounts.password
-        account_data['identity_card'] = filter_accounts.identity_card.identity_card
+        account_data['identity_card'] = filter_accounts.identity_card
         account_data['balance'] = filter_accounts.balance
         account_data['currentDeposit'] = filter_accounts.current_deposit
         account_data['uncreditedDeposit'] = filter_accounts.uncredited_deposit
@@ -94,6 +88,11 @@ def cashier_all_deposits(request):
 def cashier_demand_deposit(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashier_id'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].trade_authority:
+            return JsonResponse({"error": "柜员无交易操作权限"}, status=403)
         if data.get('deposit_amount') <= 0:
             return JsonResponse({"error": "活期存款金额错误"}, status=403)
         filter_account = account.objects.filter(account_id=data.get('account_id'), password=data.get('password'))
@@ -129,6 +128,11 @@ def cashier_demand_deposit(request):
 def cashier_time_deposit(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashier_id'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].trade_authority:
+            return JsonResponse({"error": "柜员无交易操作权限"}, status=403)
         if data.get('deposit_amount') <= 0:
             return JsonResponse({"error": "定期存款金额错误"}, status=403)
         filter_account = account.objects.filter(account_id=data.get('account_id'), password=data.get('password'))
@@ -138,7 +142,7 @@ def cashier_time_deposit(request):
                 return JsonResponse({"error": "账户挂失/冻结"}, status=403)
             # 更新用户存款情况
             filter_account.current_deposit += data.get('deposit_amount')
-            filter_account.balance += data.get('deposit_amount')
+            #filter_account.balance += data.get('deposit_amount')
             filter_account.save()
             # 更新存款记录
             new_deposit_record = deposit_record(
@@ -205,6 +209,11 @@ def cashier_all_withdrawls(request):
 def cashier_withdrawl(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashier_id'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].trade_authority:
+            return JsonResponse({"error": "柜员无交易操作权限"}, status=403)
         if data.get('withdrawl_amount') <= 0:
             return JsonResponse({"error": "取款金额错误"}, status=403)
         filter_account = account.objects.filter(account_id=data.get('account_id'), password=data.get('password'))
@@ -269,6 +278,11 @@ def cashier_all_transfers(request):
 def cashier_transfer(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashier_id'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].trade_authority:
+            return JsonResponse({"error": "柜员无交易操作权限"}, status=403)
         if data.get('transfer_amount') <= 0:
             return JsonResponse({"error": "转账金额错误"}, status=403)
         filter_out_account = account.objects.filter(account_id=data.get('account_out_id'), password=data.get('password'))
@@ -349,6 +363,11 @@ def cashier_all_records(request):
 def cashier_update_auto_renew(request):
     if request.method == "POST":
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashier_id'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].manage_authority:
+            return JsonResponse({"error": "柜员无交易操作权限"}, status=403)
         modify_deposit = deposit_record.objects.get(deposit_record_id=data.get("record_id"))
         if (account.objects.get(account_id=modify_deposit.account_id).is_frozen
                 or account.objects.get(account_id=modify_deposit.account_id).is_lost):
@@ -437,6 +456,11 @@ def demand_deposit_record_update():
 def cashier_unfreeze(request):
     if request.method == "POST":
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashierID'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].manage_authority:
+            return JsonResponse({"error": "柜员无状态操作权限"}, status=403)
         modify_account = account.objects.get(account_id = data.get("accountID"))
         modify_account.is_frozen = False
         modify_account.save()
@@ -449,6 +473,11 @@ def cashier_unfreeze(request):
 def cashier_freeze(request):
     if request.method == "POST":
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashierID'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].manage_authority:
+            return JsonResponse({"error": "柜员无状态操作权限"}, status=403)
         modify_account = account.objects.get(account_id = data.get("accountID"))
         modify_account.is_frozen = True
         modify_account.save()
@@ -461,6 +490,11 @@ def cashier_freeze(request):
 def cashier_reportloss(request):
     if request.method == "POST":
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashierID'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].manage_authority:
+            return JsonResponse({"error": "柜员无状态操作权限"}, status=403)
         modify_account = account.objects.get(account_id = data.get("accountID"))
         modify_account.is_lost = True
         modify_account.save()
@@ -473,6 +507,11 @@ def cashier_reportloss(request):
 def cashier_reissue(request):
     if request.method == "POST":
         data = json.loads(request.body.decode('utf-8'))
+        filter_cashier = cashier.objects.filter(cashier_id=data.get('cashierID'))
+        if not filter_cashier.exists():
+            return JsonResponse({"error": "柜员编号不存在"}, status=403)
+        if not filter_cashier[0].manage_authority:
+            return JsonResponse({"error": "柜员无状态操作权限"}, status=403)
         delete_account = account.objects.get(account_id = data.get("account"))
         old_id = delete_account.account_id
         new_account = account(

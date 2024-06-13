@@ -160,16 +160,6 @@ export default {
         }
     },
     computed: {
-        fetchDataFromUrl() {
-            // 获取当前URL
-            const url = new URL(window.location);
-
-            // 创建URLSearchParams对象
-            const params = new URLSearchParams(url.search);
-
-            // 从查询字符串中获取参数
-            this.cashierID = params.get('cashierID');
-        },
         fitlerTableData_Deposit() { // 搜索规则
             return this.deposit_records.filter(
                 (tuple) =>
@@ -208,6 +198,7 @@ export default {
 
             // 从查询字符串中获取参数
             this.cashierID = params.get('cashierID');
+            console.log(this.cashierID);
         },
         async QueryRecords() {
             // console.log(this.deposit_records)
@@ -252,18 +243,26 @@ export default {
             console.log(data)
             axios.post("/cashier/update-auto-renew/",
                 { // 请求体
-                    record_id: data
+                    record_id: data,
+                    cashier_id: this.cashierID,
                 })
                 .then(response => {
                     ElMessage.success("更改成功") // 显示消息提醒
                     this.QueryRecords() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
         }
     },
     mounted() { // 当页面被渲染时
         this.QueryRecords() // 查询存款记录
         this.date = new Date();
-        console.log(this.date)
+        console.log(this.date);
+    },
+    created() {
+        this.fetchDataFromUrl();
     }
 
 }

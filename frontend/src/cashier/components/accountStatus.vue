@@ -145,11 +145,16 @@
         axios.post('/cashier/unfreeze/',
             {
               accountID : this.unfreezeAccountID,
+              cashierID : this.cashierID,
             }).then(response=>{
               ElMessage.success("账户解冻成功")
               this.unfreezeVisible = false
               this.account.isFrozen = false
         })
+        .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
       },
       ConfirmFreezeAccount() {
         // this.account.isFrozen = true
@@ -157,11 +162,16 @@
         axios.post('/cashier/freeze/',
             {
               accountID : this.freezeAccountID,
+              cashierID : this.cashierID,
             }).then(response=>{
           ElMessage.success("账户冻结成功")
           this.freezeVisible = false
           this.account.isFrozen = true
         })
+        .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
       },
       ConfirmReportLossAccount() {
         // this.account.isLost = true
@@ -169,12 +179,17 @@
         axios.post('/cashier/reportloss/',
             {
               accountID: this.reportLossAccountID,
+              cashierID : this.cashierID,
             }).then(response=>{
               ElMessage.success("账户挂失成功")
               this.reportLossVisible = false
               this.account.isLost = true
               this.reportLossVisible = false
         })
+        .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
       },
       ConfirmReissueAccount() {
         // this.reissueVisible = false
@@ -183,13 +198,19 @@
         axios.post('/cashier/reissue/',
             {
               account: this.reissueAccountID,
-            }).then(response=>{
+              cashierID : this.cashierID,
+            })
+            .then(response=>{
             this.newReissueAccountID = response.data.accountID;
             ElMessage.success("账户补发成功，新账户ID: "+ this.newReissueAccountID);
             this.reissueVisible = false
             this.isShow = false
             this.queryAccountID = ''
-        })
+            })
+            .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
       },
       QueryAccount(){
         this.account = {} // 清空账号信息

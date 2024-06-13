@@ -137,7 +137,7 @@
           <el-button type="primary" @click="ConfirmModifyExaminer"
                      :disabled=" modifyInfo.new_account==='' ||
                      modifyInfo.new_password==='' || modifyInfo.new_employee_name.length===0 ||
-                     modifyInfo.new_identity_card.length===0 && modifyInfo.new_phone_number.length===0
+                     modifyInfo.new_identity_card.length!==18 && modifyInfo.new_phone_number.length===0
                       ">确定</el-button>
         </span>
       </template>

@@ -1,37 +1,102 @@
+import datetime
 from django.http import JsonResponse
 from django.utils import timezone
 from foreign_exchange.models import Currency
 from django.views.decorators.csrf import csrf_exempt
 from foreign_exchange.models import ForeignExchangeTrading
 from django.views.decorators.http import require_http_methods
+from foreign_exchange.models import account, online_user
 import json
 
-@csrf_exempt  # 可选：用于处理跨站请求伪造（CSRF）保护
-def createTradeData(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)  # 从POST请求的body中获取参数
-        account_id = data.get('account_id')
-        rmb_amount = data.get('rmb_amount')
-        currency_amount = data.get('currency_amount')
-        person_id = data.get("person_id")
-        buy_or_sell = data.get("buy_or_sell")
-        currency_id = data.get('currency_id')
-        # 获取当前UTC时间
-        current_utc_time = timezone.now()
+@require_http_methods(["GET"])
+def currency_transfer_in(request):
+    response = {}
 
-        # 转换为本地时间
-        local_time = current_utc_time.astimezone(timezone.get_current_timezone())
+    account_id = int(request.GET.get('account_id'))
+    rmb_amount = float(request.GET.get('rmb_amount'))
 
-        # 提取日期和时间部分
-        date_part = local_time.date()
-        time_part = local_time.time()
-        sell_history = ForeignExchangeTrading(account__account_id=account_id, online_user__user_id = person_id, buy_or_sell = buy_or_sell, rmb_amount=rmb_amount, currency_amount=currency_amount, trading_datetime= date_part, trading_time = time_part,currency__currency_id = currency_id)
-        sell_history.save()
-        # 在这里进行进一步的处理和逻辑操作
+    try:
+        
+        a = account.objects.get(account_id=account_id)
+        a.transfer_in(rmb_amount)
 
-        return JsonResponse({'message': 'Sell request processed successfully'}, status=200)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
+@require_http_methods(["GET"])
+def currency_transfer_out(request):
+    response = {}
+
+    account_id = int(request.GET.get('account_id'))
+    rmb_amount = float(request.GET.get('rmb_amount'))
+    password = request.GET.get('password')
+
+    try:
+        
+        a = account.objects.get(account_id=account_id)
+        a.transfer_out(rmb_amount, password=password)
+
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
+@require_http_methods(["GET"])
+def get_user_account_name(request):
+    response = {}
+
+    user_id = int(request.GET.get('user_id'))
+
+    try:
+        
+        a = online_user.objects.get(user_id=user_id)
+        account_name = a.user_name
+
+        response['name'] = account_name
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
+@csrf_exempt
+def add_trading_history(request):
+    data = json.loads(request.body)
+    account_id = data.get('account_id')
+    rmb_amount = data.get('rmb_amount')
+    currency_amount = data.get('currency_amount')
+    person_id = data.get("user_id")
+    buy_or_sell = data.get("buy_or_sell")
+    currency_name = data.get('currency_name')
+
+    c = Currency.objects.get(currency_name=currency_name)
+
+    local_time = datetime.datetime.now()
+
+    account_ = account.objects.get(account_id=account_id)
+    online_user_ = online_user.objects.get(user_id=person_id)
+
+    sell_history = ForeignExchangeTrading(
+        account=account_, 
+        online_user=online_user_, 
+        buy_or_sell=buy_or_sell, 
+        rmb_amount=rmb_amount, 
+        currency_amount=currency_amount, 
+        trading_datetime=local_time,
+        currency=c)
+    sell_history.save()
+
+    return JsonResponse({'status': 'success', 'message': '历史记录添加成功'})
     
 @require_http_methods(["GET"])
 def get_histories(request):
@@ -53,7 +118,7 @@ def get_histories(request):
         if minDatetime != None:
             histories = histories.filter(trading_datetime__gte=minDatetime)
         if userId != None:
-            histories = histories.filter(online_user__person_id=userId)
+            histories = histories.filter(online_user__user_id=userId)
         if tradingState != None:
             histories = histories.filter(buy_or_sell=(tradingState == '买入'))
         if currencyName != None:

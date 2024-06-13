@@ -4,9 +4,6 @@
     <!-- 标题和搜索框 -->
     <div style="margin-top: 20px; margin-left: 40px; font-size: 2em; font-weight: bold;">
         账户取款
-        <el-input v-model="toSearch" :prefix-icon="Search"
-            style=" width: 15vw;min-width: 150px; margin-left: 30px; margin-right: 30px; float: right; ;"
-            clearable />
     </div>
 
     <!-- 取款操作 -->
@@ -137,6 +134,10 @@ export default {
                     this.WithdrawlVisible = false // 将对话框设置为不可见
                     this.QueryWithdrawls() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
         },
     },
     mounted() { // 当页面被渲染时
