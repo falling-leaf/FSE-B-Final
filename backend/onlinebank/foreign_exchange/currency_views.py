@@ -31,6 +31,31 @@ def get_all_currency(request):
 
     return JsonResponse(response)
 
+def get_currency(request):
+    response = {}
+
+    currencyName = request.GET.get('currency_name')
+
+    try:
+        currencies = Currency.objects.filter(currency_name=currencyName)
+        data = []
+
+        for c in currencies:
+            data.append({
+                'buying_rate': c.latest_exchange_buying_rate,
+                'selling_rate': c.latest_exchange_selling_rate,
+            })
+
+        # print(data)
+        response['rates'] = data
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
 @csrf_exempt
 def handleDeleteCurrency(request):
     data = json.loads(request.body)

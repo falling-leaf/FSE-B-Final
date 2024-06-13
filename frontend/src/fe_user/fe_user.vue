@@ -8,24 +8,30 @@
             width: 100%; height: 10vh; display: flex; align-items: center; justify-content: center;">
               外汇-用户
             </div>
-            <el-menu-item index="/FExchange/user">
+            <el-menu-item :index="'/FExchange/user?user_id=' + this.user_id">
               <el-icon>
                 <Avatar />
               </el-icon>
               <span>个人信息</span>
             </el-menu-item>
-            <el-menu-item index="/FExchange/user/currency">
+            <el-menu-item :index="'/FExchange/user/currency?user_id=' + this.user_id">
               <el-icon>
                 <Avatar />
               </el-icon>
               <span>外币列表</span>
             </el-menu-item>
-            <el-menu-item index="/FExchange/user/history">
+            <el-menu-item :index="'/FExchange/user/history?user_id=' + this.user_id">
               <el-icon>
                 <Avatar />
               </el-icon>
               <span>交易历史</span>
             </el-menu-item>
+            <div style="height: 30px"></div>
+            <a style="margin-left: 40px;">
+              <el-button @click="handle">
+                返回
+              </el-button>
+            </a>
             <div style="height: 30px"></div>
             <a href="/" style="margin-left: 40px;">
               <el-button type="danger">
@@ -48,10 +54,30 @@
   
   <script>
   export default {
+    data () {
+      return {
+        user_id: 1
+      }
+    },
+    created() {
+      this.fetchDataFromUrl();
+    },
     methods: {
+      handle() {
+        window.location.href =
+            "/online_user?user_id=" + this.user_id;
+      },
       LogOut() {
         this.$router.push('/another-page');
-      }
+      },
+      fetchDataFromUrl() {
+        // 获取当前URL
+        const url = new URL(window.location);
+        // 创建URLSearchParams对象
+        const params = new URLSearchParams(url.search);
+        // 从查询字符串中获取参数
+        this.user_id = params.get('user_id');
+      },
     }
   }
   </script>

@@ -23,7 +23,7 @@
             </div>
             <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
                 银行卡号:
-                <el-select v-model="this.tradingStateCondition" placeholder="请选择银行卡号" style="width: 12.5vw;">
+                <el-select v-model="this.tradingStateCondition" placeholder="买入/卖出" style="width: 12.5vw;">
                     <el-option label="买入" value="买入"></el-option>
                     <el-option label="卖出" value="卖出"></el-option>
                 </el-select>
@@ -91,7 +91,6 @@ export default {
                 currency_amount: 0,
                 trading_datetime: '',
             }],
-            userId: 1,
             pickerType: 'date',
             dateFormat: 'YYYY-MM-DD',
             Delete,
@@ -104,7 +103,7 @@ export default {
             maxTradingDatetimeCondition: '',
             minTradingDatetimeCondition: '',
             currencyNameCondition: '',
-            accountIdCondition: 0,
+            accountIdCondition: '',
             accountIdOptions: [{
                 label: '',
                 value: '',
@@ -116,9 +115,18 @@ export default {
             isDisplaySearchBox: false,
             startDate: null,
             endDate: null,
+            userId: 0,
         }
     },
+    created() {
+        this.fetchDataFromUrl();
+    },
     methods: {
+        fetchDataFromUrl() {
+            const url = new URL(window.location);
+            const params = new URLSearchParams(url.search);
+            this.userId = params.get('user_id')
+        },
         handleStartDateChange(date, dateString) {
             this.startDate = date;
             this.minTradingDatetimeCondition = dateString;
@@ -139,19 +147,24 @@ export default {
         async getAllAccountId() {
             this.accountIdOptions = []
 
-            /*await axios.get('url to get all accountId')
+            this.fetchDataFromUrl()
+            let queryParams = {}
+            if(this.userId != 0) {
+                queryParams.user_id = this.userId
+            } 
+
+            await axios.get('/FExchange/user/account', { params: queryParams })
                 .then(response => {
-                    //console.log(response.data)
-                    if(response.data.error_num === 0) {
-                        let datas = response.data.data
-                        datas.forEach(element => {
-                            this.options.push(element)
-                        })
-                    } else {
-                        ElMessage.error("银行卡号列表请求错误")
-                        //console.log(response.data.msg)
-                    }
-                })*/
+                if(response.data.error_num === 0) {
+                    let datas = response.data.data
+                    datas.forEach(element => {
+                    this.accountIdOptions.push(element)
+                    })
+                } else {
+                    ElMessage.error("卡号列表请求错误")
+                    //console.log(response.data.msg)
+                }
+                })
         },
         async getAllCurrency() {
             this.currencyOptions = []
@@ -171,46 +184,46 @@ export default {
                 })
         },
         async getHistory() {
-        this.tableData = []
+            this.tableData = []
 
-        let queryParams = {}
-        if(this.maxTradingDatetimeCondition != '') {
-            queryParams.maxDatetime = this.maxTradingDatetimeCondition
-        }
-        if(this.minTradingDatetimeCondition != '') {
-            queryParams.minDatetime = this.minTradingDatetimeCondition
-        }
-        if(this.tradingStateCondition != '') {
-            queryParams.tradingState = this.tradingStateCondition
-        }
-        if(this.currencyNameCondition != '') {
-            queryParams.currencyName = this.currencyNameCondition
-        }
-        if(this.accountIdCondition != 0) {
-            queryParams.accountId = this.accountIdCondition
-        }
-        if(this.userId != 0) {
-            queryParams.userId = this.userId
-        }
-        
-        await axios.get('/FExchange/user/history/get', { params: queryParams })
-            .then(response => {
-                //console.log(queryParams)
-                //console.log(response.data)
-                if(response.data.error_num === 0) {
-                    let datas = response.data.histories
-                    datas.forEach(element => {
-                    element.rmb_amount = parseFloat(element.rmb_amount).toFixed(2)
-                    element.currency_amount = parseFloat(element.currency_amount).toFixed(2)
-                    element.trading_datetime = this.myTimeToLocal(element.trading_datetime)
-                    this.tableData.push(element)
-                    this.isDisplaySearchBox = false
-                    })
-                } else {
-                    ElMessage.error("交易历史数据请求错误")
-                    //console.log(response.data.msg)
-                }
-            })
+            let queryParams = {}
+            if(this.maxTradingDatetimeCondition != '') {
+                queryParams.maxDatetime = this.maxTradingDatetimeCondition
+            }
+            if(this.minTradingDatetimeCondition != '') {
+                queryParams.minDatetime = this.minTradingDatetimeCondition
+            }
+            if(this.tradingStateCondition != '') {
+                queryParams.tradingState = this.tradingStateCondition
+            }
+            if(this.currencyNameCondition != '') {
+                queryParams.currencyName = this.currencyNameCondition
+            }
+            if(this.accountIdCondition != '') {
+                queryParams.accountId = this.accountIdCondition
+            }
+            if(this.userId != 0) {
+                queryParams.userId = this.userId
+            }
+            
+            await axios.get('/FExchange/user/history/get', { params: queryParams })
+                .then(response => {
+                    //console.log(queryParams)
+                    //console.log(response.data)
+                    if(response.data.error_num === 0) {
+                        let datas = response.data.histories
+                        datas.forEach(element => {
+                            element.rmb_amount = parseFloat(element.rmb_amount).toFixed(2)
+                            element.currency_amount = parseFloat(element.currency_amount).toFixed(2)
+                            element.trading_datetime = this.myTimeToLocal(element.trading_datetime)
+                            this.tableData.push(element)
+                        })
+                        this.isDisplaySearchBox = false
+                    } else {
+                        ElMessage.error("交易历史数据请求错误")
+                        console.log(response.data.msg)
+                    }
+                })
         }
     },
     mounted() {

@@ -63,7 +63,7 @@
       async handleConfirmAdd() {
         let addParams = {}
         if(this.name != '') {
-            addParams.currency_name = this.name
+          addParams.currency_name = this.name
         }
         if(this.latest_buy != '') {
           addParams.latest_exchange_buying_rate = this.latest_buy
@@ -74,11 +74,11 @@
         addParams.operator_id= this.foreign_exchange_operator_id
         await axios.post('/FExchange/Operator/add', addParams)
           .then(response => {
-            console.log(response.data);
+            //console.log(response.data);
             if (response.data.status === 'success') {
-              ElMessage.warning('Currency add successfully');
+              ElMessage.success('Currency add successfully');
             } else {
-              alert('Error: ' + response.data.message);
+              //alert('Error: ' + response.data.message);
             }
           })
         .catch(error => {

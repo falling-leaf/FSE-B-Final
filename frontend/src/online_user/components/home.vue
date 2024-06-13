@@ -41,7 +41,7 @@
             <p style="font-size: 30px;font-weight: bolder;margin: 5px;padding: 5px">其他功能</p>
             <el-divider />
             <div>
-                  <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px">[ 外汇 ] 国际转账</el-button>
+                  <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px" @click="enterFE">[ 外汇 ] </el-button>
             </div>
             <div style="">
                   <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmLoan">[ 贷款 ] 贷款申请  </el-button>
@@ -76,6 +76,10 @@
       }
     },
     methods:{
+      enterFE() {
+        this.fetchDataFromUrl();
+        window.location.href ="/FExchange_user?user_id=" + this.user_id;
+      },
       fetchDataFromUrl() {
         // 获取当前URL
         const url = new URL(window.location);
