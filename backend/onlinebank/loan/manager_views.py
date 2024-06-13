@@ -203,7 +203,7 @@ def update_loan_record_isoverdue():
 @csrf_exempt
 def unrepayReminderManager(request):
     ''' 银行机构还款提醒 '''
-    if request == "GET":
+    if request.method == "GET":
         loan_records = models.LoanRecord.objects.filter(is_repay=False, is_overdue=False)
 
         count = 0
