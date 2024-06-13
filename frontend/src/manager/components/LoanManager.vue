@@ -168,9 +168,7 @@ export default{
           account: 'manager3'
         }
       ]
-      axios.post('/manager/getAllLoanManager', {
-        operation: "get"
-      })
+      axios.get('/manager/getAllLoanManager')
           .then(response => {
             let managers = response.data.managers;
             console.log(response.data);
