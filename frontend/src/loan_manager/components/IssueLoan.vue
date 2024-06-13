@@ -2,10 +2,10 @@
   <el-scrollbar height="100%" style="width: 100%; height: 100%">
     <!--贷款申请信息显示卡片-->
     <div style="margin-left:20px; display: flex; flex-wrap: wrap; justify-content: start;">
-      <div class="loanBox" v-for="loan in loans" :key="loan.application_id">
+      <div class="loanBox" v-for="loan in loans" :key="loan.approval_id">
         <div>
           <!-- 卡片标题 -->
-          <div style="font-size: 25px; font-weight: bold;">批准的贷款编号: {{ loan.application_id }}</div>
+          <div style="font-size: 25px; font-weight: bold;">批准的贷款编号: {{ loan.approval_id }}</div>
 
           <el-divider />
 
@@ -19,8 +19,8 @@
           <el-divider />
           <!-- 卡片操作 -->
           <div style="margin-left: 5px; margin-top: -20px; display: flex; justify-content: space-between;">
-            <el-button type="success" @click="approveLoan(loan.application_id)">发放</el-button>
-            <el-button type="danger" @click="rejectDisburseLoan(loan.application_id)">拒绝</el-button>
+            <el-button type="success" @click="approveLoan(loan.approval_id)">发放</el-button>
+            <el-button type="danger" @click="rejectDisburseLoan(loan.approval_id)">拒绝</el-button>
           </div>
         </div>
       </div>
@@ -83,13 +83,13 @@ export default {
       // 从查询字符串中获取参数
       this.currentLoan.loan_manager_id = params.get('loan_manager_id');
     },
-    approveLoan(application_id) {
-      this.currentLoan = this.loans.find(loan => loan.application_id === application_id);
+    approveLoan(approval_id) {
+      this.currentLoan = this.loans.find(loan => loan.approval_id === approval_id);
       this.currentLoan.result = 'True';
       this.loanApprovalVisible = true;
     },
-    rejectDisburseLoan(application_id) {
-      this.currentLoan = this.loans.find(loan => loan.application_id === application_id);
+    rejectDisburseLoan(approval_id) {
+      this.currentLoan = this.loans.find(loan => loan.approval_id === approval_id);
       this.currentLoan.result = 'False';
       this.loanRejectionVisible = true;
     },
