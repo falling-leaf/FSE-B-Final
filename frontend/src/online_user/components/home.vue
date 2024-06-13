@@ -36,9 +36,9 @@
                 </el-form>
           </div>
         </el-card>
-        <el-card style="margin:20px;padding-left: 40px">
+        <el-card style="margin:20px;padding-left: 40px; padding-right:40px">
           <div style="">
-            <p style="font-size: 30px;font-weight: bolder;margin: 5px;padding: 5px">其他功能</p>
+            <p style="font-size: 30px;font-weight: bolder; padding: 5px ;text-align: center; margin: 15px auto auto;">其他功能</p>
             <el-divider />
             <div>
                   <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px">[ 外汇 ] 国际转账</el-button>
@@ -46,12 +46,11 @@
             <div style="">
                   <el-button type="primary"  style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmLoan">[ 贷款 ] 贷款申请  </el-button>
             </div>
-<!--            <a href="/credit_user?online_user_id=this.user_id">-->
-            <a>
+            <div>
               <el-button type="primary" style="font-size: 20px;margin: 10px;padding: 5px" @click="ConfirmCreditcard">
                 [ 信用卡 ] 信用卡
               </el-button>
-            </a>
+            </div>
           </div>
         </el-card>
       </div>

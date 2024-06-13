@@ -77,15 +77,11 @@ class account(models.Model):
     def new_card(online_user_id, card_type):
         new_card = account()
         new_card.password = "creditcard"  # default pw
-        print("in new_card")
         user_ = online_user.objects.get(pk=online_user_id)
-        print("in new_card")
         new_card.user_id = user_
-        print("in new_card")
         new_card.identity_card = user_.identity_card
         new_card.phone_num = user_.phone_num
         new_card.card_type = card_type
-        print("in new_card")
         print(new_card.identity_card)
         new_card.save()
 

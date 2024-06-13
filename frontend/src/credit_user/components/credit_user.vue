@@ -28,7 +28,7 @@
             <!-- 卡片内容 -->
             <div style="margin-left: 10px; text-align: start; font-size: 16px;">
               <p style="padding: 2.5px;"><span style="font-weight: bold">余额：</span>{{creditcard.balance}}</p>
-              <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{creditcard.credit_limit.toFixed(3)}}</p>
+              <p style="padding: 2.5px;"><span style="font-weight: bold">信用额度：</span>{{creditcard.credit_limit.toFixed(2)}}</p>
               <p style="padding: 2.5px;"><span style="font-weight: bold">开户日期：</span>{{creditcard.open_date}}</p>
               <p style="padding: 2.5px;">
                 <el-tag v-if="creditcard.is_frozen">已冻结</el-tag>
