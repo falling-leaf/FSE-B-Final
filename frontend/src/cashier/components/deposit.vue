@@ -214,6 +214,10 @@ export default {
                     this.DemandDepositVisible = false // 将对话框设置为不可见
                     this.QueryDeposits() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
             this.newDepositInfo = { // 待新建活期存款信息
                 account_id: '',
                 password: '',
@@ -236,6 +240,10 @@ export default {
                     this.TimeDepositVisible = false // 将对话框设置为不可见
                     this.QueryDeposits() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
             this.newTimeDepositInfo = {// 待新建定期存款信息
                 account_id: '',
                 password: '',

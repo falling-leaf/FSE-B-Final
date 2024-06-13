@@ -168,11 +168,9 @@ export default{
           account: 'examiner3'
         }
       ]
-      axios.post('/manager/getAllLoanExaminer', {
-        operation: "get"
-      })
+      axios.post('/manager/getAllLoanExaminer')
           .then(response => {
-            let examiners = response.data.examiners;
+            let examiners = response.data.loan_examiner_list;
             console.log(response.data);
             examiners.forEach(examiner => {
               this.examiners.push(examiner);

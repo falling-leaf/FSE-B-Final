@@ -37,7 +37,7 @@
         </p>
       </div>
       <template #footer>
-        <el-button type="danger" @click="openAccountVisible=false">
+        <el-button type="primary" @click="openAccountVisible=false">
           确认
         </el-button>
       </template>
@@ -95,10 +95,11 @@ export default {
         password: this.newAccount.password,
         cashierID: this.cashierID
       }).then(response => {
+        ElMessage.success(response.data.success)
         this.openAccountVisible = true
         this.newAccount.id = response.data.id
-      }).catch(response => {
-        ElMessage.error(response.data.error);
+      }).catch(error => {
+        ElMessage.error(error.response.data.error);
         this.openAccountVisible = false
       })
     }

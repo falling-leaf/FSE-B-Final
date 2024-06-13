@@ -16,11 +16,11 @@
           </el-menu-item>
           
           <div style="height: 30px"></div>
-          <a href="/online_user/home" style="margin-left: 40px;">
-            <el-button type="danger">
+<!--          <a href="/online_user" >-->
+            <el-button type="danger" style="margin-left: 40px;" @click="backToHome">
               退出
             </el-button>
-          </a>
+<!--          </a>-->
         </el-menu>
       </el-aside>
       
@@ -50,7 +50,13 @@ export default {
       const params = new URLSearchParams(url.search);
       // 从查询字符串中获取参数
       this.user_id = params.get('user_id');
+    },
+    backToHome(){
+      this.fetchDataFromUrl();
+      window.location.href =
+            "/online_user?user_id=" + this.user_id ; // 函数内部进行超链接跳转
     }
+
   },
   created() {
     this.fetchDataFromUrl();

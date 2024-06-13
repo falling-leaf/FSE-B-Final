@@ -168,11 +168,9 @@ export default{
           account: 'manager3'
         }
       ]
-      axios.post('/manager/getAllLoanManager', {
-        operation: "get"
-      })
+      axios.post('/manager/getAllLoanManager')
           .then(response => {
-            let managers = response.data.managers;
+            let managers = response.data.loan_manager_list;
             console.log(response.data);
             managers.forEach(manager => {
               this.managers.push(manager);
