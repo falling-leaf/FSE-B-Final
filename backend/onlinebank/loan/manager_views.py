@@ -19,6 +19,8 @@ def showAllLoanApplicationUnapproved(request):
             application_id__in=loan_approvals.values_list('application_id', flat=True)
         )
 
+        print(unapproved_applications)
+
         # 2024.6.3 添加一个信息显示该信用卡已贷但未还的金额
         unapproved_application_list = []
         for unapproved_application in unapproved_applications:
@@ -28,7 +30,7 @@ def showAllLoanApplicationUnapproved(request):
             lentMoney = 0
             for loan_application in loan_applications:
                 lentMoney += loan_application.amount
-            account = models.Account.objects.get(account_id=unapproved_application.account_id_id)
+            account = models.account.objects.get(account_id=unapproved_application.account_id_id)
             account.lent_money = lentMoney
             account.save()
 
@@ -36,7 +38,7 @@ def showAllLoanApplicationUnapproved(request):
             unapproved_application_map['account_id'] = unapproved_application.account_id_id
             unapproved_application_map['amount'] = unapproved_application.amount
             unapproved_application_map['loan_duration'] = unapproved_application.loan_duration
-            unapproved_application_map['application_data'] = str(unapproved_application.application_data)
+            unapproved_application_map['application_data'] = str(unapproved_application.application_data)[0:19]
             unapproved_application_map['credit_limit'] = account.credit_limit
             unapproved_application_map['lent_money'] = account.lent_money
             unapproved_application_map['application_id'] = unapproved_application.application_id
@@ -45,7 +47,7 @@ def showAllLoanApplicationUnapproved(request):
         print(unapproved_application_list)
 
         response['response_code'] = 1
-        response['response_message'] = "Find all unapproved loan records"
+        response['response_message'] = "成功查询所有未审批的贷款申请"
         response['unapproved_application_list'] = unapproved_application_list
     except Exception as e:
         response['response_code'] = 0
@@ -82,7 +84,7 @@ def approvalLoanApplication(request):
             )
 
             response['response_code'] = 1
-            response['response_message'] = f"The loan examiner{loan_examiner_id} approves the loan application{application_id} and the structure is {result}"
+            response['response_message'] = f"贷款审查员{loan_examiner_id}成功审批了{application_id}号贷款申请"
         except Exception as e:
             response['response_code'] = 0
             response['response_message'] = str(e)
@@ -116,7 +118,7 @@ def showAllLoanApplicationUnlent(request):
             print(unlent_approval_list)
 
         response['response_code'] = 1
-        response['response_message'] = "Query the loan records of all pending loans"
+        response['response_message'] = "成功查询所有等待放款的贷款申请"
         response['unlent_approval_list'] = unlent_approval_list
     except Exception as e:
         response['response_code'] = 0
@@ -179,8 +181,7 @@ def lenderLoanApplication(request):
             print(5)
 
             response['response_code'] = 1
-            response['response_message'] = f"The loan application{application_id} was issued by the loan department manager{loan_manager_id}" \
-                                           f" and the result was {result}.At the same time, a loan record{loan_record.loan_id} is generated"
+            response['response_message'] = f"贷款部门经理{loan_manager_id}成功放款{approval_id}号贷款审批"
         except Exception as e:
             response['response_code'] = 0
             response['response_message'] = str(e)
@@ -214,8 +215,8 @@ def unrepayReminderManager(request):
 
         print(count)
         if count == 0:
-            return JsonResponse({'message': "没有七天内需要还款的用户"}, status=200)
+            return JsonResponse({'response_code': 1, 'response_message': "没有七天内需要还款的用户"}, status=200)
         else:
-            return JsonResponse({'message': f"七天内需要还款的用户有{count}个"}, status=200)
+            return JsonResponse({'response_code': 1, 'response_message': f"七天内需要还款的用户有{count}个"}, status=200)
     else:
-        return JsonResponse({'error': 'The method is not GET'}, status=403)
+        return JsonResponse({'response_code': 0, 'response_message': f"request获取方式错误，非GET"})

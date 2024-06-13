@@ -20,7 +20,7 @@
       <el-table-column prop="application_id" label="贷款记录ID" sortable/>
       <el-table-column prop="account_id" label="银行卡号" sortable/>
       <el-table-column prop="amount" label="贷款金额"/>
-      <el-table-column prop="application_data" label="贷款期限"/>
+      <el-table-column prop="application_data" label="贷款申请时间"/>
       <el-table-column prop="status" label="当前贷款状态"/>
     </el-table>
 
@@ -65,6 +65,7 @@ export default {
       records: [],
       loanApplicationVisible: false,
       Search,
+      code:0,
       identity_card: '',
       toSearch: '',
       newLoanInfo: {
@@ -105,26 +106,41 @@ export default {
             console.log(response.data.identity_card)
           })
           .catch(error => {
-            console.error('There was an error!', error);
+            ElMessage.error("用户身份证获取失败");
           });
     },
     //TODO 查询用户贷款记录的接口,展示还未通过的贷款记录
     queryLoans() {
-      axios.post('/loan/searchAllLoanApplicationByUser/', {
+    this.records = [];
+    axios.post('/login/getUserIdentityCard/', {
+        user_id: this.user_id,
+      })
+          .then(response => {
+            this.identity_card = response.data.identity_card
+            console.log(response.data.identity_card)
+            axios.post('/loan/searchAllLoanApplicationByUser/', {
             identity_card: this.identity_card,
       })
           .then(response => {
-            let records = response.data.loan_application_list
-            console.log(response.data)
-            records.forEach(record => {
-              this.records.push(record)
+            if(response.data.response_code === 1){
+                let records = response.data.loan_application_list
+                ElMessage.success("贷款查询成功");
+                records.forEach(record => {
+                this.records.push(record)
+            })
+            }else{
+                ElMessage.error("贷款查询失败");
+            }
             })
           })
           .catch(error => {
-            console.error('There was an error!', error);
+            ElMessage.error("贷款查询失败");
+          })
+          })
+          .catch(error => {
+            ElMessage.error("用户身份证获取失败");
           });
     },
-    //TODO 用户申请贷款的接口，待实现
     applyLoan() {
       axios.post("/loan/commitLoanApplication/", {
         identity_card: this.newLoanInfo.identity_card,
@@ -133,15 +149,17 @@ export default {
         loan_duration: this.newLoanInfo.loan_term,
       })
           .then(response => {
-            ElMessage.success("贷款申请成功");
-            this.loanApplicationVisible = false;
-            this.queryLoans();
+          if(response.data.response_code === 1){
+              ElMessage.success("贷款申请成功");
+              this.loanApplicationVisible = false;
+          }else{
+              ElMessage.success("贷款申请失败");
+          }
           })
           .catch(error => {
-            console.error('There was an error!', error);
             ElMessage.error("贷款申请失败");
           });
-
+      this.queryLoans();
       this.newLoanInfo = {
         identity_card: '',
         account_id: '',

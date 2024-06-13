@@ -108,7 +108,7 @@ export default{
   },
   methods: {
     ConfirmNewExaminer() {
-      axios.post('/manager/manage_loan_examiner', {
+      axios.post('/manager/manage_loan_examiner/', {
         operation: "add",
         employee_id: this.newExaminerInfo.employee_id,
         account: this.newExaminerInfo.account,
@@ -124,7 +124,7 @@ export default{
           })
     },
     ConfirmModPasswordExaminer() {
-      axios.post('/manager/manage_loan_examiner', {
+      axios.post('/manager/manage_loan_examiner/', {
         operation: "update",
         loan_examiner_id: this.modPasswordExaminerInfo.loan_examiner_id,
         new_password: this.modPasswordExaminerInfo.new_password
@@ -138,7 +138,7 @@ export default{
           })
     },
     ConfirmDeleteExaminer() {
-      axios.post('/manager/manage_loan_examiner', {
+      axios.post('/manager/manage_loan_examiner/', {
         operation: "delete",
         loan_examiner_id: this.deleteExaminerID
       }).then(response => {
@@ -151,24 +151,7 @@ export default{
           })
     },
     QueryExaminers() {
-      this.examiners = [
-        {
-          loan_examiner_id: 1,
-          employee_id: 101,
-          account: 'examiner1'
-        },
-        {
-          loan_examiner_id: 2,
-          employee_id: 102,
-          account: 'examiner2'
-        },
-        {
-          loan_examiner_id: 3,
-          employee_id: 103,
-          account: 'examiner3'
-        }
-      ]
-      axios.post('/manager/getAllLoanExaminer')
+      axios.get('/manager/getAllLoanExaminer/')
           .then(response => {
             let examiners = response.data.loan_examiner_list;
             console.log(response.data);

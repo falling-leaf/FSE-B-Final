@@ -231,8 +231,7 @@ export default {
         })
         .then((response) => {
           this.employee.id = response.data.loan_manager_id;
-          window.location.href =
-            "/loan_manager?loan_manager_id=" + this.employee.id; // 函数内部进行超链接跳转
+          window.location.href = "/loan_manager?loan_manager_id=" + this.employee.id ; // 函数内部进行超链接跳转
         })
         .catch((error) => {
           ElMessage.error(error.response.data.error);
