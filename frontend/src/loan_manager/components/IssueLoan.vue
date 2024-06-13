@@ -132,9 +132,25 @@ export default {
             console.error('There was an error!', error);
             ElMessage.error("查询贷款记录失败");
           });
+    },
+    remindUnrepayLoan() {
+      axios.get('/loanManager/unrepayReminderManager/', {
+      })
+          .then(response => {
+            if (response.data.response_code === 1) {
+              ElMessage.success(response.data.message);
+            } else {
+              ElMessage.error(response.data.message);
+            }
+          })
+          .catch(error => {
+            console.error('There was an error!', error);
+            ElMessage.error("还款提醒失败");
+          });
     }
   },
   mounted() {
+    this.remindUnrepayLoan(); // 页面加载时自动提醒还款
     this.queryLoans();
   }
 }

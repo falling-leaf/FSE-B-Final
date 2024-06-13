@@ -211,6 +211,8 @@ def unrepayReminderManager(request):
         for record in loan_records:
             if current_time < record.end_time < current_time + datetime.timedelta(days=7):
                 count += 1
+
+        print(count)
         if count == 0:
             return JsonResponse({'message': "没有七天内需要还款的用户"}, status=200)
         else:
