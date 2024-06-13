@@ -64,12 +64,21 @@
         let addParams = {}
         if(this.name != '') {
           addParams.currency_name = this.name
+        } else {
+          ElMessage.warning("外币名称不能为空")
+          return;
         }
         if(this.latest_buy != '') {
           addParams.latest_exchange_buying_rate = this.latest_buy
+        } else {
+          ElMessage.warning("买入价不能为空")
+          return;
         }
         if(this.latest_sell != '') {
           addParams.latest_exchange_selling_rate = this.latest_sell
+        } else {
+          ElMessage.warning("卖出价不能为空")
+          return;
         }
         addParams.operator_id= this.foreign_exchange_operator_id
         await axios.post('/FExchange/Operator/add', addParams)
@@ -77,8 +86,11 @@
             //console.log(response.data);
             if (response.data.status === 'success') {
               ElMessage.success('Currency add successfully');
+              this.name = ''
+              this.latest_buy = ''
+              this.latest_sell = ''
             } else {
-              //alert('Error: ' + response.data.message);
+              ElMessage.error(response.data.message)
             }
           })
         .catch(error => {

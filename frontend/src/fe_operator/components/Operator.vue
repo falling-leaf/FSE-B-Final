@@ -32,7 +32,7 @@
         <el-dialog v-model="isModifyRateCurrency" :title="'更新汇率'" width="35%"
             align-center>
             <h1 class="h11">预期买入价：<input type="text" id="modify_latest_buy" v-model="modify_latest_buy" class="input" required></h1>
-            <h1 class="h11">预期售出价：<input type="text" id="modify_latest_sell" v-model="modify_latest_sell" class="input" required></h1>
+            <h1 class="h11">预期卖出价：<input type="text" id="modify_latest_sell" v-model="modify_latest_sell" class="input" required></h1>
             
             <template #footer>
                 <span class="dialog-footer">
@@ -204,13 +204,12 @@ export default {
                 if (response.data.status === 'success') {
                     ElMessage.warning('Currency rename successfully')
                 } else {
-                    alert('Error: ' + response.data.message);
+                    ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
                 ElMessage.warning('重命名请求发送失败', error);
             });
-            location.reload();
         },
         async handleDeleteCurrency(){
             this.isConfirmDeleteCurrency = false
@@ -223,13 +222,12 @@ export default {
                 if (response.data.status === 'success') {
                     ElMessage.warning('Currency deleted successfully');
                 } else {
-                alert('Error: ' + response.data.message);
+                    ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
                 ElMessage.warning('删除请求发送失败', error);
             });
-            location.reload();
         },
         async handleModifyRateCurrency(){
             this.isModifyRateCurrency = false
@@ -248,13 +246,12 @@ export default {
                 if (response.data.status === 'success') {
                     ElMessage.warning('Currency modify successfully')
                 } else {
-                    alert('Error: ' + response.data.message);
+                    ElMessage.error(response.data.message)
                 }
             })
             .catch(error => {
                 ElMessage.warning('添加请求发送失败', error);
             });
-            location.reload();
         },
         async deletes(row) {
             this.selectedRowData = row

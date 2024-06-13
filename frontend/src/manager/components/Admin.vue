@@ -1,10 +1,10 @@
 <template>
     <el-scrollbar height="100%" style="width: 100%; height: 100%; ">
 
-        <el-dialog v-model="isAddOperator" :title="'新增操作员账户'" width="35%" align-center>
+        <el-dialog v-model="isAddOperator" :title="'新增操作员账号'" width="35%" align-center>
             <div>
                 <h1 class="h11">姓名：<input type="text" id="employee_name" v-model="employee_name" class="inputtext" required></h1>
-                <h1 class="h11">账户：<input type="text" id="account" v-model="account" class="inputtext" required></h1>
+                <h1 class="h11">账号：<input type="text" id="account" v-model="account" class="inputtext" required></h1>
                 <h1 class="h11">身份证号：<input type="text" id="identity_card" v-model="identity_card" class="inputtext" required></h1>
                 <h1 class="h11">性别：
                         <input type="radio" v-model="selectedOption" value="male"> 男
@@ -82,7 +82,7 @@
         <div v-if="isShow" style="margin-top: 20px; margin-left: 40px; font-size: 2em; font-weight: bold; ">外汇操作员列表    
             
             <input type="text" id="searchOperator" v-model="searchOperator" class="input">
-            <el-tooltip content="搜索账户" placement="top">
+            <el-tooltip content="搜索账号" placement="top">
                 <el-button type="primary" :icon="Search" @click="handlesearch(1)" circle></el-button>
             </el-tooltip>
             <button @click="isAddOperator = true" style =" margin-left: 150px;">+</button>
@@ -238,7 +238,16 @@ export default {
                 .then(response => {
                     console.log(response.data);
                     if (response.data.status === 'success') {
-                        ElMessage.warning('Currency add successfully');
+                        ElMessage.success('Currency add successfully');
+                        this.employee_name = ''
+                        this.account = ''
+                        this.phone_number = ''
+                        this.identity_card = ''
+                        this.password = ''
+                        this.other_information = ''
+                        this.checkedValues = []
+                        this.selectedOption = ''
+                        this.confirm_password = ''
                     } else {
                         alert('Error: ' + response.data.message);
                     }

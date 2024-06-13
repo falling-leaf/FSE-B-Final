@@ -16,6 +16,6 @@ from counteropt.cashier_views import time_deposit_record_update, demand_deposit_
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'onlinebank.settings')
 
 application = get_wsgi_application()
-'''update_loan_record_isoverdue()
+update_loan_record_isoverdue()
 time_deposit_record_update()
-demand_deposit_record_update()'''
+demand_deposit_record_update()
