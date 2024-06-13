@@ -108,7 +108,7 @@ export default{
   },
   methods: {
     ConfirmNewManager() {
-      axios.post('/manager/manage_loan_department_manager', {
+      axios.post('/manager/manage_loan_department_manager/', {
         operation: "add",
         employee_id: this.newManagerInfo.employee_id,
         account: this.newManagerInfo.account,
@@ -124,7 +124,7 @@ export default{
           })
     },
     ConfirmModPasswordManager() {
-      axios.post('/manager/manage_loan_department_manager', {
+      axios.post('/manager/manage_loan_department_manager/', {
         operation: "update",
         loan_manager_id: this.modPasswordManagerInfo.loan_manager_id,
         new_password: this.modPasswordManagerInfo.new_password
@@ -138,7 +138,7 @@ export default{
           })
     },
     ConfirmDeleteManager() {
-      axios.post('/manager/manage_loan_department_manager', {
+      axios.post('/manager/manage_loan_department_manager/', {
         operation: "delete",
         loan_manager_id: this.deleteManagerID
       }).then(response => {
@@ -151,24 +151,7 @@ export default{
           })
     },
     QueryManagers() {
-      this.managers = [
-        {
-          loan_manager_id: 1,
-          employee_id: 301,
-          account: 'manager1'
-        },
-        {
-          loan_manager_id: 2,
-          employee_id: 302,
-          account: 'manager2'
-        },
-        {
-          loan_manager_id: 3,
-          employee_id: 303,
-          account: 'manager3'
-        }
-      ]
-      axios.post('/manager/getAllLoanManager')
+      axios.get('/manager/getAllLoanManager/')
           .then(response => {
             let managers = response.data.loan_manager_list;
             console.log(response.data);

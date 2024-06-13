@@ -62,6 +62,7 @@ export default {
       loans: [],
       loanApprovalVisible: false,
       loanRejectionVisible: false,
+      loan_manager_id: 0,
       currentLoan: {
         approval_id: 2,
         loan_manager_id: 1, // Assuming the loan manager ID is 1 for demonstration
@@ -81,7 +82,7 @@ export default {
       const params = new URLSearchParams(url.search);
 
       // 从查询字符串中获取参数
-      this.currentLoan.loan_manager_id = params.get('loan_manager_id');
+      this.loan_manager_id = params.get('loan_manager_id');
     },
     approveLoan(approval_id) {
       this.currentLoan = this.loans.find(loan => loan.approval_id === approval_id);
@@ -95,14 +96,18 @@ export default {
     },
     confirmLoanApproval() {
       axios.post('/loanManager/lenderLoanApplication/', {
-        "loan_manager_id": this.currentLoan.loan_manager_id,
+        "loan_manager_id": this.loan_manager_id,
         "result": this.currentLoan.result,
         "approval_id": this.currentLoan.approval_id,
       })
           .then(response => {
+            if(response.data.response_code === 1){
             ElMessage.success("贷款已发放");
             this.loanApprovalVisible = false;
             this.queryLoans();
+          }else{
+            ElMessage.error("贷款发放失败");
+          }
           })
           .catch(error => {
             ElMessage.error("贷款发放失败");
@@ -111,31 +116,38 @@ export default {
     confirmLoanRejection() {
       axios.post('/loanManager/lenderLoanApplication/', this.currentLoan)
           .then(response => {
+            if(response.data.response_code === 1){
             ElMessage.success("贷款已拒绝");
             this.loanRejectionVisible = false;
             this.queryLoans();
+          }else{
+            ElMessage.error("贷款拒绝失败");
+          }
           })
           .catch(error => {
             ElMessage.error("贷款拒绝失败");
           });
     },
     queryLoans() {
+    this.loans = [];
       axios.get('/loanManager/showAllLoanApplicationUnlent/')
           .then(response => {
+            if(response.data.response_code === 1){
             let loans = response.data.unlent_approval_list
-            console.log(response.data)
+            ElMessage.error("查询贷款记录成功");
             loans.forEach(loan => {
               this.loans.push(loan)
             })
+          }else{
+            ElMessage.error("查询贷款记录失败");
+          }
           })
           .catch(error => {
-            console.error('There was an error!', error);
             ElMessage.error("查询贷款记录失败");
           });
     },
     remindUnrepayLoan() {
-      axios.get('/loanManager/unrepayReminderManager/', {
-      })
+      axios.get('/loanManager/unrepayReminderManager/')
           .then(response => {
             if (response.data.response_code === 1) {
               ElMessage.success(response.data.message);
@@ -144,7 +156,6 @@ export default {
             }
           })
           .catch(error => {
-            console.error('There was an error!', error);
             ElMessage.error("还款提醒失败");
           });
     }

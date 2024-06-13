@@ -66,7 +66,8 @@ export default {
         account_id: '',
         loan_id : 0
       },
-      userID: ''
+      userID: 0,
+      identity_card:''
     }
   },
   computed: {
@@ -85,23 +86,50 @@ export default {
       // 创建URLSearchParams对象
       const params = new URLSearchParams(url.search);
       // 从查询字符串中获取参数
-      this.userID = params.get('userID');
+      this.user_id = params.get('user_id');
     },
-    //查询所有需要还款的记录
-    queryRepayments() {
-      axios.post('/loan/searchAllNeedRepayLoanRecord/', {
-            identity_card: "330204197508260578",
+    getIdentity_card(){
+      axios.post('/login/getUserIdentityCard/', {
+        user_id: this.user_id,
       })
           .then(response => {
-            let records = response.data.loan_application_list
-            console.log(response.data)
-            records.forEach(record => {
-              this.records.push(record)
-            })
+            this.identity_card = response.data.identity_card
+            console.log(response.data.identity_card)
           })
           .catch(error => {
             console.error('There was an error!', error);
+          });
+    },
+    //查询所有需要还款的记录
+    queryRepayments() {
+    this.records = [];
+    axios.post('/login/getUserIdentityCard/', {
+        user_id: this.user_id,
+      })
+          .then(response => {
+            this.identity_card = response.data.identity_card
+            console.log("1页面获取的时候身份证是" + response.data.identity_card)
+            axios.post('/loan/searchAllNeedRepayLoanRecord/', {
+            identity_card: this.identity_card,
+      })
+          .then(response => {
+          if(response.data.response_code === 1){
+            let records = response.data.loan_application_list
+            ElMessage.success("用户查询还款记录成功");
+            records.forEach(record => {
+              this.records.push(record)
+            })
+          }else{
+             ElMessage.error("用户查询还款记录失败");
+          }
+          })
+          .catch(error => {
+            ElMessage.error("用户查询还款记录失败");
             // 可以在这里处理错误，例如显示错误消息
+          })
+          })
+          .catch(error => {
+            ElMessage.error("用户获取身份证失败");
           });
           this.isShow = true;
     },
@@ -114,15 +142,17 @@ export default {
         loan_id: this.newRepaymentInfo.loan_id
       })
           .then(response => {
+          if(response.data.response_code === 1){
             ElMessage.success("还款成功"); // 显示消息提醒
             this.repaymentVisible = false; // 将对话框设置为不可见
-            this.queryRepayments(); // 重新查询还款记录以刷新页面
+          }else{
+            ElMessage.error("还款失败");
+          }
           })
           .catch(error => {
-            console.error('There was an error!', error);
             ElMessage.error("还款失败");
           });
-
+        this.queryRepayments();
       this.newRepaymentInfo = {
         identity_card: '',
         account_id: '',
@@ -131,6 +161,7 @@ export default {
     },
   },
   mounted() {
+    this.getIdentity_card();
     this.queryRepayments(); // 查询还款记录
   },
   created() {
