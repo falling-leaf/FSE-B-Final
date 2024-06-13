@@ -186,7 +186,7 @@ def manageLoanExaminer(request):
             elif operation == "delete":
                 loan_examiner_id = body.get("loan_examiner_id")
                 loan_examiner = LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
-                employee1 = employee.objects.get(employee_id=loan_examiner.employee_id)
+                employee1 = employee.objects.get(employee_id=loan_examiner.employee_id_id)
 
                 employee1.is_employeed = False
                 employee1.save()
@@ -261,7 +261,7 @@ def manageLoanDepartmentManager(request):
             elif operation == "delete":
                 loan_manager_id = body.get("loan_manager_id")
                 loan_manager = LoanDepartmentManager.objects.get(loan_manager_id=loan_manager_id)
-                employee1 = employee.objects.get(employee_id=loan_manager.employee_id)
+                employee1 = employee.objects.get(employee_id=loan_manager.employee_id_id)
 
                 employee1.is_employeed = False
                 employee1.save()

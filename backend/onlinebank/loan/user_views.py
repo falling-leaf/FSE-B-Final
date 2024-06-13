@@ -59,7 +59,7 @@ def searchAllNeedRepayLoanRecord(request):
         body = json.loads(body_unicode)
 
         identity_card = body.get('identity_card')
-        user = models.oline_user.objects.get(identity_card=identity_card)
+        user = models.online_user.objects.get(identity_card=identity_card)
         accounts = models.account.objects.filter(card_type=1, identity_card=user.identity_card)
         loan_applications = models.LoanApplication.objects.filter(
             account_id__in=accounts.values_list('account_id', flat=True)
