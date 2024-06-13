@@ -39,7 +39,7 @@ def cashier_add(request):
             card_type=1,#1为银行卡
         )
         new_account.save()
-        return_data = {'id': new_account.account_id}
+        return_data = {'id': new_account.account_id, "success": "开设账户成功"}
         return JsonResponse(return_data, status=200)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
