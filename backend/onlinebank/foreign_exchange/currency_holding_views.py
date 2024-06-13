@@ -6,7 +6,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Max, Subquery, OuterRef
 from foreign_exchange.models import CurrencyHolding
 from foreign_exchange.models import Currency
-from foreign_exchange.models import account
+from foreign_exchange.models import account, online_user
+from django.core.exceptions import ObjectDoesNotExist
 import json
 
 # Create your views here.
@@ -97,16 +98,22 @@ def update_holding(request):
     currency_amount = float(request.GET.get('currency_amount'))
 
     try:
-
-        holdings = CurrencyHolding.objects.filter(online_user__user_id=user_id)
-        holding = holdings.get(currency__currency_name=currency_name)
+        holding = CurrencyHolding.objects.get(online_user__user_id=user_id, currency__currency_name=currency_name)
         holding.amount = currency_amount
         holding.save()
-
         response['msg'] = 'success'
         response['error_num'] = 0
-    except Exception as e:
-        response['msg'] = str(e)
-        response['error_num'] = 1
+
+    except ObjectDoesNotExist:
+
+        print("没有找到对应数据")
+        new_holding = CurrencyHolding(
+            currency = Currency.objects.get(currency_name=currency_name),
+            online_user = online_user.objects.get(user_id=user_id),
+            amount = currency_amount
+        )
+        new_holding.save()
+        response['msg'] = 'success'
+        response['error_num'] = 0
 
     return JsonResponse(response)

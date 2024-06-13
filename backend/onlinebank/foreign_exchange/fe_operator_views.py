@@ -88,9 +88,9 @@ def handleDeleteOperator(request):
         employees.is_employeed = False
         operator.delete()
         employees.save()
-        return JsonResponse({'status': 'success', 'message': 'Operator deleted successfully'})
+        return JsonResponse({'status': 'success', 'message': '操作员删除成功'})
     except ForeignExchangeOperator.DoesNotExist:
-        return JsonResponse({'status': 'error', 'message': 'Operator not found' })
+        return JsonResponse({'status': 'error', 'message': '未找到操作员' })
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
     

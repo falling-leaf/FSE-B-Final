@@ -69,9 +69,9 @@ def handleDeleteCurrency(request):
         try:
             currency = Currency.objects.get(currency_id = currency_id_to_delete)
             currency.delete()
-            return JsonResponse({'status': 'success', 'message': 'Currency deleted successfully'})
+            return JsonResponse({'status': 'success', 'message': '外币删除成功'})
         except Currency.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Currency not found' })
+            return JsonResponse({'status': 'error', 'message': '未找到该外币' })
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -110,7 +110,7 @@ def handleAddCurrency(request):
                 update_datetime = current_time
             )
             new_update_record.save()
-            return JsonResponse({'status': 'success', 'message': 'Currency added successfully'})
+            return JsonResponse({'status': 'success', 'message': '外币添加成功'})
         except Exception as e:
             response_data = {
                 'status': 'error',
@@ -138,7 +138,7 @@ def handleModifyRateCurrency(request):
         except Exception as e:
             response_data = {
                 'status': 'error',
-                'message': '修改 Currency 失败',
+                'message': '修改外币失败',
                 'error': str(e)
             }
         
@@ -153,7 +153,7 @@ def handleModifyRateCurrency(request):
             new_update_record.save()
             response_data = {
                 'status': 'success',
-                'message': '修改 Currency 成功'
+                'message': '修改外币成功'
             }
         except Exception as e:
             response_data = {
@@ -180,12 +180,12 @@ def handleModifyNameCurrency(request):
             currency.save()
             response_data = {
                 'status': 'success',
-                'message': '重命名 Currency 成功'
+                'message': '重命名外币成功'
             }
         except Exception as e:
             response_data = {
                 'status': 'error',
-                'message': '重命名 Currency 失败',
+                'message': '重命名外币失败',
                 'error': str(e)
             }           
     return JsonResponse(response_data)

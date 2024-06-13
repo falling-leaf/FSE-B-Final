@@ -62,6 +62,39 @@
             </template>
         </el-dialog>
 
+        <!-- <el-dialog v-model="isModifyOperatorInfo" :title="'修改信息'" width="30%"
+            align-center>
+            
+            <div>
+                <h1 class="h11">姓名：<input type="text" id="employee_name" v-model="this.selectOperator.employee_name" class="inputtext" required></h1>
+                <h1 class="h11">账号：<input type="text" id="account" v-model="this.selectOperator.account" class="inputtext" required></h1>
+                <h1 class="h11">身份证号：<input type="text" id="identity_card" v-model="this.selectOperator.identity_card" class="inputtext" required></h1>
+                <h1 class="h11">性别：
+                        <input type="radio" v-model="this.selectOperator.selectedOption" value="male"> 男
+                        <input type="radio" v-model="this.selectOperator.selectedOption" value="female"> 女
+                </h1>
+                <h1 class="h11">电话号码：<input type="text" id="phone_number" v-model="phone_number" class="inputtext" required></h1>
+                <h1 class="h11">密码：<input type="password" id="password" v-model="password" class="inputtext" required></h1>
+                <h1 class="h11">确认密码：<input type="password" id="confirm_password" v-model="confirm_password" class="inputtext" required></h1>
+                <h1 class="h11">职位：外汇操作员</h1>
+                <h1 class="h11">是否在任：是</h1>
+                <h1 class="h11">其他信息：<input type="text" id="other_information" v-model="other_information" class="inputtext" required></h1>
+                <h1 class="h11">权限设置：</h1>
+                <h1 style="margin-left: 70px; color: #222222; font-size: medium; margin-bottom: 20px;">
+                    <div v-for="checkbox in checkboxes" :key="checkbox.value">
+                    <input type="checkbox" :value="checkbox.value" v-model="checkedValues" style="margin-bottom: 20px; font-size: medium; width:30px; margin-right: 20px;"> {{ checkbox.label }}
+                    </div>
+                </h1>
+            </div>
+            
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="handleModifyOperatorInfo()">确认修改</el-button>
+                    <el-button @click="isModifyOperatorInfo = false">取消</el-button>
+                </span>
+            </template>
+        </el-dialog> -->
+
         <el-dialog v-model="isConfirmDeleteOperator" :title="'删除确认'" width="30%"
             align-center>
             <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 10px; ">
@@ -173,12 +206,13 @@ export default {
                 { label: '重命名权限', value: '4' },
                 { label: '修改外币汇率权限', value: '3' }
             ],
-            checkedValues: []
+            checkedValues: [],
+            selectOperator: null,
         }
     },
     computed: {
         fitlerTableData() {
-                return this.tableData;
+            return this.tableData;
         }
     },
     mounted() {

@@ -96,7 +96,7 @@ def add_trading_history(request):
         currency=c)
     sell_history.save()
 
-    return JsonResponse({'status': 'success', 'message': 'History update successfully'})
+    return JsonResponse({'status': 'success', 'message': '历史记录添加成功'})
     
 @require_http_methods(["GET"])
 def get_histories(request):
