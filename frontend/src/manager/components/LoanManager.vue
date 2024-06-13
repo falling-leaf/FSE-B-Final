@@ -151,6 +151,9 @@ export default{
           })
     },
     QueryManagers() {
+<<<<<<< HEAD
+      axios.get('/manager/getAllLoanManager/')
+=======
       this.managers = [
         {
           loan_manager_id: 1,
@@ -169,6 +172,7 @@ export default{
         }
       ]
       axios.post('/manager/getAllLoanManager/')
+>>>>>>> 05afb8749b922f86500152ff4be6a959c283c9c9
           .then(response => {
             let managers = response.data.loan_manager_list;
             console.log(response.data);
