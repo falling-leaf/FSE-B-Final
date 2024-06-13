@@ -252,12 +252,17 @@ export default {
             console.log(data)
             axios.post("/cashier/update-auto-renew/",
                 { // 请求体
-                    record_id: data
+                    record_id: data,
+                    cashier_id: this.cashierID,
                 })
                 .then(response => {
                     ElMessage.success("更改成功") // 显示消息提醒
                     this.QueryRecords() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
         }
     },
     mounted() { // 当页面被渲染时

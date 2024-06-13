@@ -137,6 +137,10 @@ export default {
                     this.WithdrawlVisible = false // 将对话框设置为不可见
                     this.QueryWithdrawls() // 重新查询存款记录以刷新页面
                 })
+                .catch((error) => {
+            ElMessage.error(error.response.data.error);
+            this.password = "";
+          });
         },
     },
     mounted() { // 当页面被渲染时
