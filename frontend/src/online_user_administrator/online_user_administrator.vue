@@ -36,11 +36,9 @@
             </el-icon>
             <span>黑名单</span>
           </el-menu-item>
-          <div style="height: 30px"></div>
-          <!--          <a href="/" style="margin-left: 40px;">-->
-          <!--            <el-button type="danger">-->
-          <!--              退出-->
-          <!--            </el-button>-->
+          <div style="height: 30px; margin-top: 5px; margin-left: 30%">
+            <el-button type="danger" @click="back"> 退出 </el-button>
+          </div>
           <!--          </a>-->
         </el-menu>
       </el-aside>
@@ -66,7 +64,11 @@
   
   <script>
 export default {
-  methods: {},
+  methods: {
+    back() {
+      window.location.href = "/login/user";
+    },
+  },
 };
 </script>
   

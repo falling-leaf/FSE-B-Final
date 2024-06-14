@@ -69,6 +69,21 @@
           clearable
         />
       </div>
+      <div
+        style="
+          margin-left: 2vw;
+          font-weight: bold;
+          font-size: 1rem;
+          margin-top: 20px;
+        "
+      >
+        管理员密码：
+        <el-input
+          v-model="newBlack_manager_password"
+          style="width: 12.5vw"
+          show-password
+        />
+      </div>
 
       <template #footer>
         <span>
@@ -103,6 +118,7 @@ export default {
     return {
       newBlack_user_name: "",
       newBlack_manager_name: "",
+      newBlack_manager_password: "",
       BlackInfo: {},
       blacks: [],
       DepositVisible: false,
@@ -126,6 +142,7 @@ export default {
         .post("/OBmanager/blacklist_add/", {
           manager_name: this.newBlack_manager_name,
           user_name: this.newBlack_user_name,
+          password: this.newBlack_manager_password,
         })
         .then((response) => {
           console.log(response);
