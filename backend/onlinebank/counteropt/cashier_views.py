@@ -33,9 +33,11 @@ def cashier_add(request):
             user_id = check_user[0]
             )
         else: 
+            print(data)
             new_account = account(
                 password=data.get('password'),
                 identity_card=data.get('identity_card'),
+                phone_num = data.get('phone_num'),
                 card_type=1,#1为银行卡
             )
         new_account.save()
