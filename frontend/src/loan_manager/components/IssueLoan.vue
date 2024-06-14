@@ -134,7 +134,7 @@ export default {
           .then(response => {
             if(response.data.response_code === 1){
             let loans = response.data.unlent_approval_list
-            ElMessage.error("查询贷款记录成功");
+            ElMessage.success("查询贷款记录成功");
             loans.forEach(loan => {
               this.loans.push(loan)
             })
@@ -150,9 +150,9 @@ export default {
       axios.get('/loanManager/unrepayReminderManager/')
           .then(response => {
             if (response.data.response_code === 1) {
-              ElMessage.success(response.data.message);
+              ElMessage.success(response.data.response_message);
             } else {
-              ElMessage.error(response.data.message);
+              ElMessage.error(response.data.response_message);
             }
           })
           .catch(error => {

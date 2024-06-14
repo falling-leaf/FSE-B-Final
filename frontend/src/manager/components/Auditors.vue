@@ -151,6 +151,7 @@ export default{
           })
     },
     QueryExaminers() {
+      this.examiners = [];
       axios.get('/manager/getAllLoanExaminer/')
           .then(response => {
             let examiners = response.data.loan_examiner_list;

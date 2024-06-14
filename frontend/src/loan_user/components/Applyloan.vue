@@ -120,18 +120,17 @@ export default {
             console.log(response.data.identity_card)
             axios.post('/loan/searchAllLoanApplicationByUser/', {
             identity_card: this.identity_card,
-      })
+            })
           .then(response => {
             if(response.data.response_code === 1){
                 let records = response.data.loan_application_list
                 ElMessage.success("贷款查询成功");
                 records.forEach(record => {
                 this.records.push(record)
-            })
+                })
             }else{
                 ElMessage.error("贷款查询失败");
             }
-            })
           })
           .catch(error => {
             ElMessage.error("贷款查询失败");

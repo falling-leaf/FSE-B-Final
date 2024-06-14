@@ -126,7 +126,7 @@ def loanExaminerLogin(request):
         print(body_unicode)
         check_account = body.get('account')
         password = body.get('password')
-        loan_examiner_account = LoanExaminer.objects.get(account=check_account)
+        loan_examiner_account = LoanExaminer.objects.filter(account=check_account)
         if loan_examiner_account.checkPassword(password):
             print(1)
             return JsonResponse({"loan_examiner_id": loan_examiner_account.loan_examiner_id})

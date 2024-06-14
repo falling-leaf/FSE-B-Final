@@ -22,10 +22,16 @@ def cashier_add(request):
         filter_account = account.objects.filter(identity_card=data.get('identity_card'))
         if filter_account.count() >= 4:
             return JsonResponse({"error": "账户数量超过限制"}, status=403)
+        check_idcard = data.get('identity_card')
+        check_user = online_user.objects.filter(identity_card = check_idcard)
+        set_userid = 0
+        if check_user.exists():
+            set_userid = check_user[0].user_id
         new_account = account(
             password=data.get('password'),
             identity_card=data.get('identity_card'),
             card_type=1,#1为银行卡
+            user_id = check_user[0]
         )
         new_account.save()
         return_data = {'id': new_account.account_id, "success": "开设账户成功"}
