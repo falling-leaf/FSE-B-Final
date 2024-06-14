@@ -12,7 +12,7 @@
           <!-- 卡片内容 -->
         <div style=" height: 40px;margin: auto;display: flex;align-items: center;justify-content: center">
           <div style ="font-size: 1.5rem;font-weight: bolder; margin-top: 20px;text-align: center">
-            用 户 注 册
+            修 改 密 码
           </div>
         </div>
         <el-divider/>

@@ -91,13 +91,9 @@ WSGI_APPLICATION = 'onlinebank.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'fse_final',
+        'NAME': 'banking',
         'USER': 'root',
-<<<<<<< HEAD
         'PASSWORD': 'why1445675246',
-=======
-        'PASSWORD': 'ww71304002ww',
->>>>>>> 530736b83bb8ab3b0bb3f5060ffd122a26961a36
         'HOST': 'localhost',
         'PORT': '3306',
     }

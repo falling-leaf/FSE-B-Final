@@ -75,7 +75,7 @@
                 是否自动续期：
                 <el-radio-group  style="margin-left: 10px;" v-model="newTimeDepositInfo.is_auto_renew">
                     <el-radio v-model="newTimeDepositInfo.is_auto_renew" value="1">是</el-radio>
-                    <el-radio v-model="newTimeDepositInfo.is_auto_renew" value="2">否</el-radio>
+                    <el-radio v-model="newTimeDepositInfo.is_auto_renew" value="0">否</el-radio>
                 </el-radio-group>
             </div>
 

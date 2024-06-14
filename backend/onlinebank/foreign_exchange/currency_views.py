@@ -86,7 +86,7 @@ def handleAddCurrency(request):
     
     operator = ForeignExchangeOperator.objects.get(foreign_exchange_operator_id = operator_id)
     if(operator.add_authority == False):
-        return JsonResponse({'status': 'error', 'message': '无新增外币的权限！' })
+        return JsonResponse({'status': '1', 'message': '无新增外币的权限！' })
     else:
         try:
             new_currency = Currency(
@@ -94,6 +94,7 @@ def handleAddCurrency(request):
                 latest_exchange_buying_rate = currency_latest_buy_rate,
                 latest_exchange_selling_rate = currency_latest_sell_rate
                 )
+            #print(new_currency)
             new_currency.save()
         except Exception as e:
             response_data = {

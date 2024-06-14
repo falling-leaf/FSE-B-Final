@@ -494,12 +494,13 @@ def modify_examiner(request):
         new_phone_number = body.get('new_phone_number')
         new_other_information = body.get('new_other_information')
         new_sex = body.get('new_sex')
+        print(body)
 
         if new_sex == 'female':
-            new_sex = 0
-        if new_sex == 'male':
             new_sex = 1
-
+        if new_sex == 'male':
+            new_sex = 0
+        print(new_sex)
         # Update the password
         examiner.modify_examiner_info(new_account, new_password)
         examiner.save()
@@ -507,9 +508,9 @@ def modify_examiner(request):
         employee_ = employee.objects.get(employee_id=examiner.employee_id)
         employee_.other_information = new_other_information
         employee_.phone_number = new_phone_number
-        employee_.sex = new_sex
+        employee_.employee_sex = new_sex
         employee_.identity_card = new_identity_card
-        employee_.name = new_employee_name
+        employee_.employee_name = new_employee_name
         employee_.save()
 
         response['status'] = 'success'

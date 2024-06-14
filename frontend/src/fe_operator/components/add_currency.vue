@@ -85,7 +85,10 @@
               this.name = ''
               this.latest_buy = ''
               this.latest_sell = ''
-            } else {
+            } else if (response.data.status === '1') {
+              ElMessage.error('没有对应权限')
+            }
+            else {
               //ElMessage.error(response.data.message)
               ElMessage.error('已存在同名外币')
             }

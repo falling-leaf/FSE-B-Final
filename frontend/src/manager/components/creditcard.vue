@@ -122,7 +122,7 @@
       </div>
       <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           性别：
-          <el-select v-model="this.newExaminer.sex" style="width: 12.5vw;">
+          <el-select v-model="this.modifyInfo.new_sex" style="width: 12.5vw;">
           <el-option v-for="type in sex_types" :key="type.value" :label="type.label" :value="type.value"/>
         </el-select>
       </div>

@@ -187,12 +187,11 @@ def manageLoanExaminer(request):
                 loan_examiner_id = body.get("loan_examiner_id")
                 loan_examiner = LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
                 employee1 = employee.objects.get(employee_id=loan_examiner.employee_id_id)
-
                 employee1.is_employeed = False
-                loan_examiner.objects.delete()
+                loan_examiner.delete()
                 employee1.save()
 
-                response['response_message'] = f"成功删除贷款部门经理{loan_examiner_id}."
+                response['response_message'] = f"成功删除贷款审查员{loan_examiner_id}."
             else:
                 return JsonResponse({'error': "未知的操作"}, status=403)
 
@@ -266,7 +265,7 @@ def manageLoanDepartmentManager(request):
                 employee1 = employee.objects.get(employee_id=loan_manager.employee_id_id)
 
                 employee1.is_employeed = False
-                loan_manager.objects.delete()
+                loan_manager.delete()
                 employee1.save()
 
                 response['response_message'] = f"成功删除贷款部门经理{loan_manager_id}."

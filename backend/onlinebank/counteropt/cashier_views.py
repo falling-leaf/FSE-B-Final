@@ -149,6 +149,7 @@ def cashier_demand_deposit(request):
 def cashier_time_deposit(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        print(data)
         filter_cashier = cashier.objects.filter(cashier_id=data.get('cashier_id'))
         if not filter_cashier.exists():
             return JsonResponse({"error": "柜员编号不存在"}, status=403)
@@ -170,6 +171,10 @@ def cashier_time_deposit(request):
             filter_account.current_deposit += data.get('deposit_amount')
             #filter_account.balance += data.get('deposit_amount')
             filter_account.save()
+            check_deposit_term = data.get('deposit_term')
+            if "." in check_deposit_term:
+                check_deposit_term = int(float(check_deposit_term))
+            else: check_deposit_term = int(check_deposit_term)
             # 更新存款记录
             new_deposit_record = deposit_record(
                 account_id=data.get('account_id'),
@@ -177,7 +182,7 @@ def cashier_time_deposit(request):
                 auto_renew_status=data.get('auto_renew_status'),
                 deposit_start_date=datetime.datetime.now(),
                 deposit_update_date=datetime.datetime.now(),
-                deposit_end_date=datetime.datetime.now() + datetime.timedelta(days=int(data.get('deposit_term')) * 30),
+                deposit_end_date=datetime.datetime.now() + datetime.timedelta(days=check_deposit_term * 30),
                 deposit_amount=data.get('deposit_amount'),
                 cashier_id=data.get('cashier_id'),
             )
@@ -567,6 +572,7 @@ def cashier_reissue(request):
         new_account = account(
             password = delete_account.password,
             identity_card = delete_account.identity_card,
+            phone_num = delete_account.phone_num,
             card_type = delete_account.card_type,
             balance = delete_account.balance,
             current_deposit = delete_account.current_deposit,
