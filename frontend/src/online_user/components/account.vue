@@ -10,10 +10,16 @@
     <p style="font-weight: bold;font-size: larger;margin: 10px" >用户名 : {{user_info.user_name}}</p>
     <p style="font-weight: bold;font-size: larger;margin: 10px" >电话号码 : {{user_info.phone_num}}</p>
   </div>
-
-    <div style="margin-top: 40px; margin-left: 40px; font-size: 1.5em; font-weight: bold;">
-      账户列表/卡包
-    </div>
+    <div style="display: flex;flex-direction: row">
+      <div style="margin-top: 40px; margin-left: 40px; font-size: 1.5em; font-weight: bold;">
+        账户列表/卡包
+      </div>
+      <el-button @click="RefreshCards" style="margin-top: 40px; margin-left: 15px;border-radius: 50%;width: 40px;height: 40px">
+        <el-icon>
+          <RefreshLeft />
+        </el-icon>
+      </el-button>
+      </div>
     <div style="display: flex;flex-wrap: wrap; justify-content: start;">
     <!-- 借书证卡片 -->
     <div class="cardBox" v-for="card in cards"  :key="card.account_id">
@@ -46,41 +52,6 @@
 
       </div>
     </div>
-<!--
-      <el-button class="newCardBox"
-                 @click="newCardInfo.account_id = '', newCardInfo.identity_card = '', newCardInfo.password = '', newCardInfo.phone_num = '',newCardVisible = true">
-        <el-icon style="height: 50px; width: 50px;">
-          <Plus style="height: 100%; width: 100%;" />
-        </el-icon>
-      </el-button>-->
-
-      <!-- 绑定新账户对话框 -->
-<!--      <el-dialog v-model="newCardVisible" title="绑定新账户" width="30%" align-center>
-        <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          卡号：
-          <el-input v-model="newCardInfo.account_id" style="width: 12.5vw;" clearable />
-        </div>
-        <div style="margin-left: 2vw;   font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          账户（卡片）密码：
-          <el-input v-model="newCardInfo.password" style="width: 12.5vw;" clearable />
-        </div>
-        <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          对应身份证号：
-          <el-input v-model="newCardInfo.identity_card" style="width: 12.5vw;" clearable />
-        </div>
-        <div style="margin-left: 2vw;   font-weight: bold; font-size: 1rem; margin-top: 20px; ">
-          对应手机号：
-          <el-input v-model="newCardInfo.phone_num" style="width: 12.5vw;" clearable />
-        </div>
-
-        <template #footer>
-                <span>
-                    <el-button @click="newCardVisible = false">取消</el-button>
-                    <el-button type="primary" @click="ConfirmNewCard"
-                               :disabled="newCardInfo.identity_card.length === 0 || newCardInfo.phone_num.length === 0 || newCardInfo.account_id.length === 0 || newCardInfo.password.length === 0">确定</el-button>
-                </span>
-        </template>
-      </el-dialog>-->
 
 
       <!-- 挂失账户对话框 -->
@@ -111,7 +82,7 @@
 
 <script>
 import axios from 'axios';
-import {Delete, DocumentChecked, DocumentDelete, Edit, Plus, Search} from '@element-plus/icons-vue'
+import {Delete, DocumentChecked, DocumentDelete, Edit, Plus, RefreshLeft, Search} from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 
@@ -120,7 +91,7 @@ const TimeDepositVisible = ref(false)
 const TotalDepositVisible = ref(false)
 
 export default{
-  components: {Plus},
+  components: {RefreshLeft,Plus},
   computed: {
     DocumentChecked() {
       return DocumentChecked
@@ -175,24 +146,19 @@ export default{
     }
   },
   methods: {
-    /*ConfirmNewCard(){
-      // 发出POST请求
-      axios.post("http://127.0.0.1:8000/user/bind_card",
+    RefreshCards(){
+      axios.post("http://127.0.0.1:8000/user/bind_cards/",
           { // 请求体
-            account_id: this.newCardInfo.account_id,
-            identity_card: this.newCardInfo.identity_card,
-            phone_num: this.newCardInfo.phone_num,
             user_id: this.user_id,
-            password: this.newCardInfo.password
           })
           .then(response => {
-            ElMessage.success("绑定成功") // 显示消息提醒
-            this.newCardVisible = false // 将对话框设置为不可见
+            ElMessage.success(response.data.success) // 显示消息提醒
             this.QueryCards() // 重新查询借书证以刷新页面
           }).catch(error=>{
-            ElMessage.error(error.response.data.error);
+        ElMessage.error(error.response.data.error);
       })
-    },*/
+      this.QueryCards()
+    },
     ReportLostCard(){
       axios.post("http://127.0.0.1:8000/user/card_lost/",
           { // 请求体
@@ -230,6 +196,7 @@ export default{
       let response = axios.get('http://127.0.0.1:8000/user/user_info',
           {params:{user_id: this.user_id}})
           .then(response=> {
+            this.user_info.user_id = this.$route.query.user_id;
             this.user_info.user_name = response.data.user_name;
             this.user_info.phone_num = response.data.phone_num;
           }).catch(error=>{
