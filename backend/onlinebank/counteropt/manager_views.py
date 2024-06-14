@@ -142,7 +142,7 @@ def getAllLoanExaminer(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=405)
     else:
-        return JsonResponse({'error': "the method is not GET"}, status=403)
+        return JsonResponse({'error': "获取方式不是GET"}, status=403)
 
 
 @csrf_exempt
@@ -172,7 +172,7 @@ def manageLoanExaminer(request):
                 loan_examiner.setPassword(password)
                 loan_examiner.save()
 
-                response['response_message'] = f"Successfully added information for loan examiner."
+                response['response_message'] = f"成功添加一个新的贷款审查员"
                 print(type(response))
             elif operation == "update":
                 loan_examiner_id = body.get("loan_examiner_id")
@@ -182,17 +182,19 @@ def manageLoanExaminer(request):
                 loan_examiner.setPassword(new_password)
                 loan_examiner.save()
 
-                response['response_message'] = f"Successfully update loan examiner{loan_examiner_id} password."
+                response['response_message'] = f"成功更改贷款审查员{loan_examiner_id}的密码"
             elif operation == "delete":
                 loan_examiner_id = body.get("loan_examiner_id")
                 loan_examiner = LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
                 employee1 = employee.objects.get(employee_id=loan_examiner.employee_id_id)
-                loan_examiner.delete()
+
                 employee1.is_employeed = False
+                loan_examiner.objects.delete()
                 employee1.save()
-                response['response_message'] = f"Successfully dismissal of a loan examiner{loan_examiner_id}."
+
+                response['response_message'] = f"成功删除贷款部门经理{loan_examiner_id}."
             else:
-                return JsonResponse({'error': "Unrecognized operation type"}, status=403)
+                return JsonResponse({'error': "未知的操作"}, status=403)
 
         except json.JSONDecodeError:
             return JsonResponse({'error': "无效的JSON 负载"}, status=403)
@@ -220,7 +222,7 @@ def getAllLoanManager(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=405)
     else:
-        return JsonResponse({'error': "the method is not GET"}, status=403)
+        return JsonResponse({'error': "获取方式不是GET"}, status=403)
 
 @csrf_exempt
 @require_http_methods(['POST'])
@@ -248,7 +250,7 @@ def manageLoanDepartmentManager(request):
                 loan_manager.setPassword(password)
                 loan_manager.save()
 
-                response['response_message'] = f"Successfully added information for loan department manager."
+                response['response_message'] = f"成功添加一个新贷款部门经理"
             elif operation == "update":
                 loan_manager_id = body.get("loan_manager_id")
                 new_password = body.get("new_password")
@@ -257,19 +259,19 @@ def manageLoanDepartmentManager(request):
                 loan_manager.setPassword(new_password)
                 loan_manager.save()
 
-                response['response_message'] = f"Successfully update loan manager{loan_manager_id} password."
+                response['response_message'] = f"成功更改贷款部门经理{loan_manager_id}的密码"
             elif operation == "delete":
                 loan_manager_id = body.get("loan_manager_id")
                 loan_manager = LoanDepartmentManager.objects.get(loan_manager_id=loan_manager_id)
                 employee1 = employee.objects.get(employee_id=loan_manager.employee_id_id)
 
                 employee1.is_employeed = False
-                loan_manager.delete()
+                loan_manager.objects.delete()
                 employee1.save()
 
-                response['response_message'] = f"Successfully dismissal of a loan manager{loan_manager_id}."
+                response['response_message'] = f"成功删除贷款部门经理{loan_manager_id}."
             else:
-                return JsonResponse({'error': "Unrecognized operation type"}, status=403)
+                return JsonResponse({'error': "不允许的操作"}, status=403)
 
         except json.JSONDecodeError:
             return JsonResponse({'error': "无效的JSON 负载"}, status=403)
