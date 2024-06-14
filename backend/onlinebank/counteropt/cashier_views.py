@@ -31,7 +31,8 @@ def cashier_add(request):
             password=data.get('password'),
             identity_card=data.get('identity_card'),
             card_type=1,#1为银行卡
-            user_id = check_user[0]
+            user_id = check_user[0],
+            phone_num = check_user[0].phone_num
         )
         new_account.save()
         return_data = {'id': new_account.account_id, "success": "开设账户成功"}
