@@ -79,7 +79,7 @@ export default {
     },
     queryLoans() {
     axios.post('/login/getUserIdentityCard/', {
-        user_id: this.user_id,
+        user_id: this.user_id
       })
           .then(response => {
             this.identity_card = response.data.identity_card
@@ -89,13 +89,13 @@ export default {
       })
           .then(response => {
             if(response.data.response_code === 1){
-                ElMessage.success(""查询贷款记录成功")
+                ElMessage.success("查询贷款记录成功")
                 let records = response.data.loan_application_list;
                 records.forEach(record => {
                 this.records.push(record);
             });
             }else{
-                ElMessage.error(""查询贷款记录失败")
+                ElMessage.error("查询贷款记录失败")
             }
           })
           .catch(error => {
@@ -114,19 +114,19 @@ export default {
             this.identity_card = response.data.identity_card
             console.log(response.data.identity_card)
             axios.post('/loan/unrepayLoanRecordReminder/', {
-        identity_card: this.identity_card,
-      })
-          .then(response => {
-            if (response.data.response_code === 1) {
-              ElMessage.success(response.data.response_message);
-            } else {
-              ElMessage.error(response.data.response_message);
-            }
-          })
-          .catch(error => {
-            console.error('There was an error!', error);
-            ElMessage.error("还款提醒失败");
-          })
+                identity_card: this.identity_card,
+            })
+              .then(response => {
+                if (response.data.response_code === 1) {
+                  ElMessage.success(response.data.response_message);
+                } else {
+                  ElMessage.error(response.data.response_message);
+                }
+              })
+              .catch(error => {
+                console.error('There was an error!', error);
+                ElMessage.error("还款提醒失败");
+              })
           })
           .catch(error => {
             ElMessage.error("用户身份证获取失败");

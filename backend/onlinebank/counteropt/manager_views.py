@@ -187,7 +187,7 @@ def manageLoanExaminer(request):
                 loan_examiner_id = body.get("loan_examiner_id")
                 loan_examiner = LoanExaminer.objects.get(loan_examiner_id=loan_examiner_id)
                 employee1 = employee.objects.get(employee_id=loan_examiner.employee_id_id)
-
+                loan_examiner.delete()
                 employee1.is_employeed = False
                 employee1.save()
                 response['response_message'] = f"Successfully dismissal of a loan examiner{loan_examiner_id}."
@@ -264,6 +264,7 @@ def manageLoanDepartmentManager(request):
                 employee1 = employee.objects.get(employee_id=loan_manager.employee_id_id)
 
                 employee1.is_employeed = False
+                loan_manager.delete()
                 employee1.save()
 
                 response['response_message'] = f"Successfully dismissal of a loan manager{loan_manager_id}."

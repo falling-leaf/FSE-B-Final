@@ -133,7 +133,7 @@ export default {
           .then(response => {
             if(response.data.response_code === 1){
             let records = response.data.unapproved_application_list
-            ElMessage.error("查询贷款记录成功");
+            ElMessage.success("查询贷款记录成功");
             records.forEach(record => {
               this.records.push(record)
             })

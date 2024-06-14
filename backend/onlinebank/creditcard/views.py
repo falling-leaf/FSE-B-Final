@@ -64,11 +64,17 @@ def add_new_card(request):
         apply_id = body.get('apply_id')
         # print("in add_new_card")
         # print(apply_id)
+        application = CreditCardApplication.objects.get(apply_id=apply_id)
+        examine = CreditCardExaminer.objects.get(credit_examiner_id=application.creditCardExaminer.credit_examiner_id)
+        if examine.check_authority == 0:
+            response['status'] = 'error'
+            response['message'] = "该审核员没有权限"
+            response['error_num'] = 1
+            return JsonResponse(response)
 
         account().new_card(online_user_id, 0)
-
         # Change the application state of 'have_open'
-        application = CreditCardApplication.objects.get(apply_id=apply_id)
+        
         application.have_open = True
         application.save()
 
@@ -613,12 +619,15 @@ def get_check_applications(request):
         for application in applications:
             online_user_ = online_user.objects.get(user_id=application.online_user_id)
             if online_user_.service_year >= 20:
-                s = (online_user_.service_year * 20 + 0.0001 * online_user_.annual_income / 20 +
+                s = ( 20  + 0.0001 * online_user_.annual_income / 20 +
                      0.0002 * online_user_.property_valuation / 20)
-            else:
-                s = (online_user_.service_year * online_user_.service_year +
+            elif online_user_.service_year != 0:
+                s = (online_user_.service_year +
                      0.0001 * online_user_.annual_income / online_user_.service_year +
                      0.0002 * online_user_.property_valuation / online_user_.service_year)
+            else: s = (online_user_.service_year +
+                     0.0001 * online_user_.annual_income  +
+                     0.0002 * online_user_.property_valuation)
             if s >= 320:
                 credit = '优秀'
             elif s >= 250:
@@ -665,12 +674,15 @@ def get_uncheck_applications(request):
 
             online_user_ = online_user.objects.get(user_id=application.online_user_id)
             if online_user_.service_year >= 20:
-                s = (online_user_.service_year * 20 + 0.0001 * online_user_.annual_income / 20 +
+                s = ( 20  + 0.0001 * online_user_.annual_income / 20 +
                      0.0002 * online_user_.property_valuation / 20)
-            else:
-                s = (online_user_.service_year * online_user_.service_year +
+            elif online_user_.service_year != 0:
+                s = (online_user_.service_year +
                      0.0001 * online_user_.annual_income / online_user_.service_year +
                      0.0002 * online_user_.property_valuation / online_user_.service_year)
+            else: s = (online_user_.service_year +
+                     0.0001 * online_user_.annual_income  +
+                     0.0002 * online_user_.property_valuation)
             if s >= 350:
                 credit = '优秀'
             elif s >= 250:
@@ -797,10 +809,11 @@ def change_application_state(request):
         # Get the result and examiner_id
         apply_result = body.get('apply_result')
         examiner_id = int(body.get('examiner_id'))
+        examine = CreditCardExaminer.objects.get(credit_examiner_id=examiner_id)
         if not examiner_id:
             raise ValueError("examiner_id is required")
-        print("in view = ")
-        print(examiner_id)
+        if examine.check_authority == 0:
+            raise ValueError("该审核员没有权限")
 
         # Update the apply_status and apply_result
         apply.change_state(apply_result, examiner_id)
