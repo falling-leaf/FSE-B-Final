@@ -247,7 +247,7 @@ export default {
             .then(response => {
                 console.log(response.data);
                 if (response.data.status === 'success') {
-                    ElMessage.warning('外币更新成功')
+                    ElMessage.success('外币更新成功')
                     this.searchRecords(1)
                 } else {
                     ElMessage.error(response.data.message)

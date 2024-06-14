@@ -31,7 +31,7 @@
 
         <!-- 卡片内容 -->
         <div style="margin-left: 10px; text-align: start; font-size: 16px;">
-          <p style="padding: 2.5px;"><span style="font-weight: bold;font-size: larger">账户余额：{{ card.balance }} </span></p>
+          <p style="padding: 2.5px;"><span style="font-weight: bold;font-size: larger">账户余额：{{ fix2(card.balance) }} </span></p>
           <p style="padding: 2.5px;"><span style="font-weight: bold;">卡片类型：</span>{{ card.card_type }}</p>
           <p style="padding: 2.5px;"><span style="font-weight: bold;">是否冻结：</span>{{ card.is_frozen }}</p>
           <p style="padding: 2.5px;"><span style="font-weight: bold;">是否挂失：</span>{{ card.is_lost }}</p>
@@ -146,6 +146,9 @@ export default{
     }
   },
   methods: {
+    fix2(number) {
+      return parseFloat(number).toFixed(2)
+    },
     RefreshCards(){
       axios.post("http://127.0.0.1:8000/user/bind_cards/",
           { // 请求体
