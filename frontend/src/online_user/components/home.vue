@@ -14,7 +14,7 @@
                     </el-input>
                   </el-form-item >
                   <el-form-item label="密码" >
-                    <el-input style="width: 200px" v-model="toTransferInfo.password" >
+                    <el-input type="password" style="width: 200px" v-model="toTransferInfo.password" >
                     </el-input>
                   </el-form-item>
                   <el-form-item label="转入卡号">
