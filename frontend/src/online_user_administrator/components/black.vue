@@ -81,7 +81,7 @@
         <el-input
           v-model="newBlack_manager_password"
           style="width: 12.5vw"
-          clearable
+          show-password
         />
       </div>
 
