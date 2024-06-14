@@ -34,9 +34,9 @@ def online_manager_log_in(request):
             else:
                 # print("看看这里")
                 # print(new_user)
-                return JsonResponse({"error": "password is wrong",'state': False}, status=400)
+                return JsonResponse({"error": "密码错误",'state': False}, status=400)
         else:
-            return JsonResponse({"error": "Manager don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "管理员不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -56,28 +56,30 @@ def blacklist_account_add(request):
             # 用户存在开始对照密码
             cur_manager =  online_bank_manager.objects.get(account=data.get('manager_name'))
             filter_online_user = online_user.objects.filter(user_name=data.get('user_name'))
-            print('看看filter_online_manager:{}'.format(cur_manager.account))
-            
-            if filter_online_user.exists():
-                cur_user =  online_user.objects.get(user_name=data.get('user_name'))
-                print('看看filter_online_user:{}'.format(cur_user.user_name))
-                if cur_user.is_blacklisted == False:
-                    if not BlackList.objects.filter(user_id=cur_user.user_id).exists():
-                        print("我日了个蛋")
-                        cur_black = BlackList(user_id=cur_user, online_bank_manager_id=cur_manager)
-                        cur_black.save()
-                        cur_user.is_blacklisted=True
-                        cur_user.save()
-                    return_data = {'state': True}
-                    return JsonResponse(return_data, status=200)
+            # print('看看filter_online_manager:{}'.format(cur_manager.account))
+            if cur_manager.password == data.get('password'):
+                if filter_online_user.exists():
+                    cur_user =  online_user.objects.get(user_name=data.get('user_name'))
+                    print('看看filter_online_user:{}'.format(cur_user.user_name))
+                    if cur_user.is_blacklisted == False:
+                        if not BlackList.objects.filter(user_id=cur_user.user_id).exists():
+                            print("我日了个蛋")
+                            cur_black = BlackList(user_id=cur_user, online_bank_manager_id=cur_manager)
+                            cur_black.save()
+                            cur_user.is_blacklisted=True
+                            cur_user.save()
+                        return_data = {'state': True}
+                        return JsonResponse(return_data, status=200)
+                    else:
+                        # print("看看这里")
+                        # print(new_user)
+                        return JsonResponse({"error": "用户已经在黑名单中",'state': False}, status=400)
                 else:
-                    # print("看看这里")
-                    # print(new_user)
-                    return JsonResponse({"error": "already in black",'state': False}, status=400)
+                    return JsonResponse({"error": "用户不存在",'state': False}, status=403)
             else:
-                return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+                return JsonResponse({"error": "密码错误",'state': False}, status=403)   
         else:
-            return JsonResponse({"error": "Manager don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "管理员不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -103,7 +105,7 @@ def user_frozen(request):
             else:
                 return JsonResponse({"error": "已经冻结了，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -129,7 +131,7 @@ def user_unfrozen(request):
             else:
                 return JsonResponse({"error": "你逗我呢，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -155,7 +157,7 @@ def user_lost(request):
             else:
                 return JsonResponse({"error": "已经挂失了，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -181,7 +183,7 @@ def user_unlost(request):
             else:
                 return JsonResponse({"error": "别闹，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -207,7 +209,7 @@ def user_lost(request):
             else:
                 return JsonResponse({"error": "已经挂失了，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -233,7 +235,7 @@ def user_unlost(request):
             else:
                 return JsonResponse({"error": "别闹，宝贝",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
@@ -263,7 +265,7 @@ def blacklist_account_delet(request):
             else:
                 return JsonResponse({"error": "Blacklist don't exist",'state': False}, status=403)
         else:
-            return JsonResponse({"error": "User don't exist",'state': False}, status=403)
+            return JsonResponse({"error": "用户不存在",'state': False}, status=403)
     elif request.method == 'OPTION':
         return JsonResponse({"success": "OPTION operation"}, status=200)
     else:
