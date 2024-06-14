@@ -43,7 +43,7 @@ class online_bank_manager(models.Model):
 
 class online_user(models.Model):
     user_id = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=20, null=False, default="Unknown")
+    user_name = models.CharField(max_length=20, null=False, default="Unknown",unique=True)
     password = models.CharField(max_length=20, null=False, default="666666")
     identity_card = models.CharField(max_length=18, null=False, unique=True)
     phone_num = models.CharField(max_length=20, null=False, default="10086")
