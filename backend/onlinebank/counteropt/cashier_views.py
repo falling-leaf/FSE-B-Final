@@ -24,16 +24,20 @@ def cashier_add(request):
             return JsonResponse({"error": "账户数量超过限制"}, status=403)
         check_idcard = data.get('identity_card')
         check_user = online_user.objects.filter(identity_card = check_idcard)
-        set_userid = 0
         if check_user.exists():
-            set_userid = check_user[0].user_id
-        new_account = account(
+            new_account = account(
             password=data.get('password'),
             identity_card=data.get('identity_card'),
             card_type=1,#1为银行卡
-            user_id = check_user[0],
-            phone_num = check_user[0].phone_num
-        )
+            phone_num = check_user[0].phone_num,
+            user_id = check_user[0]
+            )
+        else: 
+            new_account = account(
+                password=data.get('password'),
+                identity_card=data.get('identity_card'),
+                card_type=1,#1为银行卡
+            )
         new_account.save()
         return_data = {'id': new_account.account_id, "success": "开设账户成功"}
         return JsonResponse(return_data, status=200)
@@ -105,6 +109,11 @@ def cashier_demand_deposit(request):
         filter_account = account.objects.filter(account_id=data.get('account_id'), password=data.get('password'))
         if filter_account.exists():
             filter_account = filter_account.first()
+            check_idcard = filter_account.identity_card
+            check_user = online_user.objects.filter(identity_card = check_idcard)
+            if check_user.exists():
+                if check_user[0].is_blacklisted:
+                    return JsonResponse({"error": "账户已被列入黑名单，无法执行任何操作"}, status=403)
             if filter_account.is_frozen or filter_account.is_lost:
                 return JsonResponse({"error": "账户挂失/冻结"}, status=403)
             # 更新用户存款情况
@@ -123,7 +132,7 @@ def cashier_demand_deposit(request):
             new_deposit_record.save()
             return JsonResponse({"success": "存款成功"}, status=200)
         else:
-            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            check_account = account.objects.filter(account_id=data.get('account_id'))
             if not check_account.exists():
                 return JsonResponse({"error": "账户不存在"}, status=403)
             else: return JsonResponse({"error": "密码错误"}, status=403)
@@ -148,6 +157,11 @@ def cashier_time_deposit(request):
         filter_account = account.objects.filter(account_id=data.get('account_id'), password=data.get('password'))
         if filter_account.exists():
             filter_account = filter_account.first()
+            check_idcard = filter_account.identity_card
+            check_user = online_user.objects.filter(identity_card = check_idcard)
+            if check_user.exists():
+                if check_user[0].is_blacklisted:
+                    return JsonResponse({"error": "账户已被列入黑名单，无法执行任何操作"}, status=403)
             if filter_account.is_frozen or filter_account.is_lost:
                 return JsonResponse({"error": "账户挂失/冻结"}, status=403)
             # 更新用户存款情况
@@ -168,7 +182,7 @@ def cashier_time_deposit(request):
             new_deposit_record.save()
             return JsonResponse({"success": "存款成功"}, status=200)
         else:
-            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            check_account = account.objects.filter(account_id=data.get('account_id'))
             if not check_account.exists():
                 return JsonResponse({"error": "账户不存在"}, status=403)
             else: return JsonResponse({"error": "密码错误"}, status=403)
@@ -232,6 +246,11 @@ def cashier_withdrawl(request):
         filter_account = account.objects.filter(account_id=data.get('account_id'), password=data.get('password'))
         if filter_account.exists():
             filter_account = filter_account.first()
+            check_idcard = filter_account.identity_card
+            check_user = online_user.objects.filter(identity_card = check_idcard)
+            if check_user.exists():
+                if check_user[0].is_blacklisted:
+                    return JsonResponse({"error": "账户已被列入黑名单，无法执行任何操作"}, status=403)
             if filter_account.is_frozen or filter_account.is_lost:
                 return JsonResponse({"error": "账户挂失/冻结"}, status=403)
             # 判断用户存款是否满足取出条件
@@ -254,7 +273,7 @@ def cashier_withdrawl(request):
             else:
                 return JsonResponse({"error": "存款不足"}, status=403)
         else:
-            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            check_account = account.objects.filter(account_id=data.get('account_id'))
             if not check_account.exists():
                 return JsonResponse({"error": "账户不存在"}, status=403)
             else: return JsonResponse({"error": "密码错误"}, status=403)
@@ -306,12 +325,22 @@ def cashier_transfer(request):
         if not filter_in_account.exists():
             return JsonResponse({"error": "接收转账用户不存在"}, status=403)
         if not filter_out_account.exists():
-            check_account = account.objects.fileter(account_id=data.get('account_id'))
+            check_account = account.objects.filter(account_id=data.get('account_id'))
             if not check_account.exists():
                 return JsonResponse({"error": "账户不存在"}, status=403)
             else: return JsonResponse({"error": "密码错误"}, status=403)
         filter_in_account = filter_in_account.first()
         filter_out_account = filter_out_account.first()
+        check_idcard = filter_in_account.identity_card
+        check_user = online_user.objects.filter(identity_card = check_idcard)
+        if check_user.exists():
+            if check_user[0].is_blacklisted:
+                return JsonResponse({"error": "转入账户已被列入黑名单，无法执行任何操作"}, status=403)
+        check_idcard = filter_out_account.identity_card
+        check_user = online_user.objects.filter(identity_card = check_idcard)
+        if check_user.exists():
+            if check_user[0].is_blacklisted:
+                return JsonResponse({"error": "转出账户已被列入黑名单，无法执行任何操作"}, status=403)
         if filter_out_account.is_frozen or filter_out_account.is_lost:
             return JsonResponse({"error": "转出账户挂失/冻结"}, status=403)
         if filter_in_account.is_frozen or filter_in_account.is_lost:
