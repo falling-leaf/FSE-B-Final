@@ -108,7 +108,6 @@ class account(models.Model):
             raise ValueError("此卡已冻结")
         else:
             self.is_lost = True
-            self.is_frozen = True
             self.save()
             return True
 

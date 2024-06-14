@@ -100,17 +100,17 @@
       <el-dialog v-model="newApplicationVisible" title="申请信用卡" width="30%" align-center>
       <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           年收入：
-          <el-input v-model="newApplicationInfo.annual_income" style="width: 12.5vw;" clearable />
+          <el-input v-model="newApplicationInfo.annual_income" maxlength="20" style="width: 12.5vw;" clearable />
          元
        </div>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           总资产：
-          <el-input v-model="newApplicationInfo.property_valuation" style="width: 12.5vw;" clearable />
+          <el-input v-model="newApplicationInfo.property_valuation" maxlength="20" style="width: 12.5vw;" clearable />
           元
         </div>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           总工龄：
-          <el-input v-model="newApplicationInfo.service_year" style="width: 12.5vw;" clearable />
+          <el-input v-model="newApplicationInfo.service_year" style="width: 12.5vw;" maxlength="2" clearable />
           年
         </div>
 
@@ -162,7 +162,7 @@
       <el-dialog v-model="freezeCreditVisible" title="冻结信用卡" width="30%" align-center>
       <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           密码：
-          <el-input v-model="newFreezeCredit.password" style="width: 12.5vw;" clearable />
+          <el-input v-model="newFreezeCredit.password" style="width: 12.5vw;" maxlength="20" type="password" clearable />
       </div>
       <template #footer>
           <span>
@@ -177,7 +177,7 @@
       <el-dialog v-model="ReportLoss" title="挂失信用卡" width="30%" align-center>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
             密码：
-            <el-input v-model="newReportLoss.password" style="width: 12.5vw;" clearable />
+            <el-input v-model="newReportLoss.password" type="password" maxlength="20" style="width: 12.5vw;" clearable />
         </div>
 
         <template #footer>
@@ -193,7 +193,7 @@
       <el-dialog v-model="CancelCard" title="取消信用卡" width="30%" align-center>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
             输入密码：
-            <el-input v-model="cancelCardInfo.password" style="width: 12.5vw;" clearable />
+            <el-input v-model="cancelCardInfo.password" type="password" style="width: 12.5vw;" clearable />
         </div>
 
         <template #footer>
@@ -209,7 +209,7 @@
       <el-dialog v-model="UpdateLimit" title="更新额度" width="30%" align-center>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           输入密码：
-          <el-input v-model="newUpdateLimit.password" style="width: 12.5vw;" clearable />
+          <el-input v-model="newUpdateLimit.password" type="password" maxlength="20" style="width: 12.5vw;" clearable />
         </div>
 
         <template #footer>
@@ -225,11 +225,11 @@
       <el-dialog v-model="UpdatePassword" title="更新密码" width="30%" align-center>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           旧密码：
-          <el-input v-model="newPassword.old_password" style="width: 12.5vw;" clearable />
+          <el-input v-model="newPassword.old_password" maxlength="20" type="password" style="width: 12.5vw;" clearable />
         </div>
         <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
           新密码：
-          <el-input v-model="newPassword.new_password" style="width: 12.5vw;" clearable />
+          <el-input v-model="newPassword.new_password" maxlength="20" type="password" style="width: 12.5vw;" clearable />
         </div>
 
         <template #footer>
@@ -250,11 +250,11 @@
             </div>
             <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
                 支付金额：
-                <el-input v-model="newPayBill.amount" style="width: 12.5vw;" clearable />
+                <el-input v-model="newPayBill.amount" maxlength="20" style="width: 12.5vw;" clearable />
             </div>
             <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
                 输入密码：
-                <el-input v-model="newPayBill.password" style="width: 12.5vw;" clearable />
+                <el-input v-model="newPayBill.password"maxlength="20" style="width: 12.5vw;" type="password" clearable />
             </div>
             
             <template #footer>
@@ -276,11 +276,11 @@
           </div>
           <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
               支付密码：
-              <el-input v-model="newRepayCredit.pay_password" style="width: 12.5vw;" clearable />
+              <el-input v-model="newRepayCredit.pay_password" maxlength="20" type="password" style="width: 12.5vw;" clearable />
           </div>
           <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px; ">
               还款金额：
-              <el-input v-model="newRepayCredit.amount" style="width: 12.5vw;" clearable />
+              <el-input v-model="newRepayCredit.amount" maxlength="20" style="width: 12.5vw;" clearable />
           </div>
 
           <template #footer>
@@ -298,11 +298,11 @@
         <div style="display: flex;">
           <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px;">
             年份：
-            <el-input v-model="billInfo.year" style="width: 8vw;" clearable />
+            <el-input v-model="billInfo.year" style="width: 8vw;" maxlength="4" clearable />
           </div>
           <div style="margin-left: 2vw; font-weight: bold; font-size: 1rem; margin-top: 20px;">
             月份：
-            <el-input v-model="billInfo.month" style="width: 6vw;" clearable />
+            <el-input v-model="billInfo.month" style="width: 6vw;" maxlength="2" clearable />
           </div>
           <div style="margin-left: 2vw; margin-top: 20px; text-align: center;">
             <el-button type="primary" @click="ConfirmQueryBill" :disabled="billInfo.year.length === 0

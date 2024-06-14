@@ -6,7 +6,7 @@
                  style="height:100%; width: 100%; overflow: hidden" :router="true">
           <div style="color: white; background-color: #181818;
           width: 100%; height: 10vh; display: flex; align-items: center; justify-content: center;">
-            用户操作界面 {{user_id}}
+            信用卡-用户
           </div>
           <el-menu-item :index=" '/credit_user?user_id=' + this.user_id">
             <el-icon>
@@ -14,13 +14,16 @@
             </el-icon>
             <span>信用卡</span>
           </el-menu-item>
-          
           <div style="height: 30px"></div>
-<!--          <a href="/online_user" >-->
-            <el-button type="danger" style="margin-left: 40px;" @click="backToHome">
-              退出
-            </el-button>
-<!--          </a>-->
+          <a style="margin-left: 40px;">
+            <el-button @click="backToHome">
+              返回</el-button>
+          </a>
+          <div style="height: 30px"></div>
+            <a href="/" style="margin-left: 40px;">
+              <el-button type="danger">退出
+              </el-button>
+            </a>
         </el-menu>
       </el-aside>
       
