@@ -86,7 +86,8 @@
               this.latest_buy = ''
               this.latest_sell = ''
             } else {
-              ElMessage.error(response.data.message)
+              //ElMessage.error(response.data.message)
+              ElMessage.error('已存在同名外币')
             }
           })
         .catch(error => {

@@ -272,7 +272,7 @@ export default {
                 .then(response => {
                     console.log(response.data);
                     if (response.data.status === 'success') {
-                        ElMessage.success('Currency add successfully');
+                        ElMessage.success('操作员添加成功');
                         this.employee_name = ''
                         this.account = ''
                         this.phone_number = ''
@@ -340,7 +340,7 @@ export default {
             await axios.post('/FExchange/foreign/updateauthority',modifyParams)
             .then(response => {
                 if (response.data.status === 'success') {
-                    ElMessage.warning('Operator modify successfully');
+                    ElMessage.success('操作员权限修改成功');
                 } else {
                     alert('Error: ' + response.data.message);
                 }
@@ -358,7 +358,7 @@ export default {
             await axios.post('/FExchange/foreign/delete',deleteParams)
             .then(response => {
                 if (response.data.status === 'success') {
-                    ElMessage.warning('Currency deleted successfully');
+                    ElMessage.success('操作员删除成功');
                 } else {
                 alert('Error: ' + response.data.message);
                 }
