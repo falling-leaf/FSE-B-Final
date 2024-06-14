@@ -28,6 +28,12 @@
             <span>查询记录</span>
           </el-menu-item>
           <div style="height: 30px"></div>
+            <a style="margin-left: 40px;">
+              <el-button @click="handle">
+                返回
+              </el-button>
+            </a>
+          <div style="height: 30px"></div>
           <a href="/login" style="margin-left: 40px;">
             <el-button type="danger">
               退出
@@ -68,7 +74,11 @@ export default {
       const params = new URLSearchParams(url.search);
       // 从查询字符串中获取参数
       this.user_id = params.get('user_id');
-    }
+    },
+    handle() {
+      window.location.href =
+        "/online_user?user_id=" + this.user_id;
+    },
   }
 };
 </script>
