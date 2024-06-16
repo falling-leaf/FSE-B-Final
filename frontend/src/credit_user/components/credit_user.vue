@@ -351,7 +351,7 @@ export default{
   components: {View, Plus, Close, Key, CreditCard, List, Coin, ShoppingCart, DocumentDelete, Lock},
   data(){
     return{
-      online_user_id: 1,
+      online_user_id: '',
       creditcards: [
         {
           account_id: 1,
@@ -712,9 +712,20 @@ export default{
             ElMessage.error("查询失败：" + error);
           });
     },
+    fetchDataFromUrl() {
+      // 获取当前URL
+      const url = new URL(window.location);
+      // 创建URLSearchParams对象
+      const params = new URLSearchParams(url.search);
+      // 从查询字符串中获取参数
+      this.online_user_id = params.get('user_id');
+    },
   },
   mounted() {
     this.QueryCards();
+  },
+  created() {
+    this.fetchDataFromUrl();
   }
 }
 </script>
